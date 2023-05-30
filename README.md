@@ -56,6 +56,32 @@ binding.eventCalendarView.addOnDayClickListener(object :
 })
 ```
 
+The `Day` object structure is following:
+```kotlin
+data class Day(
+    val value: String,
+    val isCurrentMonth: Boolean,
+    var isCurrentDay: Boolean,
+    var date: String,
+)
+```
+The `date` format is "dd.MM.yyyy".
+
+<hr>
+
+You can also watch to calendar scroll changes.
+
+```kotlin
+binding.eventCalendarView.addOnCalendarScrollListener(object : EventCalendarScrollListener {
+    override fun onScrolled(month: Int, year: Int) {
+        Log.i("ECV", "Scrolled to: $month $year")
+    }
+})
+```
+If you scroll for example to january 2023, the `month` value will be `1` and the year `2023`.
+
+<hr>
+
 It is really to easy to add events to the calendar.
 Here is an example code:
 ```kotlin
@@ -68,6 +94,17 @@ binding.eventCalendarView.events = arrayListOf<Event>().apply {
 ```
 The date format have to be in format "dd.MM.yyyy".
 
+The `Event` object structure is following:
+```kotlin
+@Parcelize
+data class Event(
+    val date: String,
+    val name: String,
+    val backgroundHexColor: String,
+    val data: @RawValue Any? = null,
+) : Parcelable
+```
+The event text color is automatically determined. If the background color is dark, the text color is white. Otherwise, the text color is gray.
 
 ## Javadoc
 Each function has also a javadoc documentation.
