@@ -68,8 +68,17 @@ binding.eventCalendarView.events = arrayListOf<Event>().apply {
 ```
 The date format have to be in format "dd.MM.yyyy".
 
+
 ## Javadoc
 Each function has also a javadoc documentation.
+
+
+## Screenshots
+<img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot.png" height=400px> <img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot2.png" height=400px>
+
+
+## Sample app
+https://github.com/michael-winkler/EventCalendar/releases/download/1.0.0/app-debug.apk
 
 
 ## License
