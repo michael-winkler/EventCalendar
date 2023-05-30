@@ -1,0 +1,25 @@
+<resources>
+    <string name="ecv_day_name_monday">M</string>
+    <string name="ecv_day_name_tuesday">D</string>
+    <string name="ecv_day_name_wednesday">M</string>
+    <string name="ecv_day_name_thursday">D</string>
+    <string name="ecv_day_name_friday">F</string>
+    <string name="ecv_day_name_saturday">S</string>
+    <string name="ecv_day_name_sunday">S</string>
+
+    <string-array name="ecv_month_names">
+        <item>Januar</item>
+        <item>Februar</item>
+        <item>März</item>
+        <item>April</item>
+        <item>Mai</item>
+        <item>Juni</item>
+        <item>Juli</item>
+        <item>August</item>
+        <item>September</item>
+        <item>Oktober</item>
+        <item>November</item>
+        <item>Dezember</item>
+    </string-array>
+
+</resources>

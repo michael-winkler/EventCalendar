@@ -1,0 +1,32 @@
+<resources>
+
+    <style name="AppTheme" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/colorBackground</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <style name="BottomSheetDialog" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/bottomSheetStyleWrapper</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowSoftInputMode">adjustResize|stateHidden</item>
+    </style>
+
+    <style name="bottomSheetStyleWrapper" parent="Widget.Material3.BottomSheet.Modal">
+        <item name="backgroundTint">@color/colorBackground</item>
+    </style>
+
+    <style name="BottomSheetDialog.DragHandleView" parent="Widget.Material3.BottomSheet.DragHandle">
+        <item name="tint">@color/colorStroke</item>
+    </style>
+
+    <style name="RippleColor" parent="@style/ThemeOverlay.AppCompat.Light">
+        <item name="colorControlHighlight">@color/ecv_ripple_color</item>
+    </style>
+
+</resources>

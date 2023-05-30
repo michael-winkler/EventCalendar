@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="EventCalendarView">
+        <!-- Determines whether the header layout, which displays the left and right icons,
+        as well as the month name and year, is visible or not.
+        Default: true -->
+        <attr name="ecv_header_visible" format="boolean" />
+
+        <!-- Indicates whether the child view wants to prevent the parent view from intercepting
+        touch events.
+        Default: false -->
+        <attr name="ecv_disallow_intercept" format="boolean" />
+
+        <!-- Sets the tint color for the background of the current day circle.
+        Default: @color/ecv_charcoal_color-->
+        <attr name="ecv_current_day_background_tint_color" format="color" />
+
+        <!-- Sets the text color for the current day circle.
+        Default: @color/ecv_white-->
+        <attr name="ecv_current_day_text_color" format="color" />
+
+        <!-- Sets the tint color for the background of the "count" indicator that appears when
+        there are more events on a day than can be displayed.
+        Default: @color/ecv_charcoal_color-->
+        <attr name="ecv_count_background_tint_color" format="color" />
+
+        <!-- Sets the text color for the "count" indicator that appears when there are more
+        events on a day than can be displayed.
+        Default: @color/ecv_white-->
+        <attr name="ecv_count_background_text_color" format="color" />
+
+        <!-- Determines whether the "count" indicator that appears when there are more events on
+        a day than can be displayed is visible or not.
+        Default: true -->
+        <attr name="ecv_count_visible" format="boolean" />
+    </declare-styleable>
+</resources>

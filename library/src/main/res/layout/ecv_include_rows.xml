@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@color/ecv_item_divider_decoration_color" />
+
+    <include
+        android:id="@+id/eventCalendarViewDay1"
+        layout="@layout/ecv_textview_circle"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@color/ecv_item_divider_decoration_color" />
+
+    <include
+        android:id="@+id/eventCalendarViewDay2"
+        layout="@layout/ecv_textview_circle"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@color/ecv_item_divider_decoration_color" />
+
+    <include
+        android:id="@+id/eventCalendarViewDay3"
+        layout="@layout/ecv_textview_circle"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@color/ecv_item_divider_decoration_color" />
+
+    <include
+        android:id="@+id/eventCalendarViewDay4"
+        layout="@layout/ecv_textview_circle"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@color/ecv_item_divider_decoration_color" />
+
+    <include
+        android:id="@+id/eventCalendarViewDay5"
+        layout="@layout/ecv_textview_circle"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@color/ecv_item_divider_decoration_color" />
+
+    <include
+        android:id="@+id/eventCalendarViewDay6"
+        layout="@layout/ecv_textview_circle"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="@color/ecv_item_divider_decoration_color" />
+
+    <include
+        android:id="@+id/eventCalendarViewDay7"
+        layout="@layout/ecv_textview_circle"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+</LinearLayout>

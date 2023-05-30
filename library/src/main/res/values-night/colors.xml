@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ecv_item_day_name_color">@color/ecv_white</color>
+    <color name="ecv_item_divider_decoration_color">#3D4043</color>
+    <color name="ecv_ripple_color">#33FFFFFF</color>
+</resources>
