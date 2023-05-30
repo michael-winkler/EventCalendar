@@ -78,7 +78,7 @@ Each function has also a javadoc documentation.
 
 
 ## Sample app
-https://github.com/michael-winkler/EventCalendar/releases/download/1.0.0/app-debug.apk
+https://github.com/michael-winkler/EventCalendar/releases/download/1.0.1/app-debug.apk
 
 
 ## License
