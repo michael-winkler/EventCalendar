@@ -1,2 +1,98 @@
 # EventCalendar
- 
+
+[![](https://jitpack.io/v/michael-winkler/EventCalendar.svg)](https://jitpack.io/#michael-winkler/EventCalendar)
+[![API](https://img.shields.io/badge/API-21%2B-orange.svg?style=flat)](https://android-arsenal.com/api?level=21)
+[![License Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=true)](http://www.apache.org/licenses/LICENSE-2.0)
+
+This library uses Android X depencies and is written in Kotlin.
+
+
+## Usage
+Add a dependency to your build.gradle file:
+```kotlin
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+dependencies {
+    implementation 'com.github.michael-winkler:EventCalendar:1.0.0'
+}
+```
+
+```kotlin
+import com.nmd.eventCalendar.EventCalendarView
+```
+
+## Exampe code
+You can create a new `EventCalendarView` inside your XML-Layout like this:
+```kotlin
+<com.nmd.eventCalendar.EventCalendarView
+    android:id="@+id/eventCalendarView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:ecv_count_background_text_color="@android:color/white"
+    app:ecv_count_background_tint_color="@android:color/holo_blue_light"
+    app:ecv_count_visible="true"
+    app:ecv_current_day_background_tint_color="@android:color/holo_red_dark"
+    app:ecv_current_day_text_color="@android:color/white"
+    app:ecv_disallow_intercept="false"
+    app:ecv_header_visible="true" />
+```
+Here you can see all custom `app` parameters which you can use:    
+https://github.com/michael-winkler/EventCalendar/blob/main/library/src/main/res/values/attr.xml
+
+Now in your class you can get a reference to it like this:
+```kotlin
+binding.eventCalendarView.addOnDayClickListener(object :
+    EventCalendarDayClickListener {
+    override fun onClick(day: Day) {
+        // val eventList = binding.eventCalendarView.events.filter { it.date == day.date }
+        // You can use this to get the events for the selected day
+        Log.i("ECV", "TEST 1: " + day.date)
+    }
+})
+```
+
+It is really to easy to add events to the calendar.
+Here is an example code:
+```kotlin
+binding.eventCalendarView.events = arrayListOf<Event>().apply {
+    Event(date = "15.04.2023", name = "Vacation", backgroundHexColor = "#4badeb")
+    Event(date = "16.04.2023", name = "Home office", backgroundHexColor = "#e012ad")
+    Event(date = "17.04.2023", name = "Meeting", backgroundHexColor = "#e07912")
+    Event(date = "18.04.2023", name = "Vacation", backgroundHexColor = "#4badeb", data = "Let's go!")
+}
+```
+The date format have to be in format "dd.MM.yyyy".
+
+## Javadoc
+Each function has also a javadoc documentation.
+
+
+## License
+```
+Copyright Author @NMD [Next Mobile Development - Michael Winkler]
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
+## Last words
+If you like this library feel free to "star" it:<br>
+![star](https://github.com/michael-winkler/Screenshot/blob/master/Images/star.png)
+
+```
+This library has been successfully tested with:
+Android Studio Flamingo | 2022.2.1 Patch 2
+```
