@@ -234,7 +234,7 @@ class EventCalendarView @JvmOverloads constructor(
      *
      * Also if there are more events on a single day than the user can visibly see,
      * the last fully visible item will be automatically displayed as "+1", for example.
-     * In this case, the count text is automatically generated. If you dont want the automatic count
+     * In this case, the count text is automatically generated. If you don't want the automatic count
      * then you can disable it in your xml-layout
      * ```
      * app:ecv_count_visible="false"
