@@ -20,7 +20,7 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.github.michael-winkler:EventCalendar:1.0.0'
+    implementation 'com.github.michael-winkler:EventCalendar:1.0.2'
 }
 ```
 
