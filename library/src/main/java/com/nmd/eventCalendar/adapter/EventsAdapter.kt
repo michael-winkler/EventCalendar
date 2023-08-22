@@ -5,12 +5,16 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.nmd.eventCalendar.EventCalendarView
 import com.nmd.eventCalendar.R
 import com.nmd.eventCalendar.databinding.EcvEventViewBinding
 import com.nmd.eventCalendar.model.Event
 import com.nmd.eventCalendar.utils.Utils.Companion.isDarkColor
 
-class EventsAdapter(private var list: ArrayList<Event>) :
+class EventsAdapter(
+    private var list: ArrayList<Event>,
+    private val eventCalendarView: EventCalendarView?,
+) :
     RecyclerView.Adapter<EventsAdapter.AdapterViewHolder>() {
 
     class AdapterViewHolder(val binding: EcvEventViewBinding) :
@@ -31,12 +35,24 @@ class EventsAdapter(private var list: ArrayList<Event>) :
             binding.itemEventMaterialTextView.text = item.name
 
             val color = Color.parseColor(item.backgroundHexColor)
-            binding.itemEventMaterialTextView.setTextColor(
-                ContextCompat.getColor(
-                    binding.itemEventMaterialTextView.context,
-                    if (color.isDarkColor()) R.color.ecv_white else R.color.ecv_charcoal_color
+            val automaticTextColor = eventCalendarView?.eventItemAutomaticTextColor == false
+            if (automaticTextColor) {
+                val eventItemTextColor =
+                    eventCalendarView?.eventItemTextColor ?: ContextCompat.getColor(
+                        binding.itemEventMaterialTextView.context,
+                        R.color.ecv_white
+                    )
+                binding.itemEventMaterialTextView.setTextColor(eventItemTextColor)
+            } else {
+                binding.itemEventMaterialTextView.setTextColor(
+                    ContextCompat.getColor(
+                        binding.itemEventMaterialTextView.context,
+                        if (color.isDarkColor()) R.color.ecv_white else R.color.ecv_charcoal_color
+
+                    )
                 )
-            )
+            }
+
             binding.root.setCardBackgroundColor(color)
         }
     }

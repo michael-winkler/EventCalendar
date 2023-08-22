@@ -20,7 +20,7 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.github.michael-winkler:EventCalendar:1.0.2'
+    implementation 'com.github.michael-winkler:EventCalendar:1.0.3'
 }
 ```
 
@@ -41,6 +41,8 @@ You can create a new `EventCalendarView` inside your XML-Layout like this:
     app:ecv_current_day_background_tint_color="@android:color/holo_red_dark"
     app:ecv_current_day_text_color="@android:color/white"
     app:ecv_disallow_intercept="false"
+    app:ecv_event_item_automatic_text_color="true"
+    app:ecv_event_item_text_color="@android:color/black"
     app:ecv_header_visible="true" />
 ```
 Here you can see all custom `app` parameters which you can use:    
@@ -107,6 +109,7 @@ data class Event(
 ) : Parcelable
 ```
 The event text color is automatically determined. If the background color is dark, the text color is white. Otherwise, the text color is gray.
+You can change this behaviour with `app:ecv_event_item_automatic_text_color="false"`. And then with `app:ecv_event_item_text_color="@android:color/black"` you can set the event item text color.
 
 ## Javadoc
 Each function has also a javadoc documentation.
@@ -117,7 +120,7 @@ Each function has also a javadoc documentation.
 
 
 ## Sample app
-https://github.com/michael-winkler/EventCalendar/releases/download/1.0.1/app-debug.apk
+https://github.com/michael-winkler/EventCalendar/releases/download/1.0.3/app-debug.apk
 
 
 ## License

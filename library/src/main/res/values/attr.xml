@@ -33,5 +33,14 @@
         a day than can be displayed is visible or not.
         Default: true -->
         <attr name="ecv_count_visible" format="boolean" />
+
+        <!-- Determines whether the automatic event item text color should be set automatic or not.
+        Default: true-->
+        <attr name="ecv_event_item_automatic_text_color" format="boolean" />
+
+        <!-- Sets the text color for event items. Will only be used if
+        "ecv_event_item_automatic_text_color" is set to false.
+        Default: @color/ecv_white-->
+        <attr name="ecv_event_item_text_color" format="color" />
     </declare-styleable>
 </resources>

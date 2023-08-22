@@ -208,7 +208,7 @@ class EventCalendarFragment : Fragment() {
             recyclerView.adapter = if (eventList.isEmpty()) {
                 null
             } else {
-                EventsAdapter(eventList)
+                EventsAdapter(eventList, eventCalendarView)
             }
 
             textView.text = day.value

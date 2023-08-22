@@ -111,6 +111,8 @@ class EventCalendarView @JvmOverloads constructor(
     internal var countBackgroundTextColor =
         ContextCompat.getColor(context, R.color.ecv_white)
     internal var countVisible = true
+    internal var eventItemAutomaticTextColor = true
+    internal var eventItemTextColor = ContextCompat.getColor(context, R.color.ecv_white)
 
     init {
         context.withStyledAttributes(attrs, R.styleable.EventCalendarView) {
@@ -136,6 +138,15 @@ class EventCalendarView @JvmOverloads constructor(
             )
             countVisible =
                 getBoolean(R.styleable.EventCalendarView_ecv_count_visible, countVisible)
+            eventItemAutomaticTextColor =
+                getBoolean(
+                    R.styleable.EventCalendarView_ecv_event_item_automatic_text_color,
+                    eventItemAutomaticTextColor
+                )
+            eventItemTextColor = getColor(
+                (R.styleable.EventCalendarView_ecv_event_item_text_color),
+                eventItemTextColor
+            )
         }
 
         if (isInEditMode) {
@@ -239,6 +250,19 @@ class EventCalendarView @JvmOverloads constructor(
      * ```
      * app:ecv_count_visible="false"
      * ```
+     * The [Event] item text color is set automatic to light or dark.
+     * This depends on the [Event] item "backgroundHexColor". If it is a dark background color,
+     * then the text color will be light, else dark. If you don't want the automatic text color
+     * then you can disable it in your xml-layout
+     * ```
+     * app:ecv_event_item_automatic_text_color="false"
+     * ```
+     * You can set now the event item text color like this in your xml-layout
+     * ```
+     * app:ecv_event_item_text_color="@android:color/white"
+     * ```
+     * but remember that "ecv_event_item_text_color" only works if "ecv_event_item_automatic_text_color"
+     * is set to false!
      *
      * @return The current event list. Can not be null but empty list.
      */
