@@ -103,19 +103,19 @@ class EventCalendarView @JvmOverloads constructor(
     // For xml layout
     internal var headerVisible = true
     internal var currentDayBackgroundTintColor =
-        ContextCompat.getColor(context, R.color.ecv_charcoal_color)
+        ContextCompat.getColor(getContext(), R.color.ecv_charcoal_color)
     internal var currentDayTextColor =
-        ContextCompat.getColor(context, R.color.ecv_white)
+        ContextCompat.getColor(getContext(), R.color.ecv_white)
     internal var countBackgroundTintColor =
-        ContextCompat.getColor(context, R.color.ecv_charcoal_color)
+        ContextCompat.getColor(getContext(), R.color.ecv_charcoal_color)
     internal var countBackgroundTextColor =
-        ContextCompat.getColor(context, R.color.ecv_white)
+        ContextCompat.getColor(getContext(), R.color.ecv_white)
     internal var countVisible = true
     internal var eventItemAutomaticTextColor = true
-    internal var eventItemTextColor = ContextCompat.getColor(context, R.color.ecv_white)
+    internal var eventItemTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
 
     init {
-        context.withStyledAttributes(attrs, R.styleable.EventCalendarView) {
+        getContext().withStyledAttributes(attrs, R.styleable.EventCalendarView) {
             headerVisible =
                 getBoolean(R.styleable.EventCalendarView_ecv_header_visible, headerVisible)
             disallowIntercept =
@@ -150,7 +150,7 @@ class EventCalendarView @JvmOverloads constructor(
         }
 
         if (isInEditMode) {
-            val view: View? = LayoutInflater.from(context)
+            val view: View? = LayoutInflater.from(getContext())
                 .inflate(R.layout.ecv_android_studio_preview, this, false)
             view?.let {
                 addView(it)
@@ -158,13 +158,13 @@ class EventCalendarView @JvmOverloads constructor(
             }
         } else {
             val view: View? =
-                LayoutInflater.from(context).inflate(R.layout.ecv_event_calendar, this, false)
+                LayoutInflater.from(getContext()).inflate(R.layout.ecv_event_calendar, this, false)
             view?.let {
                 addView(it)
             }
             eventCalendarViewPager2 = view?.findViewById(R.id.eventCalendarViewPager2)
 
-            val appCompatActivity = context as AppCompatActivity
+            val appCompatActivity = getContext() as AppCompatActivity
             eventCalendarViewPager2?.adapter = InfiniteViewPagerAdapter(
                 fragmentManager = appCompatActivity.supportFragmentManager,
                 lifecycle = appCompatActivity.lifecycle,

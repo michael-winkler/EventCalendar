@@ -20,7 +20,7 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.github.michael-winkler:EventCalendar:1.0.4'
+    implementation 'com.github.michael-winkler:EventCalendar:1.0.5'
 }
 ```
 
@@ -120,7 +120,7 @@ Each function has also a javadoc documentation.
 
 
 ## Sample app
-https://github.com/michael-winkler/EventCalendar/releases/download/1.0.4/app-debug.apk
+https://github.com/michael-winkler/EventCalendar/releases/download/1.0.5/app-debug.apk
 
 
 ## License
@@ -145,5 +145,5 @@ If you like this library feel free to "star" it:<br>
 
 ```
 This library has been successfully tested with:
-Android Studio Giraffe | 2022.3.1
+Android Studio Giraffe | 2022.3.1 Patch 2
 ```
