@@ -1,6 +1,8 @@
 package com.nmd.eventCalendar.utils
 
+import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
 import androidx.core.graphics.ColorUtils
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
@@ -12,6 +14,14 @@ import java.util.Calendar
 class Utils {
 
     companion object {
+
+        fun Context?.getActivity(): Activity? {
+            return when (this) {
+                is Activity -> this
+                is ContextWrapper -> this.baseContext.getActivity()
+                else -> null
+            }
+        }
 
         fun Int.getDaysOfMonthAndGivenYear(year: Int): List<Day> {
             val calendar = Calendar.getInstance().apply {

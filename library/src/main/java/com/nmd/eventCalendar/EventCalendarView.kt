@@ -27,6 +27,7 @@ import com.nmd.eventCalendar.`interface`.EventCalendarScrollListener
 import com.nmd.eventCalendar.model.Day
 import com.nmd.eventCalendar.model.Event
 import com.nmd.eventCalendar.utils.Utils.Companion.disableItemAnimation
+import com.nmd.eventCalendar.utils.Utils.Companion.getActivity
 import com.nmd.eventCalendar.utils.Utils.Companion.getDaysOfMonthAndGivenYear
 import com.nmd.eventCalendar.utils.Utils.Companion.getMonthName
 import java.util.*
@@ -78,7 +79,7 @@ import kotlin.math.abs
  *
  */
 class EventCalendarView @JvmOverloads constructor(
-    context: Context, attrs: AttributeSet? = null,
+    private val context: Context, attrs: AttributeSet? = null,
 ) : FrameLayout(context, attrs) {
 
     internal var currentViewPager2Position = 0
@@ -164,43 +165,46 @@ class EventCalendarView @JvmOverloads constructor(
             }
             eventCalendarViewPager2 = view?.findViewById(R.id.eventCalendarViewPager2)
 
-            val appCompatActivity = getContext() as AppCompatActivity
-            eventCalendarViewPager2?.adapter = InfiniteViewPagerAdapter(
-                fragmentManager = appCompatActivity.supportFragmentManager,
-                lifecycle = appCompatActivity.lifecycle,
-                eventCalendarView = this,
-            )
+            val appCompatActivity = context.getActivity() as? AppCompatActivity
+            if (appCompatActivity != null) {
+                eventCalendarViewPager2?.adapter = InfiniteViewPagerAdapter(
+                    fragmentManager = appCompatActivity.supportFragmentManager,
+                    lifecycle = appCompatActivity.lifecycle,
+                    eventCalendarView = this,
+                )
 
-            val currentMonthPosition =
-                ((currentYear - sYear) * 12) + (currentMonth - sMonth) - (if (currentMonth >= eMonth && currentYear >= eYear) (currentYear - eYear) * 12 + (currentMonth - eMonth) else 0)
-            eventCalendarViewPager2?.setCurrentItem(currentMonthPosition, false)
-            currentViewPager2Position = currentMonthPosition
-            currentMonthAndYearTriple = getMonthNameAndYear(currentMonthPosition)
+                val currentMonthPosition =
+                    ((currentYear - sYear) * 12) + (currentMonth - sMonth) - (if (currentMonth >= eMonth && currentYear >= eYear) (currentYear - eYear) * 12 + (currentMonth - eMonth) else 0)
+                eventCalendarViewPager2?.setCurrentItem(currentMonthPosition, false)
+                currentViewPager2Position = currentMonthPosition
+                currentMonthAndYearTriple = getMonthNameAndYear(currentMonthPosition)
 
-            eventCalendarViewPager2?.disableItemAnimation()
-            eventCalendarViewPager2?.offscreenPageLimit = 1
-            eventCalendarViewPager2?.isSaveEnabled = false
+                eventCalendarViewPager2?.disableItemAnimation()
+                eventCalendarViewPager2?.offscreenPageLimit = 1
+                eventCalendarViewPager2?.isSaveEnabled = false
 
-            eventCalendarViewPager2?.registerOnPageChangeCallback(object :
-                ViewPager2.OnPageChangeCallback() {
-                override fun onPageScrolled(
-                    position: Int,
-                    positionOffset: Float,
-                    positionOffsetPixels: Int,
-                ) {
-                }
+                eventCalendarViewPager2?.registerOnPageChangeCallback(object :
+                    ViewPager2.OnPageChangeCallback() {
+                    override fun onPageScrolled(
+                        position: Int,
+                        positionOffset: Float,
+                        positionOffsetPixels: Int,
+                    ) {
+                    }
 
-                override fun onPageSelected(position: Int) {
-                    currentViewPager2Position = position
-                    currentMonthAndYearTriple = getMonthNameAndYear(position)
-                    scrollListener?.onScrolled(
-                        month = currentMonthAndYearTriple.third.plus(1),
-                        year = currentMonthAndYearTriple.second
-                    )
-                }
+                    override fun onPageSelected(position: Int) {
+                        currentViewPager2Position = position
+                        currentMonthAndYearTriple = getMonthNameAndYear(position)
+                        scrollListener?.onScrolled(
+                            month = currentMonthAndYearTriple.third.plus(1),
+                            year = currentMonthAndYearTriple.second
+                        )
+                    }
 
-                override fun onPageScrollStateChanged(state: Int) {}
-            })
+                    override fun onPageScrollStateChanged(state: Int) {}
+                })
+            }
+
         }
     }
 
