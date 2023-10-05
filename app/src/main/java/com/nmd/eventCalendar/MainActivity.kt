@@ -2,6 +2,8 @@ package com.nmd.eventCalendar
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -31,13 +33,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initialize() {
+        binding.progressBar.visibility = View.VISIBLE
+        binding.eventCalendarView.visibility = View.GONE
         //binding.eventCalendarView.setMonthAndYear(4, 2023, 6, 2023)
         binding.eventCalendarViewCalendarImageView.setOnClickListener {
             binding.eventCalendarView.scrollToCurrentMonth(false)
         }
 
         binding.eventCalendarViewShuffleImageView.setOnClickListener {
-            binding.eventCalendarView.events = createRandomEventList(512)
+            Handler(Looper.getMainLooper()).post {
+                createRandomEventList(256).let {
+                    binding.eventCalendarView.events = it
+                }
+            }
         }
 
         binding.eventCalendarView.addOnDayClickListener(object :
@@ -53,7 +61,16 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        binding.eventCalendarView.events = createRandomEventList(512)
+        Handler(Looper.getMainLooper()).post {
+            createRandomEventList(256).let {
+                binding.eventCalendarView.events = it
+                binding.eventCalendarView.post {
+                    binding.progressBar.visibility = View.GONE
+                    binding.eventCalendarView.visibility = View.VISIBLE
+                }
+            }
+        }
+
     }
 
     @SuppressLint("SetTextI18n")

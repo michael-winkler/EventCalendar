@@ -10,9 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.updateLayoutParams
@@ -26,6 +24,7 @@ import com.nmd.eventCalendar.EventCalendarView
 import com.nmd.eventCalendar.R
 import com.nmd.eventCalendar.adapter.EventsAdapter
 import com.nmd.eventCalendar.builder.EventCalendarBuilder
+import com.nmd.eventCalendar.databinding.EcvEventCalendarViewBinding
 import com.nmd.eventCalendar.model.Day
 import com.nmd.eventCalendar.model.Event
 import com.nmd.eventCalendar.utils.Utils.Companion.dayEvents
@@ -34,48 +33,25 @@ import com.nmd.eventCalendar.utils.Utils.Companion.getMonthName
 import com.nmd.eventCalendar.utils.Utils.Companion.orEmptyArrayList
 
 class EventCalendarFragment : Fragment() {
-    private lateinit var rootView: View
-    private lateinit var eventCalendarViewMonthYearTextView: MaterialTextView
-    private lateinit var eventCalendarViewMonthYearImageViewLeft: ImageView
-    private lateinit var eventCalendarViewMonthYearImageViewRight: ImageView
-    private lateinit var eventCalendarViewMonthYearHeader: RelativeLayout
-    private var eventCalendarViewNestedScrollView: NestedScrollView? = null
+    private lateinit var binding: EcvEventCalendarViewBinding
     var eventCalendarView: EventCalendarView? = null
     private var oldEventCalendarViewNestedScrollViewScrollPositionY: Int = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
     ): View {
-
-        val orientation = resources.configuration.orientation
-        val layoutId = if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            R.layout.ecv_event_calendar_view
-        } else {
-            R.layout.ecv_event_calendar_view_land
-        }
-        rootView = inflater.inflate(layoutId, container, false)
-        return rootView
+        binding = EcvEventCalendarViewBinding.inflate(inflater)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        eventCalendarViewMonthYearTextView =
-            rootView.findViewById(R.id.eventCalendarViewMonthYearTextView)
-        eventCalendarViewMonthYearImageViewLeft =
-            rootView.findViewById(R.id.eventCalendarViewMonthYearImageViewLeft)
-        eventCalendarViewMonthYearImageViewRight =
-            rootView.findViewById(R.id.eventCalendarViewMonthYearImageViewRight)
-        eventCalendarViewMonthYearHeader =
-            rootView.findViewById(R.id.eventCalendarViewMonthYearHeader)
-
-        eventCalendarViewNestedScrollView =
-            rootView.findViewById(R.id.eventCalendarViewNestedScrollView)
-        eventCalendarViewNestedScrollView?.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, _, _, oldScrollY ->
+        binding.eventCalendarViewNestedScrollView?.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, _, _, oldScrollY ->
             oldEventCalendarViewNestedScrollViewScrollPositionY = oldScrollY
         })
 
-        eventCalendarViewNestedScrollView?.scrollY =
+        binding.eventCalendarViewNestedScrollView?.scrollY =
             oldEventCalendarViewNestedScrollViewScrollPositionY
 
         arguments?.let { bundle ->
@@ -83,18 +59,18 @@ class EventCalendarFragment : Fragment() {
             val year = bundle.getInt(EventCalendarBuilder.BUILDER_YEAR)
 
             val monthYearText = month.getMonthName(requireContext()) + " " + year
-            eventCalendarViewMonthYearTextView.text = monthYearText
+            (binding.eventCalendarViewMonthYearTextView as MaterialTextView?)?.text = monthYearText
 
-            eventCalendarViewMonthYearImageViewLeft.setOnClickListener {
+            binding.eventCalendarViewMonthYearImageViewLeft.setOnClickListener {
                 val scrollTo = currentItem.minus(1)
                 eventCalendarView?.eventCalendarViewPager2?.setCurrentItem(scrollTo, true)
             }
-            eventCalendarViewMonthYearImageViewRight.setOnClickListener {
+            binding.eventCalendarViewMonthYearImageViewRight.setOnClickListener {
                 val scrollTo = currentItem.plus(1)
                 eventCalendarView?.eventCalendarViewPager2?.setCurrentItem(scrollTo, true)
             }
 
-            eventCalendarViewMonthYearHeader.visibility =
+            binding.eventCalendarViewMonthYearHeader.visibility =
                 if (eventCalendarView?.headerVisible == true) View.VISIBLE else View.GONE
 
             initTextViews(month.getDaysOfMonthAndGivenYear(year))
@@ -106,12 +82,12 @@ class EventCalendarFragment : Fragment() {
 
     private val listOfRows: List<LinearLayout> by lazy {
         listOf(
-            rootView.findViewById(R.id.eventCalendarViewRow1),
-            rootView.findViewById(R.id.eventCalendarViewRow2),
-            rootView.findViewById(R.id.eventCalendarViewRow3),
-            rootView.findViewById(R.id.eventCalendarViewRow4),
-            rootView.findViewById(R.id.eventCalendarViewRow5),
-            rootView.findViewById(R.id.eventCalendarViewRow6)
+            binding.root.findViewById(R.id.eventCalendarViewRow1),
+            binding.root.findViewById(R.id.eventCalendarViewRow2),
+            binding.root.findViewById(R.id.eventCalendarViewRow3),
+            binding.root.findViewById(R.id.eventCalendarViewRow4),
+            binding.root.findViewById(R.id.eventCalendarViewRow5),
+            binding.root.findViewById(R.id.eventCalendarViewRow6)
         )
     }
 
@@ -128,11 +104,9 @@ class EventCalendarFragment : Fragment() {
     }
 
     private fun initTextViews(days: List<Day>) {
-        val list = arrayListOf<MaterialCardView>()
-
-        listOfRows.forEach { row ->
-            dayIds.forEach { dayId ->
-                list.add(row.findViewById(dayId))
+        val list = listOfRows.flatMap { row ->
+            dayIds.map { dayId ->
+                row.findViewById<MaterialCardView>(dayId)
             }
         }
 
@@ -184,25 +158,6 @@ class EventCalendarFragment : Fragment() {
 
             if (eventCalendarView?.countVisible == true) {
                 recyclerView.addItemDecoration(LastPossibleVisibleItemForUserDecoration(eventList))
-                // Old code
-                /*
-                recyclerView.post {
-                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-                    val lastVisiblePosition = layoutManager.findLastCompletelyVisibleItemPosition()
-
-                    if (eventList.size.minus(1) != lastVisiblePosition || lastVisiblePosition == -1) {
-                        val position = if (lastVisiblePosition == -1) 0 else lastVisiblePosition
-                        val holderLastItem =
-                            recyclerView.findViewHolderForAdapterPosition(position) as? EventsAdapter.AdapterViewHolder
-                        val count = eventList.size.minus(lastVisiblePosition)
-                        holderLastItem.markLastEvent(
-                            count,
-                            eventCalendarView?.countBackgroundTintColor,
-                            eventCalendarView?.countBackgroundTextColor
-                        )
-                    }
-                }
-                 */
             }
 
             recyclerView.adapter = if (eventList.isEmpty()) {

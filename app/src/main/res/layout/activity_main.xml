@@ -50,19 +50,32 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.nmd.eventCalendar.EventCalendarView
-        android:id="@+id/eventCalendarView"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:ecv_count_background_text_color="@android:color/white"
-        app:ecv_count_background_tint_color="@android:color/holo_blue_light"
-        app:ecv_count_visible="true"
-        app:ecv_current_day_background_tint_color="@android:color/holo_red_dark"
-        app:ecv_current_day_text_color="@android:color/white"
-        app:ecv_disallow_intercept="false"
-        app:ecv_event_item_automatic_text_color="true"
-        app:ecv_event_item_text_color="@color/ecv_black"
-        app:ecv_header_visible="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:background="@color/colorBackground"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <com.nmd.eventCalendar.EventCalendarView
+            android:id="@+id/eventCalendarView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:ecv_count_background_text_color="@android:color/white"
+            app:ecv_count_background_tint_color="@android:color/holo_blue_light"
+            app:ecv_count_visible="true"
+            app:ecv_current_day_background_tint_color="@android:color/holo_red_dark"
+            app:ecv_current_day_text_color="@android:color/white"
+            app:ecv_disallow_intercept="false"
+            app:ecv_event_item_automatic_text_color="true"
+            app:ecv_event_item_text_color="@color/ecv_black"
+            app:ecv_header_visible="true" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+    </FrameLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
