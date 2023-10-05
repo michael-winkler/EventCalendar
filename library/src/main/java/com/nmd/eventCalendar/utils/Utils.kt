@@ -15,6 +15,14 @@ class Utils {
 
     companion object {
 
+        fun Context?.getRealContext(): Context? {
+            return when (this) {
+                is ContextWrapper -> this.baseContext
+                is Context -> this
+                else -> null
+            }
+        }
+
         fun Context?.getActivity(): Activity? {
             return when (this) {
                 is Activity -> this
@@ -97,7 +105,8 @@ class Utils {
             return (1..numDaysInMonth).toList()
         }
 
-        fun Int.getMonthName(context: Context): String {
+        fun Int.getMonthName(context: Context?): String {
+            context ?: return ""
             val array = context.resources.getStringArray(R.array.ecv_month_names)
             return array[this]
         }

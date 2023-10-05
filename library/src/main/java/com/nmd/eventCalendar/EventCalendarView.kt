@@ -21,6 +21,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textview.MaterialTextView
 import com.nmd.eventCalendar.adapter.InfiniteViewPagerAdapter
+import com.nmd.eventCalendar.databinding.EcvEventCalendarBinding
 import com.nmd.eventCalendar.instanceState.SavedState
 import com.nmd.eventCalendar.`interface`.EventCalendarDayClickListener
 import com.nmd.eventCalendar.`interface`.EventCalendarScrollListener
@@ -79,11 +80,14 @@ import kotlin.math.abs
  *
  */
 class EventCalendarView @JvmOverloads constructor(
-    private val context: Context, attrs: AttributeSet? = null,
-) : FrameLayout(context, attrs) {
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+    defStyleRes: Int = 0
+) : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
+    internal lateinit var binding: EcvEventCalendarBinding
 
     internal var currentViewPager2Position = 0
-    internal var eventCalendarViewPager2: ViewPager2? = null
     private val currentCalendar = Calendar.getInstance()
     private val currentYear = currentCalendar.get(Calendar.YEAR)
     private val currentMonth = currentCalendar.get(Calendar.MONTH)
@@ -158,53 +162,50 @@ class EventCalendarView @JvmOverloads constructor(
                 androidStudioPreview(it)
             }
         } else {
-            val view: View? =
-                LayoutInflater.from(getContext()).inflate(R.layout.ecv_event_calendar, this, false)
-            view?.let {
-                addView(it)
+            binding = EcvEventCalendarBinding.inflate(LayoutInflater.from(context))
+            addView(binding.root)
+
+            with(binding) {
+                val appCompatActivity = getContext().getActivity() as? AppCompatActivity
+                if (appCompatActivity != null) {
+                    eventCalendarViewPager2.adapter = InfiniteViewPagerAdapter(
+                        fragmentManager = appCompatActivity.supportFragmentManager,
+                        lifecycle = appCompatActivity.lifecycle,
+                        eventCalendarView = this@EventCalendarView,
+                    )
+
+                    val currentMonthPosition =
+                        ((currentYear - sYear) * 12) + (currentMonth - sMonth) - (if (currentMonth >= eMonth && currentYear >= eYear) (currentYear - eYear) * 12 + (currentMonth - eMonth) else 0)
+                    eventCalendarViewPager2.setCurrentItem(currentMonthPosition, false)
+                    currentViewPager2Position = currentMonthPosition
+                    currentMonthAndYearTriple = getMonthNameAndYear(currentMonthPosition)
+
+                    eventCalendarViewPager2.disableItemAnimation()
+                    eventCalendarViewPager2.offscreenPageLimit = 1
+                    eventCalendarViewPager2.isSaveEnabled = false
+
+                    eventCalendarViewPager2.registerOnPageChangeCallback(object :
+                        ViewPager2.OnPageChangeCallback() {
+                        override fun onPageScrolled(
+                            position: Int,
+                            positionOffset: Float,
+                            positionOffsetPixels: Int,
+                        ) {
+                        }
+
+                        override fun onPageSelected(position: Int) {
+                            currentViewPager2Position = position
+                            currentMonthAndYearTriple = getMonthNameAndYear(position)
+                            scrollListener?.onScrolled(
+                                month = currentMonthAndYearTriple.third.plus(1),
+                                year = currentMonthAndYearTriple.second
+                            )
+                        }
+
+                        override fun onPageScrollStateChanged(state: Int) {}
+                    })
+                }
             }
-            eventCalendarViewPager2 = view?.findViewById(R.id.eventCalendarViewPager2)
-
-            val appCompatActivity = context.getActivity() as? AppCompatActivity
-            if (appCompatActivity != null) {
-                eventCalendarViewPager2?.adapter = InfiniteViewPagerAdapter(
-                    fragmentManager = appCompatActivity.supportFragmentManager,
-                    lifecycle = appCompatActivity.lifecycle,
-                    eventCalendarView = this,
-                )
-
-                val currentMonthPosition =
-                    ((currentYear - sYear) * 12) + (currentMonth - sMonth) - (if (currentMonth >= eMonth && currentYear >= eYear) (currentYear - eYear) * 12 + (currentMonth - eMonth) else 0)
-                eventCalendarViewPager2?.setCurrentItem(currentMonthPosition, false)
-                currentViewPager2Position = currentMonthPosition
-                currentMonthAndYearTriple = getMonthNameAndYear(currentMonthPosition)
-
-                eventCalendarViewPager2?.disableItemAnimation()
-                eventCalendarViewPager2?.offscreenPageLimit = 1
-                eventCalendarViewPager2?.isSaveEnabled = false
-
-                eventCalendarViewPager2?.registerOnPageChangeCallback(object :
-                    ViewPager2.OnPageChangeCallback() {
-                    override fun onPageScrolled(
-                        position: Int,
-                        positionOffset: Float,
-                        positionOffsetPixels: Int,
-                    ) {
-                    }
-
-                    override fun onPageSelected(position: Int) {
-                        currentViewPager2Position = position
-                        currentMonthAndYearTriple = getMonthNameAndYear(position)
-                        scrollListener?.onScrolled(
-                            month = currentMonthAndYearTriple.third.plus(1),
-                            year = currentMonthAndYearTriple.second
-                        )
-                    }
-
-                    override fun onPageScrollStateChanged(state: Int) {}
-                })
-            }
-
         }
     }
 
@@ -303,7 +304,7 @@ class EventCalendarView @JvmOverloads constructor(
 
         // Only scroll if the position is not null
         scrollPosition?.let {
-            eventCalendarViewPager2?.setCurrentItem(/* item = */ it, /* smoothScroll = */
+            binding.eventCalendarViewPager2.setCurrentItem(/* item = */ it, /* smoothScroll = */
                 smoothScroll
             )
         }
@@ -400,7 +401,7 @@ class EventCalendarView @JvmOverloads constructor(
     @SuppressLint("NotifyDataSetChanged")
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        eventCalendarViewPager2?.adapter?.notifyDataSetChanged()
+        binding.eventCalendarViewPager2.adapter?.notifyDataSetChanged()
     }
 
     /**
@@ -461,7 +462,7 @@ class EventCalendarView @JvmOverloads constructor(
                 }
             }
 
-            eventCalendarViewPager2?.setCurrentItem(currentViewPager2Position, false)
+            binding.eventCalendarViewPager2.setCurrentItem(currentViewPager2Position, false)
         } else {
             super.onRestoreInstanceState(state)
         }
@@ -473,13 +474,16 @@ class EventCalendarView @JvmOverloads constructor(
     @SuppressLint("NotifyDataSetChanged")
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     private fun updateViewPager2(dateRangeChanged: Boolean) {
-        eventCalendarViewPager2?.adapter = eventCalendarViewPager2?.adapter
-        if (dateRangeChanged) {
-            val validPosition = getValidViewPagerPosition()
-            eventCalendarViewPager2?.setCurrentItem(validPosition, false)
-            currentViewPager2Position = validPosition
-        } else {
-            eventCalendarViewPager2?.setCurrentItem(currentViewPager2Position, false)
+        with(binding) {
+
+            eventCalendarViewPager2.adapter = eventCalendarViewPager2.adapter
+            if (dateRangeChanged) {
+                val validPosition = getValidViewPagerPosition()
+                eventCalendarViewPager2.setCurrentItem(validPosition, false)
+                currentViewPager2Position = validPosition
+            } else {
+                eventCalendarViewPager2.setCurrentItem(currentViewPager2Position, false)
+            }
         }
     }
 
@@ -553,13 +557,16 @@ class EventCalendarView @JvmOverloads constructor(
         val linearLayout: LinearLayout = view.findViewById(R.id.ecv_android_studio_include)
         val relativeLayout: RelativeLayout? =
             linearLayout.findViewById(R.id.eventCalendarViewMonthYearHeader)
-        val materialTextView: MaterialTextView? =
-            linearLayout.findViewById(R.id.eventCalendarViewMonthYearTextView)
+        val materialTextView1: MaterialTextView? =
+            linearLayout.findViewById(R.id.eventCalendarViewMonthYearTextView1)
+        val materialTextView2: MaterialTextView? =
+            linearLayout.findViewById(R.id.eventCalendarViewMonthYearTextView2)
 
         // Display correct month and year inside header
         val monthYearText = Calendar.getInstance().get(Calendar.MONTH)
             .getMonthName(context) + " " + Calendar.getInstance().get(Calendar.YEAR)
-        materialTextView?.text = monthYearText
+        materialTextView1?.text = monthYearText
+        materialTextView2?.text = monthYearText
 
         // Show or hide the header view
         relativeLayout?.visibility = if (headerVisible) View.VISIBLE else View.GONE

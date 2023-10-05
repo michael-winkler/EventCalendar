@@ -21,8 +21,8 @@
             app:tint="@color/ecv_item_day_name_color"
             tools:ignore="ContentDescription" />
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/eventCalendarViewMonthYearTextView"
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/eventCalendarViewMonthYearTextView1"
             style="@style/ECV_MonthYear"
             android:layout_centerInParent="true"
             android:layout_toStartOf="@+id/eventCalendarViewMonthYearImageViewRight"
