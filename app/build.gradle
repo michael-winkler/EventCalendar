@@ -4,13 +4,13 @@ plugins {
 }
 
 android {
-    compileSdk 33
+    compileSdk 34
     namespace 'com.nmd.eventCalendarSample'
 
     defaultConfig {
         applicationId "com.nmd.eventCalendar"
         minSdk 23
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0.5"
     }
@@ -40,8 +40,8 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
-    implementation 'androidx.appcompat:appcompat:1.7.0-alpha02'
-    implementation 'androidx.constraintlayout:constraintlayout:2.2.0-alpha10'
-    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.7.0-alpha03'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.0-alpha13'
+    implementation 'com.google.android.material:material:1.10.0'
     implementation project(path: ':library')
 }
