@@ -9,32 +9,24 @@ import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.MotionEvent
-import android.view.View
 import android.widget.FrameLayout
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import androidx.annotation.RestrictTo
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.withStyledAttributes
 import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.card.MaterialCardView
-import com.google.android.material.textview.MaterialTextView
 import com.nmd.eventCalendar.adapter.InfiniteViewPagerAdapter
 import com.nmd.eventCalendar.databinding.EcvEventCalendarBinding
 import com.nmd.eventCalendar.instanceState.SavedState
 import com.nmd.eventCalendar.`interface`.EventCalendarDayClickListener
 import com.nmd.eventCalendar.`interface`.EventCalendarScrollListener
-import com.nmd.eventCalendar.model.Day
 import com.nmd.eventCalendar.model.Event
 import com.nmd.eventCalendar.utils.Utils.Companion.disableItemAnimation
 import com.nmd.eventCalendar.utils.Utils.Companion.getActivity
-import com.nmd.eventCalendar.utils.Utils.Companion.getDaysOfMonthAndGivenYear
 import com.nmd.eventCalendar.utils.Utils.Companion.getMonthName
 import java.util.*
 import kotlin.math.abs
 
-@Suppress("unused")
 /**
  * Provides a [EventCalendarView].
  *
@@ -85,7 +77,7 @@ class EventCalendarView @JvmOverloads constructor(
     defStyleAttr: Int = 0,
     defStyleRes: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
-    internal lateinit var binding: EcvEventCalendarBinding
+    internal val binding = EcvEventCalendarBinding.inflate(LayoutInflater.from(context))
 
     internal var currentViewPager2Position = 0
     private val currentCalendar = Calendar.getInstance()
@@ -154,57 +146,47 @@ class EventCalendarView @JvmOverloads constructor(
             )
         }
 
-        if (isInEditMode) {
-            val view: View? = LayoutInflater.from(getContext())
-                .inflate(R.layout.ecv_android_studio_preview, this, false)
-            view?.let {
-                addView(it)
-                androidStudioPreview(it)
-            }
-        } else {
-            binding = EcvEventCalendarBinding.inflate(LayoutInflater.from(context))
-            addView(binding.root)
+        addView(binding.root)
 
-            with(binding) {
-                val appCompatActivity = getContext().getActivity() as? AppCompatActivity
-                if (appCompatActivity != null) {
-                    eventCalendarViewPager2.adapter = InfiniteViewPagerAdapter(
-                        fragmentManager = appCompatActivity.supportFragmentManager,
-                        lifecycle = appCompatActivity.lifecycle,
-                        eventCalendarView = this@EventCalendarView,
-                    )
+        with(binding) {
+            val appCompatActivity = getContext().getActivity() as? AppCompatActivity
+            if (appCompatActivity != null) {
+                eventCalendarViewPager2.adapter = InfiniteViewPagerAdapter(
+                    fragmentManager = appCompatActivity.supportFragmentManager,
+                    lifecycle = appCompatActivity.lifecycle,
+                    eventCalendarView = this@EventCalendarView,
+                )
 
-                    val currentMonthPosition =
-                        ((currentYear - sYear) * 12) + (currentMonth - sMonth) - (if (currentMonth >= eMonth && currentYear >= eYear) (currentYear - eYear) * 12 + (currentMonth - eMonth) else 0)
-                    eventCalendarViewPager2.setCurrentItem(currentMonthPosition, false)
-                    currentViewPager2Position = currentMonthPosition
-                    currentMonthAndYearTriple = getMonthNameAndYear(currentMonthPosition)
+                val currentMonthPosition =
+                    ((currentYear - sYear) * 12) + (currentMonth - sMonth) - (if (currentMonth >= eMonth && currentYear >= eYear) (currentYear - eYear) * 12 + (currentMonth - eMonth) else 0)
+                eventCalendarViewPager2.setCurrentItem(currentMonthPosition, false)
+                currentViewPager2Position = currentMonthPosition
+                currentMonthAndYearTriple = getMonthNameAndYear(currentMonthPosition)
 
-                    eventCalendarViewPager2.disableItemAnimation()
-                    eventCalendarViewPager2.offscreenPageLimit = 1
-                    eventCalendarViewPager2.isSaveEnabled = false
+                eventCalendarViewPager2.disableItemAnimation()
+                eventCalendarViewPager2.offscreenPageLimit = 1
+                eventCalendarViewPager2.isSaveEnabled = false
 
-                    eventCalendarViewPager2.registerOnPageChangeCallback(object :
-                        ViewPager2.OnPageChangeCallback() {
-                        override fun onPageScrolled(
-                            position: Int,
-                            positionOffset: Float,
-                            positionOffsetPixels: Int,
-                        ) {
-                        }
+                eventCalendarViewPager2.registerOnPageChangeCallback(object :
+                    ViewPager2.OnPageChangeCallback() {
+                    override fun onPageScrolled(
+                        position: Int,
+                        positionOffset: Float,
+                        positionOffsetPixels: Int,
+                    ) {
+                    }
 
-                        override fun onPageSelected(position: Int) {
-                            currentViewPager2Position = position
-                            currentMonthAndYearTriple = getMonthNameAndYear(position)
-                            scrollListener?.onScrolled(
-                                month = currentMonthAndYearTriple.third.plus(1),
-                                year = currentMonthAndYearTriple.second
-                            )
-                        }
+                    override fun onPageSelected(position: Int) {
+                        currentViewPager2Position = position
+                        currentMonthAndYearTriple = getMonthNameAndYear(position)
+                        scrollListener?.onScrolled(
+                            month = currentMonthAndYearTriple.third.plus(1),
+                            year = currentMonthAndYearTriple.second
+                        )
+                    }
 
-                        override fun onPageScrollStateChanged(state: Int) {}
-                    })
-                }
+                    override fun onPageScrollStateChanged(state: Int) {}
+                })
             }
         }
     }
@@ -547,79 +529,6 @@ class EventCalendarView @JvmOverloads constructor(
 
         val monthName = calendar.get(Calendar.MONTH).getMonthName(context)
         return Triple(first = monthName, second = year, third = calendar.get(Calendar.MONTH))
-    }
-
-    /**
-     * Internal method.
-     */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    private fun androidStudioPreview(view: View) {
-        val linearLayout: LinearLayout = view.findViewById(R.id.ecv_android_studio_include)
-        val relativeLayout: RelativeLayout? =
-            linearLayout.findViewById(R.id.eventCalendarViewMonthYearHeader)
-        val materialTextView1: MaterialTextView? =
-            linearLayout.findViewById(R.id.eventCalendarViewMonthYearTextView1)
-        val materialTextView2: MaterialTextView? =
-            linearLayout.findViewById(R.id.eventCalendarViewMonthYearTextView2)
-
-        // Display correct month and year inside header
-        val monthYearText = Calendar.getInstance().get(Calendar.MONTH)
-            .getMonthName(context) + " " + Calendar.getInstance().get(Calendar.YEAR)
-        materialTextView1?.text = monthYearText
-        materialTextView2?.text = monthYearText
-
-        // Show or hide the header view
-        relativeLayout?.visibility = if (headerVisible) View.VISIBLE else View.GONE
-        initTextViews(
-            Calendar.getInstance().get(Calendar.MONTH).getDaysOfMonthAndGivenYear(
-                Calendar.getInstance().get(Calendar.YEAR)
-            ), linearLayout
-        )
-    }
-
-    /**
-     * Internal method.
-     */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    private fun initTextViews(days: List<Day>, linearLayout: LinearLayout?) {
-        linearLayout ?: return
-
-        val dayIds = intArrayOf(
-            R.id.eventCalendarViewDay1,
-            R.id.eventCalendarViewDay2,
-            R.id.eventCalendarViewDay3,
-            R.id.eventCalendarViewDay4,
-            R.id.eventCalendarViewDay5,
-            R.id.eventCalendarViewDay6,
-            R.id.eventCalendarViewDay7
-        )
-
-        val list = arrayListOf<MaterialCardView>()
-        val listOfRows = arrayListOf<LinearLayout>(
-            linearLayout.findViewById(R.id.eventCalendarViewRow1),
-            linearLayout.findViewById(R.id.eventCalendarViewRow2),
-            linearLayout.findViewById(R.id.eventCalendarViewRow3),
-            linearLayout.findViewById(R.id.eventCalendarViewRow4),
-            linearLayout.findViewById(R.id.eventCalendarViewRow5),
-            linearLayout.findViewById(R.id.eventCalendarViewRow6)
-        )
-
-        listOfRows.forEach { row ->
-            dayIds.forEach { dayId ->
-                list.add(row.findViewById(dayId))
-            }
-        }
-
-        if (days.size != list.size) {
-            return
-        }
-
-        days.forEachIndexed { index, day ->
-            val materialCardView = list[index]
-            val textView: MaterialTextView =
-                materialCardView.findViewById(R.id.eventCalendarViewDayTextView)
-            textView.text = day.value
-        }
     }
 
 }

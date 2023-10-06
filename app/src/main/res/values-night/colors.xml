@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorBackground">#1B1B1F</color>
-    <color name="colorBackgroundCard">#303134</color>
-    <color name="colorBackgroundCardBlue">#9DADD1</color>
-    <color name="colorCollapsedText">@color/colorWhite</color>
-    <color name="colorExpandedText">@color/colorPrimary</color>
     <color name="colorIconTint">@color/colorWhite</color>
     <color name="colorStroke">#505154</color>
-
-    <color name="colorText">@color/colorWhite</color>
 </resources>

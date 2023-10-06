@@ -47,10 +47,110 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
-        <include
-            layout="@layout/ecv_include_rows_names"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="16dp"
+                android:layout_gravity="bottom"
+                android:background="@color/ecv_item_divider_decoration_color" />
+
+            <com.google.android.material.textview.MaterialTextView
+                style="@style/ECV_DayName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="0dp"
+                android:layout_weight="1"
+                android:text="@string/ecv_day_name_monday" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="16dp"
+                android:layout_gravity="bottom"
+                android:background="@color/ecv_item_divider_decoration_color" />
+
+            <com.google.android.material.textview.MaterialTextView
+                style="@style/ECV_DayName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="0dp"
+                android:layout_weight="1"
+                android:text="@string/ecv_day_name_tuesday" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="16dp"
+                android:layout_gravity="bottom"
+                android:background="@color/ecv_item_divider_decoration_color" />
+
+            <com.google.android.material.textview.MaterialTextView
+                style="@style/ECV_DayName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="0dp"
+                android:layout_weight="1"
+                android:text="@string/ecv_day_name_wednesday" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="16dp"
+                android:layout_gravity="bottom"
+                android:background="@color/ecv_item_divider_decoration_color" />
+
+            <com.google.android.material.textview.MaterialTextView
+                style="@style/ECV_DayName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="0dp"
+                android:layout_weight="1"
+                android:text="@string/ecv_day_name_thursday" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="16dp"
+                android:layout_gravity="bottom"
+                android:background="@color/ecv_item_divider_decoration_color" />
+
+            <com.google.android.material.textview.MaterialTextView
+                style="@style/ECV_DayName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="0dp"
+                android:layout_weight="1"
+                android:text="@string/ecv_day_name_friday" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="16dp"
+                android:layout_gravity="bottom"
+                android:background="@color/ecv_item_divider_decoration_color" />
+
+            <com.google.android.material.textview.MaterialTextView
+                style="@style/ECV_DayName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="0dp"
+                android:layout_weight="1"
+                android:text="@string/ecv_day_name_saturday" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="16dp"
+                android:layout_gravity="bottom"
+                android:background="@color/ecv_item_divider_decoration_color" />
+
+            <com.google.android.material.textview.MaterialTextView
+                style="@style/ECV_DayName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="0dp"
+                android:layout_weight="1"
+                android:text="@string/ecv_day_name_sunday" />
+
+        </LinearLayout>
 
         <View
             android:layout_width="match_parent"
