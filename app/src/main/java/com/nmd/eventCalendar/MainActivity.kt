@@ -2,8 +2,6 @@ package com.nmd.eventCalendar
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +15,10 @@ import com.nmd.eventCalendar.model.Day
 import com.nmd.eventCalendar.model.Event
 import com.nmd.eventCalendarSample.databinding.ActivityMainBinding
 import com.nmd.eventCalendarSample.databinding.BottomSheetBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Calendar
 
 class MainActivity : AppCompatActivity() {
@@ -41,9 +43,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.eventCalendarViewShuffleImageView.setOnClickListener {
-            Handler(Looper.getMainLooper()).post {
-                createRandomEventList(256).let {
-                    binding.eventCalendarView.events = it
+            binding.progressBar.visibility = View.VISIBLE
+            binding.eventCalendarView.visibility = View.GONE
+
+            createRandomEventList(256) {
+                binding.eventCalendarView.events = it
+                binding.eventCalendarView.post {
+                    binding.progressBar.visibility = View.GONE
+                    binding.eventCalendarView.visibility = View.VISIBLE
                 }
             }
         }
@@ -61,13 +68,11 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        Handler(Looper.getMainLooper()).post {
-            createRandomEventList(256).let {
-                binding.eventCalendarView.events = it
-                binding.eventCalendarView.post {
-                    binding.progressBar.visibility = View.GONE
-                    binding.eventCalendarView.visibility = View.VISIBLE
-                }
+        createRandomEventList(256) {
+            binding.eventCalendarView.events = it
+            binding.eventCalendarView.post {
+                binding.progressBar.visibility = View.GONE
+                binding.eventCalendarView.visibility = View.VISIBLE
             }
         }
 
@@ -192,37 +197,43 @@ class MainActivity : AppCompatActivity() {
                 add(RandomEventList("Farm Visit", "#7cb342"))
             }
 
-            fun createRandomEventList(numRandomEvents: Int): ArrayList<Event> {
-                val currentDate = Calendar.getInstance()
-                val currentYear = currentDate.get(Calendar.YEAR)
+            fun createRandomEventList(numRandomEvents: Int, callback: (ArrayList<Event>) -> Unit) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    val currentDate = Calendar.getInstance()
+                    val currentYear = currentDate.get(Calendar.YEAR)
 
-                val eventList = arrayListOf<Event>()
-                val eventsPerMonth = numRandomEvents / 12
+                    val eventList = arrayListOf<Event>()
+                    val eventsPerMonth = numRandomEvents / 12
 
-                for (month in 1..12) {
-                    val calendar = Calendar.getInstance().apply {
-                        set(currentYear, month - 1, 1)
+                    for (month in 1..12) {
+                        val calendar = Calendar.getInstance().apply {
+                            set(currentYear, month - 1, 1)
+                        }
+                        val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+
+                        val randomEvents = arrayListOf<RandomEventList>()
+                        repeat(list.size) {
+                            val randomEvent = list.random()
+                            randomEvents.add(randomEvent)
+                        }
+
+                        val eventsForMonth = arrayListOf<Event>()
+                        for (i in 1..eventsPerMonth) {
+                            val randomEvent = randomEvents.random()
+                            val randomDay = (1..daysInMonth).random()
+                            val dateStr =
+                                String.format("%02d.%02d.%04d", randomDay, month, currentYear)
+                            val newEvent = Event(dateStr, randomEvent.name, randomEvent.color)
+                            eventsForMonth.add(newEvent)
+                        }
+
+                        eventList.addAll(eventsForMonth.shuffled())
                     }
-                    val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
 
-                    val randomEvents = arrayListOf<RandomEventList>()
-                    repeat(list.size) {
-                        val randomEvent = list.random()
-                        randomEvents.add(randomEvent)
+                    withContext(Dispatchers.Main) {
+                        callback.invoke(eventList)
                     }
-
-                    val eventsForMonth = arrayListOf<Event>()
-                    for (i in 1..eventsPerMonth) {
-                        val randomEvent = randomEvents.random()
-                        val randomDay = (1..daysInMonth).random()
-                        val dateStr = String.format("%02d.%02d.%04d", randomDay, month, currentYear)
-                        val newEvent = Event(dateStr, randomEvent.name, randomEvent.color)
-                        eventsForMonth.add(newEvent)
-                    }
-
-                    eventList.addAll(eventsForMonth.shuffled())
                 }
-                return eventList
             }
         }
     }
