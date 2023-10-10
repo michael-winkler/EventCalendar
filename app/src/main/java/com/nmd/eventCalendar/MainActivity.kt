@@ -15,6 +15,7 @@ import com.nmd.eventCalendar.model.Day
 import com.nmd.eventCalendar.model.Event
 import com.nmd.eventCalendarSample.databinding.ActivityMainBinding
 import com.nmd.eventCalendarSample.databinding.BottomSheetBinding
+import com.nmd.eventCalendarSample.databinding.BottomSheetSingleWeekBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -76,6 +77,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        binding.floatingActionButton.setOnClickListener {
+            bottomSheet2()
+        }
+
     }
 
     @SuppressLint("SetTextI18n")
@@ -90,6 +95,33 @@ class MainActivity : AppCompatActivity() {
             if (eventList.isEmpty()) View.VISIBLE else View.GONE
 
         binding.bottomSheetRecyclerView.adapter = SheetEventsAdapter(ArrayList(eventList))
+
+        bottomSheetDialog.setContentView(binding.root)
+        bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        bottomSheetDialog.behavior.skipCollapsed = true
+        bottomSheetDialog.setCancelable(true)
+
+        bottomSheetDialog.show()
+    }
+
+    private fun bottomSheet2() {
+        val binding =
+            BottomSheetSingleWeekBinding.inflate(LayoutInflater.from(this))
+        val bottomSheetDialog =
+            BottomSheetDialog(this, com.nmd.eventCalendarSample.R.style.BottomSheetDialog)
+
+        binding.bottomSheetEventCalendarSingleWeekView.events =
+            this@MainActivity.binding.eventCalendarView.events
+        binding.bottomSheetEventCalendarSingleWeekView.addOnDayClickListener(object :
+            EventCalendarDayClickListener {
+            override fun onClick(day: Day) {
+                bottomSheetDialog.dismiss()
+
+                val eventList =
+                    this@MainActivity.binding.eventCalendarView.events.filter { it.date == day.date }
+                bottomSheet(day, eventList)
+            }
+        })
 
         bottomSheetDialog.setContentView(binding.root)
         bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED

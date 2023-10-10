@@ -74,9 +74,7 @@ import kotlin.math.abs
 class EventCalendarView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0,
-    defStyleRes: Int = 0
-) : FrameLayout(context, attrs, defStyleAttr, defStyleRes) {
+) : FrameLayout(context, attrs) {
     internal val binding = EcvEventCalendarBinding.inflate(LayoutInflater.from(context))
 
     internal var currentViewPager2Position = 0

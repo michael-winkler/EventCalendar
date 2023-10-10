@@ -76,6 +76,17 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center" />
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:src="@drawable/icon_calendar_today_outline"
+            app:backgroundTint="@color/colorPrimary"
+            app:rippleColor="@color/ecv_ripple_color"
+            app:tint="@color/colorWhite" />
+
     </FrameLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

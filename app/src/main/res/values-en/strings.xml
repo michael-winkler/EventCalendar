@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Event Calendar</string>
     <string name="event_calendar_no_events">No events where found for the selected day!</string>
+    <string name="event_calendar_current_week">Current week</string>
 </resources>

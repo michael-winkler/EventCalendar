@@ -9,7 +9,10 @@ import androidx.viewpager2.widget.ViewPager2
 import com.nmd.eventCalendar.R
 import com.nmd.eventCalendar.model.Day
 import com.nmd.eventCalendar.model.Event
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class Utils {
 
@@ -95,6 +98,49 @@ class Utils {
             return days
         }
 
+        fun getDaysForCurrentWeek(): List<Day> {
+            val calendar = Calendar.getInstance()
+            val currentWeek = calendar.get(Calendar.WEEK_OF_YEAR)
+            val currentYear = calendar.get(Calendar.YEAR)
+
+            val days = mutableListOf<Day>()
+
+            calendar.set(Calendar.WEEK_OF_YEAR, currentWeek)
+            calendar.set(Calendar.YEAR, currentYear)
+            calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
+
+            val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+            val currentDate = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date())
+
+            for (i in 0 until 7) {
+                val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+                val date = dateFormat.format(calendar.time)
+
+                days.add(
+                    Day(
+                        value = dayOfMonth.toString(),
+                        isCurrentMonth = true,
+                        isCurrentDay = currentDate == date,
+                        date = date
+                    )
+                )
+
+                calendar.add(Calendar.DAY_OF_MONTH, 1)
+            }
+
+            return days
+        }
+
+        fun getCurrentWeekNumber(): Int {
+            val calendar = Calendar.getInstance()
+            return calendar[Calendar.WEEK_OF_YEAR]
+        }
+
+        fun getCurrentYear(): Int {
+            val calendar = Calendar.getInstance()
+            return calendar[Calendar.YEAR]
+        }
+
         private fun Int.getDaysInMonthAndGivenYear(year: Int): List<Int> {
             val calendar = Calendar.getInstance().apply {
                 set(Calendar.MONTH, this@getDaysInMonthAndGivenYear)
@@ -127,6 +173,8 @@ class Utils {
         fun <T> ArrayList<T>?.orEmptyArrayList(): ArrayList<T> {
             return this ?: ArrayList()
         }
+
+        fun Boolean?.orTrue(): Boolean = this ?: true
 
     }
 }

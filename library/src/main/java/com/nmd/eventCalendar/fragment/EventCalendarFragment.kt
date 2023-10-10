@@ -30,6 +30,7 @@ import com.nmd.eventCalendar.utils.Utils.Companion.getDaysOfMonthAndGivenYear
 import com.nmd.eventCalendar.utils.Utils.Companion.getMonthName
 import com.nmd.eventCalendar.utils.Utils.Companion.getRealContext
 import com.nmd.eventCalendar.utils.Utils.Companion.orEmptyArrayList
+import com.nmd.eventCalendar.utils.Utils.Companion.orTrue
 
 class EventCalendarFragment : Fragment() {
     private lateinit var binding: EcvEventCalendarViewBinding
@@ -142,7 +143,12 @@ class EventCalendarFragment : Fragment() {
             }
 
             if (eventList.isNotEmpty()) {
-                recyclerView.adapter = EventsAdapter(eventList, eventCalendarView)
+                recyclerView.adapter = EventsAdapter(
+                    list = eventList,
+                    eventItemAutomaticTextColor = eventCalendarView?.eventItemAutomaticTextColor.orTrue(),
+                    eventItemTextColor = eventCalendarView?.eventItemTextColor
+                        ?: ContextCompat.getColor(requireContext(), R.color.ecv_white)
+                )
             }
 
             textView.text = day.value
@@ -215,6 +221,5 @@ class EventCalendarFragment : Fragment() {
             }
         }
     }
-
 
 }
