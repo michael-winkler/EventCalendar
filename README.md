@@ -20,7 +20,7 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.github.michael-winkler:EventCalendar:1.0.7'
+    implementation 'com.github.michael-winkler:EventCalendar:1.0.8'
 }
 ```
 
@@ -45,8 +45,30 @@ You can create a new `EventCalendarView` inside your XML-Layout like this:
     app:ecv_event_item_text_color="@android:color/black"
     app:ecv_header_visible="true" />
 ```
+
+Or if you just want the current calendar week you can use this one:
+```kotlin
+<com.nmd.eventCalendar.EventCalendarSingleWeekView
+    android:id="@+id/eventCalendarView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:ecv_count_background_text_color="@android:color/white"
+    app:ecv_count_background_tint_color="@android:color/holo_blue_light"
+    app:ecv_count_visible="true"
+    app:ecv_current_day_background_tint_color="@android:color/holo_red_dark"
+    app:ecv_current_day_text_color="@android:color/white"
+    app:ecv_event_item_automatic_text_color="true"
+    app:ecv_event_item_text_color="@android:color/black"
+    app:ecv_header_visible="true" />
+```
+
 Here you can see all custom `app` parameters which you can use:    
 https://github.com/michael-winkler/EventCalendar/blob/main/library/src/main/res/values/attr.xml
+
+The `EventCalendarSingleWeekView` can use all `app:evc` too except `ecv_disallow_intercept`.
+Also the `EventCalendarSingleWeekView` displays only `Events` where the date is in range of the current calendar week.
+You don't need anything to do by yourself. The library will filter automatically the events for the
+week view by itself.
 
 Now in your class you can get a reference to it like this:
 ```kotlin
@@ -59,6 +81,7 @@ binding.eventCalendarView.addOnDayClickListener(object :
     }
 })
 ```
+The `EventCalendarDayClickListener` listener works also for the `EventCalendarSingleWeekView`.
 
 The `Day` object structure is following:
 ```kotlin
@@ -120,7 +143,7 @@ Each function has also a javadoc documentation.
 
 
 ## Sample app
-https://github.com/michael-winkler/EventCalendar/releases/download/1.0.7/app-debug.apk
+https://github.com/michael-winkler/EventCalendar/releases/download/1.0.8/app-debug.apk
 
 
 ## License

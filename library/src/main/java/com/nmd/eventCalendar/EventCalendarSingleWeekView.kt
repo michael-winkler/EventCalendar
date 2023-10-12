@@ -88,6 +88,10 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
         }
 
         addView(binding.root)
+
+        // We want a initial calendar week ui. That is the reason why we update the layout.
+        // Without the call we see a empty view.
+        updateLayout()
     }
 
     /**
