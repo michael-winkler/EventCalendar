@@ -20,7 +20,7 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.github.michael-winkler:EventCalendar:1.0.8'
+    implementation 'com.github.michael-winkler:EventCalendar:1.0.10'
 }
 ```
 
@@ -143,7 +143,7 @@ Each function has also a javadoc documentation.
 
 
 ## Sample app
-https://github.com/michael-winkler/EventCalendar/releases/download/1.0.8/app-debug.apk
+https://github.com/michael-winkler/EventCalendar/releases/download/1.0.10/app-debug.apk
 
 
 ## License

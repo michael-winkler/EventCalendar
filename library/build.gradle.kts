@@ -2,6 +2,7 @@ plugins {
     id("com.android.library")
     id("kotlin-android")
     id("kotlin-parcelize")
+    id("maven-publish")
 }
 
 android {
@@ -41,6 +42,12 @@ android {
     lint {
         abortOnError = false
     }
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
 
 dependencies {
@@ -49,4 +56,18 @@ dependencies {
     implementation("androidx.viewpager2:viewpager2:1.1.0-beta02")
     implementation("androidx.recyclerview:recyclerview:1.3.1")
     implementation("com.google.android.material:material:1.10.0")
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("release") {
+                from(components.findByName("java"))
+
+                groupId = "com.nmd.eventCalendar"
+                artifactId = "Eventcalendar"
+                version = "1.0.10"
+            }
+        }
+    }
 }
