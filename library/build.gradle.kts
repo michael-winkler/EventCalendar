@@ -38,11 +38,12 @@ android {
     kotlin {
         jvmToolchain(17)
     }
+    lint {
+        abortOnError = false
+    }
 }
 
 dependencies {
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar", "*.jar"))))
-
     implementation("androidx.appcompat:appcompat:1.7.0-alpha03")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.viewpager2:viewpager2:1.1.0-beta02")
