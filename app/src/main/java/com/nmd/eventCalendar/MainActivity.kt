@@ -38,7 +38,14 @@ class MainActivity : AppCompatActivity() {
     private fun initialize() {
         binding.progressBar.visibility = View.VISIBLE
         binding.eventCalendarView.visibility = View.GONE
-        //binding.eventCalendarView.setMonthAndYear(4, 2023, 6, 2023)
+
+        val year = Calendar.getInstance().get(Calendar.YEAR)
+        binding.eventCalendarView.setMonthAndYear(
+            startMonth = 1,
+            startYear = year,
+            endMonth = 12,
+            endYear = year
+        )
         binding.eventCalendarViewCalendarImageView.setOnClickListener {
             binding.eventCalendarView.scrollToCurrentMonth(false)
         }

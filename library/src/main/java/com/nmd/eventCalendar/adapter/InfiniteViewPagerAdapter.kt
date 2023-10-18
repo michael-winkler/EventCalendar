@@ -1,12 +1,12 @@
 package com.nmd.eventCalendar.adapter
 
+import android.util.SparseIntArray
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.nmd.eventCalendar.EventCalendarView
 import com.nmd.eventCalendar.builder.EventCalendarBuilder
-import java.util.Calendar
 
 class InfiniteViewPagerAdapter(
     val fragmentManager: FragmentManager,
@@ -21,30 +21,30 @@ class InfiniteViewPagerAdapter(
 
     override fun createFragment(position: Int): Fragment {
         val item = position.calculate()
-        return EventCalendarBuilder().date(month = item.second, year = item.first)
+        return EventCalendarBuilder().date(month = item.get(0), year = item.get(1))
             .eventCalendarView(eventCalendarView).build()
     }
 
     override fun getItemId(position: Int): Long {
         val item = position.calculate()
-        return item.first.toLong() * 100L + item.second.toLong()
+        return item.get(0).toLong() * 100L + item.get(1).toLong()
     }
 
     private fun getMonthCount(): Int {
-        val startCalendar = Calendar.getInstance()
-        startCalendar.set(eventCalendarView.sYear, eventCalendarView.sMonth, 1)
-        val endCalendar = Calendar.getInstance()
-        endCalendar.set(eventCalendarView.eYear, eventCalendarView.eMonth, 1)
-        val diffYear = endCalendar.get(Calendar.YEAR) - startCalendar.get(Calendar.YEAR)
-        val diffMonth = endCalendar.get(Calendar.MONTH) - startCalendar.get(Calendar.MONTH)
+        val diffYear = eventCalendarView.eYear - eventCalendarView.sYear
+        val diffMonth = eventCalendarView.eMonth - eventCalendarView.sMonth
+
         val diffTotal = diffYear * 12 + diffMonth + 1
-        return if (diffTotal > 0) diffTotal else 0
+        return maxOf(0, diffTotal)
     }
 
-    private fun Int.calculate(): Pair<Int, Int> {
+    private fun Int.calculate(): SparseIntArray {
         val year = eventCalendarView.sYear + this / 12
         val month = (this % 12 + eventCalendarView.sMonth) % 12
-        return Pair(first = year, second = month)
+        return SparseIntArray().apply {
+            put(0, month)
+            put(1, year)
+        }
     }
 
 }

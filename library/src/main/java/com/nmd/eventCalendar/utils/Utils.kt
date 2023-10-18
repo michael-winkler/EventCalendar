@@ -41,8 +41,7 @@ class Utils {
                 set(Calendar.DAY_OF_MONTH, 1)
             }
             val numDaysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
-            val firstDayOfWeek =
-                calendar.get(Calendar.DAY_OF_WEEK) - 2 // Adjust for zero-based indexing
+            val firstDayOfWeek = (calendar.get(Calendar.DAY_OF_WEEK) + 5) % 7
             val numEmptyCells = (firstDayOfWeek + 7) % 7
 
             val days = mutableListOf<Day>()

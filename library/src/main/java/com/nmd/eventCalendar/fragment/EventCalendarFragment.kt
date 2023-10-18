@@ -47,45 +47,51 @@ class EventCalendarFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.eventCalendarViewNestedScrollView?.post {
-            binding.eventCalendarViewNestedScrollView?.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, _, _, oldScrollY ->
-                oldEventCalendarViewNestedScrollViewScrollPositionY = oldScrollY
-            })
-        }
-
-        binding.eventCalendarViewNestedScrollView?.post {
-            binding.eventCalendarViewNestedScrollView?.scrollY =
-                oldEventCalendarViewNestedScrollViewScrollPositionY
-        }
-
-        arguments?.let { bundle ->
-            val month = bundle.getInt(EventCalendarBuilder.BUILDER_MONTH)
-            val year = bundle.getInt(EventCalendarBuilder.BUILDER_YEAR)
-
-            val monthYearText = month.getMonthName(requireContext()) + " " + year
-            binding.eventCalendarViewMonthYearTextView1?.text = monthYearText
-            binding.eventCalendarViewMonthYearTextView2?.text = monthYearText
-
-            binding.eventCalendarViewMonthYearImageViewLeft.setOnClickListener {
-                eventCalendarView?.binding?.eventCalendarViewPager2?.setCurrentItem(
-                    currentItem - 1,
-                    true
-                )
+        with(binding) {
+            eventCalendarViewNestedScrollView?.post {
+                eventCalendarViewNestedScrollView.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { _, _, _, _, oldScrollY ->
+                    oldEventCalendarViewNestedScrollViewScrollPositionY = oldScrollY
+                })
             }
 
-            binding.eventCalendarViewMonthYearImageViewRight.setOnClickListener {
-                eventCalendarView?.binding?.eventCalendarViewPager2?.setCurrentItem(
-                    currentItem + 1,
-                    true
-                )
+            eventCalendarViewNestedScrollView?.post {
+                eventCalendarViewNestedScrollView.scrollY =
+                    oldEventCalendarViewNestedScrollViewScrollPositionY
             }
 
-            binding.eventCalendarViewMonthYearHeader.post {
-                binding.eventCalendarViewMonthYearHeader.visibility =
-                    if (eventCalendarView?.headerVisible == true) View.VISIBLE else View.GONE
-            }
+            arguments?.let { bundle ->
+                val month = bundle.getInt(EventCalendarBuilder.BUILDER_MONTH)
+                val year = bundle.getInt(EventCalendarBuilder.BUILDER_YEAR)
 
-            initTextViews(month.getDaysOfMonthAndGivenYear(year))
+                val monthYearText = month.getMonthName(requireContext()) + " " + year
+                eventCalendarViewMonthYearTextView1?.text = monthYearText
+                eventCalendarViewMonthYearTextView2?.text = monthYearText
+
+                eventCalendarViewMonthYearImageViewLeft.post {
+                    eventCalendarViewMonthYearImageViewLeft.setOnClickListener {
+                        eventCalendarView?.binding?.eventCalendarViewPager2?.setCurrentItem(
+                            currentItem - 1,
+                            true
+                        )
+                    }
+                }
+
+                eventCalendarViewMonthYearImageViewRight.post {
+                    eventCalendarViewMonthYearImageViewRight.setOnClickListener {
+                        eventCalendarView?.binding?.eventCalendarViewPager2?.setCurrentItem(
+                            currentItem + 1,
+                            true
+                        )
+                    }
+                }
+
+                eventCalendarViewMonthYearHeader.post {
+                    eventCalendarViewMonthYearHeader.visibility =
+                        if (eventCalendarView?.headerVisible == true) View.VISIBLE else View.GONE
+                }
+
+                initTextViews(month.getDaysOfMonthAndGivenYear(year))
+            }
         }
     }
 
@@ -133,15 +139,14 @@ class EventCalendarFragment : Fragment() {
 
             val eventList = day.dayEvents(eventCalendarView?.eventArrayList.orEmptyArrayList())
             val recyclerView: RecyclerView = materialCardView.eventCalendarViewDayRecyclerView
-
-            if (eventCalendarView?.countVisible == true) {
+            recyclerView.setHasFixedSize(true)
+            if (eventCalendarView?.countVisible == true && eventList.isNotEmpty()) {
                 recyclerView.addItemDecoration(
                     LastPossibleVisibleItemForUserDecoration(
                         eventList
                     )
                 )
             }
-
             if (eventList.isNotEmpty()) {
                 recyclerView.adapter = EventsAdapter(
                     list = eventList,
@@ -193,26 +198,31 @@ class EventCalendarFragment : Fragment() {
             if (count > 0) {
                 val materialCardView: MaterialCardView? =
                     parent.findViewHolderForAdapterPosition(lastCompleteVisiblePosition)?.itemView as? MaterialCardView
-                val textView =
-                    materialCardView?.findViewById<MaterialTextView>(R.id.itemEventMaterialTextView)
 
-                textView?.text = "+${count.plus(1)}"
+                materialCardView?.let { cardView ->
+                    val textView =
+                        cardView.findViewById<MaterialTextView>(R.id.itemEventMaterialTextView)
 
-                textView?.setTextColor(
-                    eventCalendarView?.countBackgroundTextColor ?: ContextCompat.getColor(
-                        textView.context,
-                        R.color.ecv_white
+                    textView?.let { materialTextView ->
+                        materialTextView.text = "+${count.plus(1)}"
+
+                        materialTextView.setTextColor(
+                            eventCalendarView?.countBackgroundTextColor ?: ContextCompat.getColor(
+                                materialTextView.context,
+                                R.color.ecv_white
+                            )
+                        )
+
+                        materialTextView.setTypeface(textView.typeface, Typeface.BOLD)
+                    }
+
+                    cardView.setCardBackgroundColor(
+                        eventCalendarView?.countBackgroundTintColor ?: ContextCompat.getColor(
+                            cardView.context,
+                            R.color.ecv_charcoal_color
+                        )
                     )
-                )
-
-                textView?.setTypeface(textView.typeface, Typeface.BOLD)
-
-                materialCardView?.setCardBackgroundColor(
-                    eventCalendarView?.countBackgroundTintColor ?: ContextCompat.getColor(
-                        materialCardView.context,
-                        R.color.ecv_charcoal_color
-                    )
-                )
+                }
             }
 
             for (i in lastCompleteVisiblePosition + 1..eventList.lastIndex) {

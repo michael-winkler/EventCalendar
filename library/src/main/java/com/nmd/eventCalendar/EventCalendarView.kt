@@ -455,7 +455,6 @@ class EventCalendarView @JvmOverloads constructor(
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     private fun updateViewPager2(dateRangeChanged: Boolean) {
         with(binding) {
-
             eventCalendarViewPager2.adapter = eventCalendarViewPager2.adapter
             if (dateRangeChanged) {
                 val validPosition = getValidViewPagerPosition()

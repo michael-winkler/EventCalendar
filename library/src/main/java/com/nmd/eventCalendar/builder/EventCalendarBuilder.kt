@@ -12,8 +12,9 @@ class EventCalendarBuilder {
         const val BUILDER_YEAR = "calendar_year"
     }
 
-    private var month: Int = Calendar.getInstance().get(Calendar.MONTH)
-    private var year: Int = Calendar.getInstance().get(Calendar.YEAR)
+    private val calendar = Calendar.getInstance()
+    private var month: Int = calendar.get(Calendar.MONTH)
+    private var year: Int = calendar.get(Calendar.YEAR)
     private var eventCalendarView: EventCalendarView? = null
 
     fun date(month: Int, year: Int): EventCalendarBuilder {
@@ -28,17 +29,15 @@ class EventCalendarBuilder {
     }
 
     fun build(): EventCalendarFragment {
-        if (eventCalendarView == null) {
-            throw RuntimeException("EventCalendarView must be set in EventCalendarBuilder.")
-        }
+        val eventCalendarView = requireNotNull(eventCalendarView) { "EventCalendarView must be set in EventCalendarBuilder." }
 
-        val eventCalendarFragment = EventCalendarFragment()
-        eventCalendarFragment.eventCalendarView = eventCalendarView
-        eventCalendarFragment.arguments = Bundle().apply {
-            putInt(BUILDER_MONTH, month)
-            putInt(BUILDER_YEAR, year)
+        return EventCalendarFragment().apply {
+            this.eventCalendarView = eventCalendarView
+            arguments = Bundle().apply {
+                putInt(BUILDER_MONTH, month)
+                putInt(BUILDER_YEAR, year)
+            }
         }
-        return eventCalendarFragment
     }
 
 }
