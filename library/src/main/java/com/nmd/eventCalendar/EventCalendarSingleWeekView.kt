@@ -15,7 +15,6 @@ import androidx.core.content.withStyledAttributes
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textview.MaterialTextView
 import com.nmd.eventCalendar.adapter.EventsAdapter
 import com.nmd.eventCalendar.databinding.EcvEventCalendarSingleWeekViewBinding
@@ -191,7 +190,7 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
         }
 
         val eventArrayList1 = ArrayList<Event>()
-        days.forEach { day ->
+        for (day in days) {
             eventArrayList1.addAll(eventArrayList.filter { it.date == day.date })
         }
 
@@ -203,19 +202,26 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
         list: List<EcvTextviewCircleBinding>,
         eventsList: ArrayList<Event>,
     ) {
-        days.forEachIndexed { index, day ->
-            val materialCardView = list[index]
+        for (index in days.indices) {
+            val day = days[index]
+            val dayItemLayout = list[index]
 
-            materialCardView.eventCalendarViewDayFrameLayout.setOnClickListener {
+            dayItemLayout.eventCalendarViewDayFrameLayout.setOnClickListener {
                 clickListener?.onClick(day)
             }
 
-            val textView: MaterialTextView = materialCardView.eventCalendarViewDayTextView
+            val textView: MaterialTextView = dayItemLayout.eventCalendarViewDayTextView
 
             val eventList = day.dayEvents(eventsList.orEmptyArrayList())
-            val recyclerView: RecyclerView = materialCardView.eventCalendarViewDayRecyclerView
+            val recyclerView: RecyclerView = dayItemLayout.eventCalendarViewDayRecyclerView
+            with(recyclerView) {
+                setItemViewCacheSize(100)
+                setHasFixedSize(true)
+                isSaveEnabled = false
+                itemAnimator = null
+            }
 
-            if (countVisible) {
+            if (countVisible && eventList.isNotEmpty()) {
                 recyclerView.addItemDecoration(
                     LastPossibleVisibleItemForUserDecoration(
                         eventList
@@ -234,7 +240,6 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
             textView.text = day.value
 
             if (day.isCurrentDay) {
-                textView.setTypeface(textView.typeface, Typeface.BOLD)
                 textView.setTextColor(currentDayTextColor)
 
                 context.getRealContext()?.let {
@@ -248,7 +253,7 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
                 )
             }
 
-            if (day.isCurrentMonth) {
+            if (day.isCurrentMonth || day.isCurrentDay) {
                 textView.setTypeface(textView.typeface, Typeface.BOLD)
             } else {
                 textView.setTypeface(textView.typeface, Typeface.ITALIC)
@@ -270,16 +275,18 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
 
             val count = eventList.size - lastCompleteVisiblePosition - 1
             if (count > 0) {
-                val materialCardView: MaterialCardView? =
-                    parent.findViewHolderForAdapterPosition(lastCompleteVisiblePosition)?.itemView as? MaterialCardView
-                val textView =
-                    materialCardView?.findViewById<MaterialTextView>(R.id.itemEventMaterialTextView)
+                val materialTextView =
+                    parent.findViewHolderForAdapterPosition(lastCompleteVisiblePosition)?.itemView as? MaterialTextView
+                materialTextView?.let { textView ->
+                    textView.text = "+${count.plus(1)}"
+                    textView.setTextColor(countBackgroundTextColor)
+                    textView.setTypeface(textView.typeface, Typeface.BOLD)
 
-                textView?.text = "+${count.plus(1)}"
-                textView?.setTextColor(countBackgroundTextColor)
-                textView?.setTypeface(textView.typeface, Typeface.BOLD)
-
-                materialCardView?.setCardBackgroundColor(countBackgroundTintColor)
+                    ViewCompat.setBackgroundTintList(
+                        textView,
+                        ColorStateList.valueOf(countBackgroundTintColor)
+                    )
+                }
             }
 
             for (i in lastCompleteVisiblePosition + 1..eventList.lastIndex) {

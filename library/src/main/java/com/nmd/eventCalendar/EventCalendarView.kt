@@ -14,16 +14,19 @@ import androidx.annotation.RestrictTo
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.withStyledAttributes
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import com.nmd.eventCalendar.adapter.InfiniteViewPagerAdapter
+import com.nmd.eventCalendar.adapter.InfiniteAdapter
 import com.nmd.eventCalendar.databinding.EcvEventCalendarBinding
 import com.nmd.eventCalendar.instanceState.SavedState
 import com.nmd.eventCalendar.`interface`.EventCalendarDayClickListener
 import com.nmd.eventCalendar.`interface`.EventCalendarScrollListener
 import com.nmd.eventCalendar.model.Event
-import com.nmd.eventCalendar.utils.Utils.Companion.disableItemAnimation
 import com.nmd.eventCalendar.utils.Utils.Companion.getActivity
 import com.nmd.eventCalendar.utils.Utils.Companion.getMonthName
+import com.nmd.eventCalendar.utils.Utils.Companion.smoothScrollTo
 import java.util.*
 import kotlin.math.abs
 
@@ -149,41 +152,40 @@ class EventCalendarView @JvmOverloads constructor(
         with(binding) {
             val appCompatActivity = getContext().getActivity() as? AppCompatActivity
             if (appCompatActivity != null) {
-                eventCalendarViewPager2.adapter = InfiniteViewPagerAdapter(
-                    fragmentManager = appCompatActivity.supportFragmentManager,
-                    lifecycle = appCompatActivity.lifecycle,
-                    eventCalendarView = this@EventCalendarView,
-                )
+                eventCalendarRecyclerView2.adapter = InfiniteAdapter(this@EventCalendarView)
 
                 val currentMonthPosition =
                     ((currentYear - sYear) * 12) + (currentMonth - sMonth) - (if (currentMonth >= eMonth && currentYear >= eYear) (currentYear - eYear) * 12 + (currentMonth - eMonth) else 0)
-                eventCalendarViewPager2.setCurrentItem(currentMonthPosition, false)
+                (eventCalendarRecyclerView2.layoutManager as LinearLayoutManager).scrollToPosition(
+                    currentMonthPosition
+                )
                 currentViewPager2Position = currentMonthPosition
                 currentMonthAndYearTriple = getMonthNameAndYear(currentMonthPosition)
 
-                eventCalendarViewPager2.disableItemAnimation()
-                eventCalendarViewPager2.offscreenPageLimit = 1
-                eventCalendarViewPager2.isSaveEnabled = false
+                eventCalendarRecyclerView2.setHasFixedSize(true)
+                eventCalendarRecyclerView2.setItemViewCacheSize(1000)
 
-                eventCalendarViewPager2.registerOnPageChangeCallback(object :
-                    ViewPager2.OnPageChangeCallback() {
-                    override fun onPageScrolled(
-                        position: Int,
-                        positionOffset: Float,
-                        positionOffsetPixels: Int,
-                    ) {
+                if (eventCalendarRecyclerView2.onFlingListener == null) {
+                    PagerSnapHelper().attachToRecyclerView(eventCalendarRecyclerView2)
+                }
+
+                val layoutManager = eventCalendarRecyclerView2.layoutManager as LinearLayoutManager
+
+                eventCalendarRecyclerView2.addOnScrollListener(object :
+                    RecyclerView.OnScrollListener() {
+                    override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                        super.onScrollStateChanged(recyclerView, newState)
+                        if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                            val position = layoutManager.findFirstVisibleItemPosition()
+
+                            currentViewPager2Position = position
+                            currentMonthAndYearTriple = getMonthNameAndYear(position)
+                            scrollListener?.onScrolled(
+                                month = currentMonthAndYearTriple.third.plus(1),
+                                year = currentMonthAndYearTriple.second
+                            )
+                        }
                     }
-
-                    override fun onPageSelected(position: Int) {
-                        currentViewPager2Position = position
-                        currentMonthAndYearTriple = getMonthNameAndYear(position)
-                        scrollListener?.onScrolled(
-                            month = currentMonthAndYearTriple.third.plus(1),
-                            year = currentMonthAndYearTriple.second
-                        )
-                    }
-
-                    override fun onPageScrollStateChanged(state: Int) {}
                 })
             }
         }
@@ -257,7 +259,7 @@ class EventCalendarView @JvmOverloads constructor(
         }
         set(events) {
             eventArrayList = events
-            updateViewPager2(false)
+            updateRecyclerView(false)
         }
 
     /**
@@ -284,9 +286,15 @@ class EventCalendarView @JvmOverloads constructor(
 
         // Only scroll if the position is not null
         scrollPosition?.let {
-            binding.eventCalendarViewPager2.setCurrentItem(/* item = */ it, /* smoothScroll = */
-                smoothScroll
-            )
+            if (smoothScroll) {
+                binding.eventCalendarRecyclerView2.smoothScrollTo(it)
+            } else {
+                (binding.eventCalendarRecyclerView2.layoutManager as LinearLayoutManager).scrollToPosition(
+                    it
+                )
+            }
+            currentViewPager2Position = it
+            currentMonthAndYearTriple = getMonthNameAndYear(it)
         }
     }
 
@@ -325,7 +333,7 @@ class EventCalendarView @JvmOverloads constructor(
             eMonth = endMonth - 1
             eYear = endYear
 
-            updateViewPager2(true)
+            updateRecyclerView(true)
         }
     }
 
@@ -381,7 +389,7 @@ class EventCalendarView @JvmOverloads constructor(
     @SuppressLint("NotifyDataSetChanged")
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        binding.eventCalendarViewPager2.adapter?.notifyDataSetChanged()
+        binding.eventCalendarRecyclerView2.adapter?.notifyDataSetChanged()
     }
 
     /**
@@ -442,7 +450,9 @@ class EventCalendarView @JvmOverloads constructor(
                 }
             }
 
-            binding.eventCalendarViewPager2.setCurrentItem(currentViewPager2Position, false)
+            (binding.eventCalendarRecyclerView2.layoutManager as LinearLayoutManager).scrollToPosition(
+                currentViewPager2Position
+            )
         } else {
             super.onRestoreInstanceState(state)
         }
@@ -453,15 +463,19 @@ class EventCalendarView @JvmOverloads constructor(
      */
     @SuppressLint("NotifyDataSetChanged")
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    private fun updateViewPager2(dateRangeChanged: Boolean) {
+    private fun updateRecyclerView(dateRangeChanged: Boolean) {
         with(binding) {
-            eventCalendarViewPager2.adapter = eventCalendarViewPager2.adapter
+            eventCalendarRecyclerView2.adapter = eventCalendarRecyclerView2.adapter
             if (dateRangeChanged) {
                 val validPosition = getValidViewPagerPosition()
-                eventCalendarViewPager2.setCurrentItem(validPosition, false)
+                (eventCalendarRecyclerView2.layoutManager as LinearLayoutManager).scrollToPosition(
+                    validPosition
+                )
                 currentViewPager2Position = validPosition
             } else {
-                eventCalendarViewPager2.setCurrentItem(currentViewPager2Position, false)
+                (eventCalendarRecyclerView2.layoutManager as LinearLayoutManager).scrollToPosition(
+                    currentViewPager2Position
+                )
             }
         }
     }

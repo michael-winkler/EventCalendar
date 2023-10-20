@@ -1,9 +1,11 @@
 package com.nmd.eventCalendar.adapter
 
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.nmd.eventCalendar.R
 import com.nmd.eventCalendar.databinding.EcvEventViewBinding
@@ -21,33 +23,37 @@ class EventsAdapter(
         RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterViewHolder {
-        val binding = EcvEventViewBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
+        return AdapterViewHolder(
+            EcvEventViewBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
         )
-        return AdapterViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: AdapterViewHolder, position: Int) {
-        with(holder) {
+        with(holder.binding) {
             val item = list.getOrNull(position) ?: return
-            binding.itemEventMaterialTextView.text = item.name
+            itemEventMaterialTextView.text = item.name
 
             val color = Color.parseColor(item.backgroundHexColor)
             if (eventItemAutomaticTextColor) {
-                binding.itemEventMaterialTextView.setTextColor(
+                itemEventMaterialTextView.setTextColor(
                     ContextCompat.getColor(
-                        binding.itemEventMaterialTextView.context,
+                        itemEventMaterialTextView.context,
                         if (color.isDarkColor()) R.color.ecv_white else R.color.ecv_charcoal_color
 
                     )
                 )
             } else {
-                binding.itemEventMaterialTextView.setTextColor(eventItemTextColor)
+                itemEventMaterialTextView.setTextColor(eventItemTextColor)
             }
 
-            binding.root.setCardBackgroundColor(color)
+            ViewCompat.setBackgroundTintList(
+                itemEventMaterialTextView,
+                ColorStateList.valueOf(color)
+            )
         }
     }
 

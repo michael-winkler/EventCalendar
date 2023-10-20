@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.ContextWrapper
 import androidx.core.graphics.ColorUtils
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
 import com.nmd.eventCalendar.R
 import com.nmd.eventCalendar.model.Day
 import com.nmd.eventCalendar.model.Event
@@ -164,16 +163,24 @@ class Utils {
             return ColorUtils.calculateLuminance(this) < 0.5
         }
 
-        fun ViewPager2?.disableItemAnimation() {
-            val view: RecyclerView? = this?.getChildAt(0) as RecyclerView?
-            view?.itemAnimator = null
-        }
-
         fun <T> ArrayList<T>?.orEmptyArrayList(): ArrayList<T> {
             return this ?: ArrayList()
         }
 
         fun Boolean?.orTrue(): Boolean = this ?: true
+
+        fun RecyclerView.smoothScrollTo(position: Int) {
+            post {
+                try {
+                    layoutManager?.smoothScrollToPosition(
+                        this,
+                        RecyclerView.State(),
+                        position
+                    )
+                } catch (ignored: Exception) {
+                }
+            }
+        }
 
     }
 }

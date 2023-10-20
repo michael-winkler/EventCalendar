@@ -1,31 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<com.google.android.material.textview.MaterialTextView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/itemEventMaterialTextView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center|top"
     android:layout_marginStart="2dp"
     android:layout_marginTop="1dp"
     android:layout_marginEnd="2dp"
-    android:layout_marginBottom="0dp"
-    app:cardBackgroundColor="#4badeb"
-    app:cardCornerRadius="4dp"
-    app:cardElevation="0dp"
-    app:strokeWidth="0dp">
-
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/itemEventMaterialTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:ellipsize="none"
-        android:gravity="center"
-        android:padding="2dp"
-        android:singleLine="true"
-        android:textColor="@color/ecv_charcoal_color"
-        android:textSize="10sp"
-        tools:ignore="SmallSp"
-        tools:text="Vacation" />
-
-</com.google.android.material.card.MaterialCardView>
+    android:background="@drawable/ecv_event_item_background"
+    android:ellipsize="none"
+    android:gravity="center"
+    android:padding="2dp"
+    android:singleLine="true"
+    android:textColor="@color/ecv_charcoal_color"
+    android:textSize="10sp"
+    tools:ignore="SmallSp"
+    tools:text="Vacation" />
