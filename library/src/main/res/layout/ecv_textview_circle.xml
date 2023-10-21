@@ -8,7 +8,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:divider="@drawable/ecv_divider_horizontal"
+        android:orientation="vertical"
+        android:showDividers="beginning">
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/eventCalendarViewDayTextView"

@@ -50,13 +50,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <View
-                android:layout_width="1dp"
-                android:layout_height="16dp"
-                android:layout_gravity="bottom"
-                android:background="@color/ecv_item_divider_decoration_color" />
+            android:divider="@drawable/ecv_divider_vertical"
+            android:orientation="horizontal"
+            android:showDividers="beginning|middle">
 
             <com.google.android.material.textview.MaterialTextView
                 style="@style/ECV_DayName"
@@ -66,12 +62,6 @@
                 android:layout_weight="1"
                 android:text="@string/ecv_day_name_monday" />
 
-            <View
-                android:layout_width="1dp"
-                android:layout_height="16dp"
-                android:layout_gravity="bottom"
-                android:background="@color/ecv_item_divider_decoration_color" />
-
             <com.google.android.material.textview.MaterialTextView
                 style="@style/ECV_DayName"
                 android:layout_width="0dp"
@@ -79,12 +69,6 @@
                 android:layout_marginHorizontal="0dp"
                 android:layout_weight="1"
                 android:text="@string/ecv_day_name_tuesday" />
-
-            <View
-                android:layout_width="1dp"
-                android:layout_height="16dp"
-                android:layout_gravity="bottom"
-                android:background="@color/ecv_item_divider_decoration_color" />
 
             <com.google.android.material.textview.MaterialTextView
                 style="@style/ECV_DayName"
@@ -94,12 +78,6 @@
                 android:layout_weight="1"
                 android:text="@string/ecv_day_name_wednesday" />
 
-            <View
-                android:layout_width="1dp"
-                android:layout_height="16dp"
-                android:layout_gravity="bottom"
-                android:background="@color/ecv_item_divider_decoration_color" />
-
             <com.google.android.material.textview.MaterialTextView
                 style="@style/ECV_DayName"
                 android:layout_width="0dp"
@@ -107,12 +85,6 @@
                 android:layout_marginHorizontal="0dp"
                 android:layout_weight="1"
                 android:text="@string/ecv_day_name_thursday" />
-
-            <View
-                android:layout_width="1dp"
-                android:layout_height="16dp"
-                android:layout_gravity="bottom"
-                android:background="@color/ecv_item_divider_decoration_color" />
 
             <com.google.android.material.textview.MaterialTextView
                 style="@style/ECV_DayName"
@@ -122,12 +94,6 @@
                 android:layout_weight="1"
                 android:text="@string/ecv_day_name_friday" />
 
-            <View
-                android:layout_width="1dp"
-                android:layout_height="16dp"
-                android:layout_gravity="bottom"
-                android:background="@color/ecv_item_divider_decoration_color" />
-
             <com.google.android.material.textview.MaterialTextView
                 style="@style/ECV_DayName"
                 android:layout_width="0dp"
@@ -135,12 +101,6 @@
                 android:layout_marginHorizontal="0dp"
                 android:layout_weight="1"
                 android:text="@string/ecv_day_name_saturday" />
-
-            <View
-                android:layout_width="1dp"
-                android:layout_height="16dp"
-                android:layout_gravity="bottom"
-                android:background="@color/ecv_item_divider_decoration_color" />
 
             <com.google.android.material.textview.MaterialTextView
                 style="@style/ECV_DayName"
@@ -151,11 +111,6 @@
                 android:text="@string/ecv_day_name_sunday" />
 
         </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/ecv_item_divider_decoration_color" />
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/eventCalendarViewNestedScrollView"
@@ -173,21 +128,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="100dp" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/ecv_item_divider_decoration_color" />
-
                 <include
                     android:id="@+id/eventCalendarViewRow2"
                     layout="@layout/ecv_include_rows"
                     android:layout_width="match_parent"
                     android:layout_height="100dp" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/ecv_item_divider_decoration_color" />
 
                 <include
                     android:id="@+id/eventCalendarViewRow3"
@@ -195,21 +140,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="100dp" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/ecv_item_divider_decoration_color" />
-
                 <include
                     android:id="@+id/eventCalendarViewRow4"
                     layout="@layout/ecv_include_rows"
                     android:layout_width="match_parent"
                     android:layout_height="100dp" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/ecv_item_divider_decoration_color" />
 
                 <include
                     android:id="@+id/eventCalendarViewRow5"
@@ -217,21 +152,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="100dp" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/ecv_item_divider_decoration_color" />
-
                 <include
                     android:id="@+id/eventCalendarViewRow6"
                     layout="@layout/ecv_include_rows"
                     android:layout_width="match_parent"
                     android:layout_height="100dp" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/ecv_item_divider_decoration_color" />
 
             </LinearLayout>
 

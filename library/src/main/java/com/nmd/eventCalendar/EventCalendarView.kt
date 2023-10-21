@@ -177,13 +177,7 @@ class EventCalendarView @JvmOverloads constructor(
                         super.onScrollStateChanged(recyclerView, newState)
                         if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                             val position = layoutManager.findFirstVisibleItemPosition()
-
-                            currentViewPager2Position = position
-                            currentMonthAndYearTriple = getMonthNameAndYear(position)
-                            scrollListener?.onScrolled(
-                                month = currentMonthAndYearTriple.third.plus(1),
-                                year = currentMonthAndYearTriple.second
-                            )
+                            scrollHelper(position)
                         }
                     }
                 })
@@ -285,16 +279,16 @@ class EventCalendarView @JvmOverloads constructor(
         }
 
         // Only scroll if the position is not null
-        scrollPosition?.let {
+        scrollPosition?.let { position ->
             if (smoothScroll) {
-                binding.eventCalendarRecyclerView2.smoothScrollTo(it)
+                binding.eventCalendarRecyclerView2.smoothScrollTo(position)
             } else {
                 (binding.eventCalendarRecyclerView2.layoutManager as LinearLayoutManager).scrollToPosition(
-                    it
+                    position
                 )
+                scrollHelper(position)
             }
-            currentViewPager2Position = it
-            currentMonthAndYearTriple = getMonthNameAndYear(it)
+
         }
     }
 
@@ -306,6 +300,19 @@ class EventCalendarView @JvmOverloads constructor(
      */
     fun scrollToCurrentMonth(smoothScroll: Boolean = false) {
         scrollTo(currentMonth.plus(1), currentYear, smoothScroll)
+    }
+
+    /**
+     * Internal method.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    private fun scrollHelper(position: Int) {
+        currentViewPager2Position = position
+        currentMonthAndYearTriple = getMonthNameAndYear(position)
+        scrollListener?.onScrolled(
+            month = currentMonthAndYearTriple.third.plus(1),
+            year = currentMonthAndYearTriple.second
+        )
     }
 
     /**
