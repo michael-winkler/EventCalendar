@@ -17,7 +17,6 @@ import androidx.core.content.withStyledAttributes
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
 import com.nmd.eventCalendar.adapter.InfiniteAdapter
 import com.nmd.eventCalendar.databinding.EcvEventCalendarBinding
 import com.nmd.eventCalendar.instanceState.SavedState
@@ -80,7 +79,7 @@ class EventCalendarView @JvmOverloads constructor(
 ) : FrameLayout(context, attrs) {
     internal val binding = EcvEventCalendarBinding.inflate(LayoutInflater.from(context))
 
-    internal var currentViewPager2Position = 0
+    internal var currentRecyclerViewPosition = 0
     private val currentCalendar = Calendar.getInstance()
     private val currentYear = currentCalendar.get(Calendar.YEAR)
     private val currentMonth = currentCalendar.get(Calendar.MONTH)
@@ -153,26 +152,26 @@ class EventCalendarView @JvmOverloads constructor(
             val appCompatActivity = getContext().getActivity() as? AppCompatActivity
             if (appCompatActivity != null) {
 
-                eventCalendarRecyclerView2.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING)
-                eventCalendarRecyclerView2.adapter = InfiniteAdapter(this@EventCalendarView)
+                eventCalendarRecyclerView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING)
+                eventCalendarRecyclerView.adapter = InfiniteAdapter(this@EventCalendarView)
 
                 val currentMonthPosition =
                     ((currentYear - sYear) * 12) + (currentMonth - sMonth) - (if (currentMonth >= eMonth && currentYear >= eYear) (currentYear - eYear) * 12 + (currentMonth - eMonth) else 0)
-                eventCalendarRecyclerView2.scrollToPosition(currentMonthPosition)
+                eventCalendarRecyclerView.scrollToPosition(currentMonthPosition)
 
-                currentViewPager2Position = currentMonthPosition
+                currentRecyclerViewPosition = currentMonthPosition
                 currentMonthAndYearTriple = getMonthNameAndYear(currentMonthPosition)
 
-                eventCalendarRecyclerView2.setHasFixedSize(true)
-                eventCalendarRecyclerView2.setItemViewCacheSize(1000)
+                eventCalendarRecyclerView.setHasFixedSize(true)
+                eventCalendarRecyclerView.setItemViewCacheSize(1000)
 
-                if (eventCalendarRecyclerView2.onFlingListener == null) {
-                    PagerSnapHelper().attachToRecyclerView(eventCalendarRecyclerView2)
+                if (eventCalendarRecyclerView.onFlingListener == null) {
+                    PagerSnapHelper().attachToRecyclerView(eventCalendarRecyclerView)
                 }
 
-                val layoutManager = eventCalendarRecyclerView2.layoutManager as LinearLayoutManager
+                val layoutManager = eventCalendarRecyclerView.layoutManager as LinearLayoutManager
 
-                eventCalendarRecyclerView2.addOnScrollListener(object :
+                eventCalendarRecyclerView.addOnScrollListener(object :
                     RecyclerView.OnScrollListener() {
                     override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                         super.onScrollStateChanged(recyclerView, newState)
@@ -282,9 +281,9 @@ class EventCalendarView @JvmOverloads constructor(
         // Only scroll if the position is not null
         scrollPosition?.let { position ->
             if (smoothScroll) {
-                binding.eventCalendarRecyclerView2.smoothScrollTo(position)
+                binding.eventCalendarRecyclerView.smoothScrollTo(position)
             } else {
-                binding.eventCalendarRecyclerView2.scrollToPosition(position)
+                binding.eventCalendarRecyclerView.scrollToPosition(position)
                 scrollHelper(position)
             }
 
@@ -306,7 +305,7 @@ class EventCalendarView @JvmOverloads constructor(
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     private fun scrollHelper(position: Int) {
-        currentViewPager2Position = position
+        currentRecyclerViewPosition = position
         currentMonthAndYearTriple = getMonthNameAndYear(position)
         scrollListener?.onScrolled(
             month = currentMonthAndYearTriple.third.plus(1),
@@ -395,7 +394,7 @@ class EventCalendarView @JvmOverloads constructor(
     @SuppressLint("NotifyDataSetChanged")
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        binding.eventCalendarRecyclerView2.adapter?.notifyDataSetChanged()
+        binding.eventCalendarRecyclerView.adapter?.notifyDataSetChanged()
     }
 
     /**
@@ -410,7 +409,7 @@ class EventCalendarView @JvmOverloads constructor(
         val superState = super.onSaveInstanceState()
         val state = Bundle()
         state.putBoolean(SavedState.SAVED_STATE_DISALLOW_INTERCEPT, disallowIntercept)
-        state.putInt(SavedState.SAVED_STATE_VIEWPAGER_POSITION, currentViewPager2Position)
+        state.putInt(SavedState.SAVED_STATE_RECYCLERVIEW_POSITION, currentRecyclerViewPosition)
         state.putInt(SavedState.SAVED_STATE_START_MONTH, sMonth)
         state.putInt(SavedState.SAVED_STATE_START_YEAR, sYear)
         state.putInt(SavedState.SAVED_STATE_END_MONTH, eMonth)
@@ -428,8 +427,8 @@ class EventCalendarView @JvmOverloads constructor(
             super.onRestoreInstanceState(state.superState)
             disallowIntercept =
                 viewState.getBoolean(SavedState.SAVED_STATE_DISALLOW_INTERCEPT, true)
-            currentViewPager2Position =
-                viewState.getInt(SavedState.SAVED_STATE_VIEWPAGER_POSITION, 0)
+            currentRecyclerViewPosition =
+                viewState.getInt(SavedState.SAVED_STATE_RECYCLERVIEW_POSITION, 0)
             sMonth = viewState.getInt(SavedState.SAVED_STATE_START_MONTH, Calendar.JANUARY)
             sYear = viewState.getInt(SavedState.SAVED_STATE_START_YEAR, 2020)
             eMonth = viewState.getInt(SavedState.SAVED_STATE_END_MONTH, Calendar.DECEMBER)
@@ -456,7 +455,7 @@ class EventCalendarView @JvmOverloads constructor(
                 }
             }
 
-            binding.eventCalendarRecyclerView2.scrollToPosition(currentViewPager2Position)
+            binding.eventCalendarRecyclerView.scrollToPosition(currentRecyclerViewPosition)
         } else {
             super.onRestoreInstanceState(state)
         }
@@ -469,13 +468,13 @@ class EventCalendarView @JvmOverloads constructor(
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     private fun updateRecyclerView(dateRangeChanged: Boolean) {
         with(binding) {
-            eventCalendarRecyclerView2.adapter = eventCalendarRecyclerView2.adapter
+            eventCalendarRecyclerView.adapter = eventCalendarRecyclerView.adapter
             if (dateRangeChanged) {
-                val validPosition = getValidViewPagerPosition()
-                binding.eventCalendarRecyclerView2.scrollToPosition(validPosition)
-                currentViewPager2Position = validPosition
+                val validPosition = getValidRecyclerViewPosition()
+                eventCalendarRecyclerView.scrollToPosition(validPosition)
+                currentRecyclerViewPosition = validPosition
             } else {
-                binding.eventCalendarRecyclerView2.scrollToPosition(currentViewPager2Position)
+                eventCalendarRecyclerView.scrollToPosition(currentRecyclerViewPosition)
             }
         }
     }
@@ -484,12 +483,12 @@ class EventCalendarView @JvmOverloads constructor(
      * Internal method.
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    private fun getValidViewPagerPosition(): Int {
+    private fun getValidRecyclerViewPosition(): Int {
         val booleanIntPair =
             monthInRange(currentMonthAndYearTriple.third, currentMonthAndYearTriple.second)
         booleanIntPair.first
 
-        // First we check if old viewpager 2 position is still valid for new date range
+        // First we check if old recyclerview position is still valid for new date range
         val value = if (booleanIntPair.first) {
             // Still valid
             abs(booleanIntPair.second)

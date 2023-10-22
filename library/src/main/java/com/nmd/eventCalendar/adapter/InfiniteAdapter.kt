@@ -55,13 +55,13 @@ class InfiniteAdapter(val eventCalendarView: EventCalendarView) :
             eventCalendarViewMonthYearTextView2?.text = monthYearText
 
             eventCalendarViewMonthYearImageViewLeft.setOnClickListener {
-                eventCalendarView.binding.eventCalendarRecyclerView2.smoothScrollTo(
+                eventCalendarView.binding.eventCalendarRecyclerView.smoothScrollTo(
                     currentItem - 1
                 )
             }
 
             eventCalendarViewMonthYearImageViewRight.setOnClickListener {
-                eventCalendarView.binding.eventCalendarRecyclerView2.smoothScrollTo(
+                eventCalendarView.binding.eventCalendarRecyclerView.smoothScrollTo(
                     currentItem + 1
                 )
             }
@@ -77,7 +77,7 @@ class InfiniteAdapter(val eventCalendarView: EventCalendarView) :
     override fun getItemCount(): Int = getMonthCount()
 
     private val currentItem: Int
-        get() = eventCalendarView.currentViewPager2Position
+        get() = eventCalendarView.currentRecyclerViewPosition
 
     private fun getMonthCount(): Int {
         val diffYear = eventCalendarView.eYear - eventCalendarView.sYear
