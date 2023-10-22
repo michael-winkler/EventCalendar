@@ -152,13 +152,14 @@ class EventCalendarView @JvmOverloads constructor(
         with(binding) {
             val appCompatActivity = getContext().getActivity() as? AppCompatActivity
             if (appCompatActivity != null) {
+
+                eventCalendarRecyclerView2.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING)
                 eventCalendarRecyclerView2.adapter = InfiniteAdapter(this@EventCalendarView)
 
                 val currentMonthPosition =
                     ((currentYear - sYear) * 12) + (currentMonth - sMonth) - (if (currentMonth >= eMonth && currentYear >= eYear) (currentYear - eYear) * 12 + (currentMonth - eMonth) else 0)
-                (eventCalendarRecyclerView2.layoutManager as LinearLayoutManager).scrollToPosition(
-                    currentMonthPosition
-                )
+                eventCalendarRecyclerView2.scrollToPosition(currentMonthPosition)
+
                 currentViewPager2Position = currentMonthPosition
                 currentMonthAndYearTriple = getMonthNameAndYear(currentMonthPosition)
 
@@ -283,9 +284,7 @@ class EventCalendarView @JvmOverloads constructor(
             if (smoothScroll) {
                 binding.eventCalendarRecyclerView2.smoothScrollTo(position)
             } else {
-                (binding.eventCalendarRecyclerView2.layoutManager as LinearLayoutManager).scrollToPosition(
-                    position
-                )
+                binding.eventCalendarRecyclerView2.scrollToPosition(position)
                 scrollHelper(position)
             }
 
@@ -457,9 +456,7 @@ class EventCalendarView @JvmOverloads constructor(
                 }
             }
 
-            (binding.eventCalendarRecyclerView2.layoutManager as LinearLayoutManager).scrollToPosition(
-                currentViewPager2Position
-            )
+            binding.eventCalendarRecyclerView2.scrollToPosition(currentViewPager2Position)
         } else {
             super.onRestoreInstanceState(state)
         }
@@ -475,14 +472,10 @@ class EventCalendarView @JvmOverloads constructor(
             eventCalendarRecyclerView2.adapter = eventCalendarRecyclerView2.adapter
             if (dateRangeChanged) {
                 val validPosition = getValidViewPagerPosition()
-                (eventCalendarRecyclerView2.layoutManager as LinearLayoutManager).scrollToPosition(
-                    validPosition
-                )
+                binding.eventCalendarRecyclerView2.scrollToPosition(validPosition)
                 currentViewPager2Position = validPosition
             } else {
-                (eventCalendarRecyclerView2.layoutManager as LinearLayoutManager).scrollToPosition(
-                    currentViewPager2Position
-                )
+                binding.eventCalendarRecyclerView2.scrollToPosition(currentViewPager2Position)
             }
         }
     }
