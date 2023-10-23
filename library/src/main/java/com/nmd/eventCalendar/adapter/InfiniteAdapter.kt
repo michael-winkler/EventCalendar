@@ -27,12 +27,33 @@ import com.nmd.eventCalendar.utils.Utils.Companion.getRealContext
 import com.nmd.eventCalendar.utils.Utils.Companion.orEmptyArrayList
 import com.nmd.eventCalendar.utils.Utils.Companion.orTrue
 import com.nmd.eventCalendar.utils.Utils.Companion.smoothScrollTo
+import java.util.Calendar
 
-class InfiniteAdapter(val eventCalendarView: EventCalendarView) :
+class InfiniteAdapter(private val eventCalendarView: EventCalendarView) :
     RecyclerView.Adapter<InfiniteAdapter.AdapterViewHolder>() {
 
-    class AdapterViewHolder(val binding: EcvEventCalendarViewBinding) :
-        RecyclerView.ViewHolder(binding.root)
+    inner class AdapterViewHolder(val binding: EcvEventCalendarViewBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        val yearAdapterViewHolder = Calendar.getInstance().get(Calendar.YEAR)
+
+        init {
+            binding.eventCalendarViewMonthYearHeader.visibility =
+                if (eventCalendarView.headerVisible) View.VISIBLE else View.GONE
+
+            binding.eventCalendarViewMonthYearImageViewLeft.setOnClickListener {
+                eventCalendarView.binding.eventCalendarRecyclerView.smoothScrollTo(
+                    currentItem - 1
+                )
+            }
+
+            binding.eventCalendarViewMonthYearImageViewRight.setOnClickListener {
+                eventCalendarView.binding.eventCalendarRecyclerView.smoothScrollTo(
+                    currentItem + 1
+                )
+            }
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterViewHolder {
         return AdapterViewHolder(
@@ -45,31 +66,17 @@ class InfiniteAdapter(val eventCalendarView: EventCalendarView) :
     }
 
     override fun onBindViewHolder(holder: AdapterViewHolder, position: Int) {
-        val item = position.calculate()
-        val month = item.get(0)
-        val year = item.get(1)
-
         with(holder.binding) {
-            val monthYearText = month.getMonthName(root.context) + " " + year
+            val item = holder.bindingAdapterPosition.calculate()
+            val month = item.get(0)
+            val year = item.get(1)
+
+            val monthName = month.getMonthName(root.context)
+            val monthYearText =
+                if (holder.yearAdapterViewHolder == year) monthName else "$monthName $year"
             eventCalendarViewMonthYearTextView1?.text = monthYearText
             eventCalendarViewMonthYearTextView2?.text = monthYearText
 
-            eventCalendarViewMonthYearImageViewLeft.setOnClickListener {
-                eventCalendarView.binding.eventCalendarRecyclerView.smoothScrollTo(
-                    currentItem - 1
-                )
-            }
-
-            eventCalendarViewMonthYearImageViewRight.setOnClickListener {
-                eventCalendarView.binding.eventCalendarRecyclerView.smoothScrollTo(
-                    currentItem + 1
-                )
-            }
-
-            eventCalendarViewMonthYearHeader.post {
-                eventCalendarViewMonthYearHeader.visibility =
-                    if (eventCalendarView.headerVisible) View.VISIBLE else View.GONE
-            }
             initTextViews(this, month.getDaysOfMonthAndGivenYear(year))
         }
     }
@@ -141,43 +148,45 @@ class InfiniteAdapter(val eventCalendarView: EventCalendarView) :
                 setHasFixedSize(true)
                 isSaveEnabled = false
                 itemAnimator = null
-            }
 
-            if (eventCalendarView.countVisible && eventList.isNotEmpty()) {
-                recyclerView.addItemDecoration(
-                    LastPossibleVisibleItemForUserDecoration(
-                        eventList
+                if (eventCalendarView.countVisible && eventList.isNotEmpty()) {
+                    addItemDecoration(
+                        LastPossibleVisibleItemForUserDecoration(
+                            eventList
+                        )
                     )
-                )
+                }
+                if (eventList.isNotEmpty()) {
+                    adapter = EventsAdapter(
+                        list = eventList,
+                        eventItemAutomaticTextColor = eventCalendarView.eventItemAutomaticTextColor.orTrue(),
+                        eventItemTextColor = eventCalendarView.eventItemTextColor
+                    )
+                }
             }
-            if (eventList.isNotEmpty()) {
-                recyclerView.adapter = EventsAdapter(
-                    list = eventList,
-                    eventItemAutomaticTextColor = eventCalendarView.eventItemAutomaticTextColor.orTrue(),
-                    eventItemTextColor = eventCalendarView.eventItemTextColor
-                )
-            }
 
-            textView.text = day.value
+            with(textView) {
+                text = day.value
 
-            if (day.isCurrentDay) {
-                textView.setTextColor(eventCalendarView.currentDayTextColor)
+                if (day.isCurrentDay) {
+                    setTextColor(eventCalendarView.currentDayTextColor)
 
-                textView.context.getRealContext()?.let {
-                    textView.background =
-                        ContextCompat.getDrawable(it, R.drawable.ecv_circle)
+                    context.getRealContext()?.let {
+                        background =
+                            ContextCompat.getDrawable(it, R.drawable.ecv_circle)
+                    }
+
+                    ViewCompat.setBackgroundTintList(
+                        this,
+                        ColorStateList.valueOf(eventCalendarView.currentDayBackgroundTintColor)
+                    )
                 }
 
-                ViewCompat.setBackgroundTintList(
-                    textView,
-                    ColorStateList.valueOf(eventCalendarView.currentDayBackgroundTintColor)
-                )
-            }
-
-            if (day.isCurrentMonth || day.isCurrentDay) {
-                textView.setTypeface(textView.typeface, Typeface.BOLD)
-            } else {
-                textView.setTypeface(textView.typeface, Typeface.ITALIC)
+                if (day.isCurrentMonth || day.isCurrentDay) {
+                    setTypeface(typeface, Typeface.BOLD)
+                } else {
+                    setTypeface(typeface, Typeface.ITALIC)
+                }
             }
         }
     }

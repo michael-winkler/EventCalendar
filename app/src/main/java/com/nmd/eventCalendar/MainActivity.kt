@@ -36,64 +36,60 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initialize() {
-        binding.progressBar.visibility = View.VISIBLE
-        binding.eventCalendarView.visibility = View.GONE
+        with(binding) {
+            progressBar.visibility = View.VISIBLE
+            eventCalendarView.visibility = View.GONE
 
-        val year = Calendar.getInstance().get(Calendar.YEAR)
-        binding.eventCalendarView.setMonthAndYear(
-            startMonth = 1,
-            startYear = year,
-            endMonth = 12,
-            endYear = year
-        )
-        binding.eventCalendarViewCalendarImageView.setOnClickListener {
-            binding.eventCalendarView.scrollToCurrentMonth(false)
-        }
+            val year = Calendar.getInstance().get(Calendar.YEAR)
+            eventCalendarView.setMonthAndYear(
+                startMonth = 1, startYear = year, endMonth = 12, endYear = year
+            )
+            eventCalendarViewCalendarImageView.setOnClickListener {
+                eventCalendarView.scrollToCurrentMonth(false)
+            }
 
-        binding.eventCalendarViewShuffleImageView.setOnClickListener {
-            binding.progressBar.visibility = View.VISIBLE
-            binding.eventCalendarView.visibility = View.GONE
+            eventCalendarViewShuffleImageView.setOnClickListener {
+                progressBar.visibility = View.VISIBLE
+                eventCalendarView.visibility = View.GONE
 
-            createRandomEventList(256) {
-                binding.eventCalendarView.events = it
-                binding.eventCalendarView.post {
-                    binding.progressBar.visibility = View.GONE
-                    binding.eventCalendarView.visibility = View.VISIBLE
+                createRandomEventList(256) {
+                    eventCalendarView.events = it
+                    eventCalendarView.post {
+                        progressBar.visibility = View.GONE
+                        eventCalendarView.visibility = View.VISIBLE
+                    }
                 }
             }
-        }
 
-        binding.eventCalendarView.addOnDayClickListener(object :
-            EventCalendarDayClickListener {
-            override fun onClick(day: Day) {
-                val eventList = binding.eventCalendarView.events.filter { it.date == day.date }
-                bottomSheet(day, eventList)
+            eventCalendarView.addOnDayClickListener(object : EventCalendarDayClickListener {
+                override fun onClick(day: Day) {
+                    val eventList = eventCalendarView.events.filter { it.date == day.date }
+                    bottomSheet(day, eventList)
+                }
+            })
+            eventCalendarView.addOnCalendarScrollListener(object : EventCalendarScrollListener {
+                override fun onScrolled(month: Int, year: Int) {
+                    Log.i("ECV", "Scrolled to: $month $year")
+                }
+            })
+
+            createRandomEventList(256) {
+                eventCalendarView.events = it
+                eventCalendarView.post {
+                    progressBar.visibility = View.GONE
+                    eventCalendarView.visibility = View.VISIBLE
+                }
             }
-        })
-        binding.eventCalendarView.addOnCalendarScrollListener(object : EventCalendarScrollListener {
-            override fun onScrolled(month: Int, year: Int) {
-                Log.i("ECV", "Scrolled to: $month $year")
-            }
-        })
 
-        createRandomEventList(256) {
-            binding.eventCalendarView.events = it
-            binding.eventCalendarView.post {
-                binding.progressBar.visibility = View.GONE
-                binding.eventCalendarView.visibility = View.VISIBLE
+            floatingActionButton.setOnClickListener {
+                bottomSheet2()
             }
         }
-
-        binding.floatingActionButton.setOnClickListener {
-            bottomSheet2()
-        }
-
     }
 
     @SuppressLint("SetTextI18n")
     private fun bottomSheet(day: Day, eventList: List<Event>) {
-        val binding =
-            BottomSheetBinding.inflate(LayoutInflater.from(this))
+        val binding = BottomSheetBinding.inflate(LayoutInflater.from(this))
         val bottomSheetDialog =
             BottomSheetDialog(this, com.nmd.eventCalendarSample.R.style.BottomSheetDialog)
 
@@ -112,8 +108,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun bottomSheet2() {
-        val binding =
-            BottomSheetSingleWeekBinding.inflate(LayoutInflater.from(this))
+        val binding = BottomSheetSingleWeekBinding.inflate(LayoutInflater.from(this))
         val bottomSheetDialog =
             BottomSheetDialog(this, com.nmd.eventCalendarSample.R.style.BottomSheetDialog)
 

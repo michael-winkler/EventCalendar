@@ -13,11 +13,15 @@ import com.nmd.eventCalendar.model.Event
 import com.nmd.eventCalendar.utils.Utils.Companion.isDarkColor
 
 class EventsAdapter(
-    private var list: ArrayList<Event>,
+    private val list: ArrayList<Event>,
     private val eventItemAutomaticTextColor: Boolean,
     private val eventItemTextColor: Int,
 ) :
     RecyclerView.Adapter<EventsAdapter.AdapterViewHolder>() {
+
+    init {
+        setHasStableIds(true)
+    }
 
     class AdapterViewHolder(val binding: EcvEventViewBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -33,25 +37,24 @@ class EventsAdapter(
     }
 
     override fun onBindViewHolder(holder: AdapterViewHolder, position: Int) {
-        with(holder.binding) {
+        with(holder.binding.itemEventMaterialTextView) {
             val item = list.getOrNull(position) ?: return
-            itemEventMaterialTextView.text = item.name
+            text = item.name
 
             val color = Color.parseColor(item.backgroundHexColor)
             if (eventItemAutomaticTextColor) {
-                itemEventMaterialTextView.setTextColor(
+                setTextColor(
                     ContextCompat.getColor(
-                        itemEventMaterialTextView.context,
+                        context,
                         if (color.isDarkColor()) R.color.ecv_white else R.color.ecv_charcoal_color
-
                     )
                 )
             } else {
-                itemEventMaterialTextView.setTextColor(eventItemTextColor)
+                setTextColor(eventItemTextColor)
             }
 
             ViewCompat.setBackgroundTintList(
-                itemEventMaterialTextView,
+                this,
                 ColorStateList.valueOf(color)
             )
         }
