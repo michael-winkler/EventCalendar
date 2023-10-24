@@ -7,6 +7,7 @@ import android.graphics.Canvas
 import android.graphics.Typeface
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
 import androidx.annotation.RestrictTo
@@ -215,6 +216,12 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
             val eventList = day.dayEvents(eventsList.orEmptyArrayList())
             val recyclerView: RecyclerView = dayItemLayout.eventCalendarViewDayRecyclerView
             with(recyclerView) {
+                suppressLayout(true)
+                addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
+                    override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+                        return true
+                    }
+                })
                 setItemViewCacheSize(100)
                 setHasFixedSize(true)
                 isSaveEnabled = false

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -18,12 +19,12 @@
 
     </RelativeLayout>
 
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:divider="@drawable/ecv_divider_vertical"
         android:orientation="horizontal"
-        android:showDividers="beginning|middle|end">
+        app:divider="@drawable/ecv_divider_vertical"
+        app:showDividers="beginning|middle|end">
 
         <com.google.android.material.textview.MaterialTextView
             style="@style/ECV_DayName"
@@ -81,16 +82,16 @@
             android:layout_weight="1"
             android:text="@string/ecv_day_name_sunday" />
 
-    </LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/eventCalendarSingleWeekViewRow1"
         android:layout_width="match_parent"
         android:layout_height="126dp"
         android:baselineAligned="false"
-        android:divider="@drawable/ecv_divider_vertical"
         android:orientation="horizontal"
-        android:showDividers="middle|beginning|end">
+        app:divider="@drawable/ecv_divider_vertical"
+        app:showDividers="middle|beginning|end">
 
         <include
             android:id="@+id/eventCalendarSingleWeekViewDay1"
@@ -141,6 +142,6 @@
             android:layout_height="match_parent"
             android:layout_weight="1" />
 
-    </LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
-</LinearLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>
