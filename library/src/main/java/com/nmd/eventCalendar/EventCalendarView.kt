@@ -282,12 +282,16 @@ class EventCalendarView @JvmOverloads constructor(
 
         // Only scroll if the position is not null
         scrollPosition?.let { position ->
-            if (smoothScroll) {
-                binding.eventCalendarRecyclerView.smoothScrollTo(position)
-            } else {
-                binding.eventCalendarRecyclerView.scrollToPosition(position)
-                scrollHelper(position)
+            if (position == currentRecyclerViewPosition) {
+                return
             }
+            if (!smoothScroll) {
+                // We use here the same logic as we know it from ViewPager2 class
+                // We jump instant to the left or right item side which we want and then
+                // perform the final scroll as animation.
+                binding.eventCalendarRecyclerView.scrollToPosition(if (position > currentRecyclerViewPosition) position - 1 else position + 1)
+            }
+            binding.eventCalendarRecyclerView.smoothScrollTo(position)
         }
     }
 
