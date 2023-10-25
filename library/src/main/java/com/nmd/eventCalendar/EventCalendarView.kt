@@ -10,22 +10,24 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.widget.FrameLayout
+import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.withStyledAttributes
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.nmd.eventCalendar.adapter.InfiniteAdapter
+import com.nmd.eventCalendar.custom.SnapOnScrollListener
+import com.nmd.eventCalendar.custom.SnapOnScrollListener.Companion.attachSnapHelperWithListener
 import com.nmd.eventCalendar.databinding.EcvEventCalendarBinding
 import com.nmd.eventCalendar.instanceState.SavedState
 import com.nmd.eventCalendar.`interface`.EventCalendarDayClickListener
 import com.nmd.eventCalendar.`interface`.EventCalendarScrollListener
 import com.nmd.eventCalendar.model.Event
 import com.nmd.eventCalendar.utils.Utils.Companion.getActivity
-import com.nmd.eventCalendar.utils.Utils.Companion.getMonthName
 import com.nmd.eventCalendar.utils.Utils.Companion.smoothScrollTo
+import java.time.YearMonth
 import java.util.*
 import kotlin.math.abs
 
@@ -70,7 +72,7 @@ import kotlin.math.abs
  * ```
  * The date format have to be in format "dd.MM.yyyy".
  * For more details about how a event model should be
- * @see events()
+ * @see events
  *
  */
 class EventCalendarView @JvmOverloads constructor(
@@ -84,7 +86,7 @@ class EventCalendarView @JvmOverloads constructor(
     private val currentYear = currentCalendar.get(Calendar.YEAR)
     private val currentMonth = currentCalendar.get(Calendar.MONTH)
 
-    private lateinit var currentMonthAndYearTriple: Triple<String, Int, Int>
+    private lateinit var currentYearAndMonthPair: Pair<Int, Int>
 
     internal var sMonth = Calendar.JANUARY
     internal var sYear = 2020
@@ -93,7 +95,7 @@ class EventCalendarView @JvmOverloads constructor(
     internal var eYear = currentYear.plus(1)
 
     internal var clickListener: EventCalendarDayClickListener? = null
-    internal var scrollListener: EventCalendarScrollListener? = null
+    private var scrollListener: EventCalendarScrollListener? = null
     internal var eventArrayList: ArrayList<Event> = ArrayList()
     private var _disallowIntercept = false
 
@@ -151,36 +153,36 @@ class EventCalendarView @JvmOverloads constructor(
         with(binding) {
             val appCompatActivity = getContext().getActivity() as? AppCompatActivity
             if (appCompatActivity != null) {
-
-                eventCalendarRecyclerView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING)
-                eventCalendarRecyclerView.adapter = InfiniteAdapter(this@EventCalendarView)
+                with(eventCalendarRecyclerView) {
+                    setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING)
+                    setHasFixedSize(true)
+                    setItemViewCacheSize(1000)
+                    adapter = InfiniteAdapter(this@EventCalendarView)
+                    attachSnapHelperWithListener(
+                        snapHelper = PagerSnapHelper(),
+                        onSnapPositionChangeListener = object :
+                            SnapOnScrollListener.OnSnapPositionChangeListener {
+                            override fun onSnapPositionChange(position: Int) {
+                                if (position != currentRecyclerViewPosition) {
+                                    // We only invoke the scroll change event if the position is a new one
+                                    scrollHelper(position)
+                                }
+                            }
+                        })
+                }
 
                 val currentMonthPosition =
                     ((currentYear - sYear) * 12) + (currentMonth - sMonth) - (if (currentMonth >= eMonth && currentYear >= eYear) (currentYear - eYear) * 12 + (currentMonth - eMonth) else 0)
                 eventCalendarRecyclerView.scrollToPosition(currentMonthPosition)
 
                 currentRecyclerViewPosition = currentMonthPosition
-                currentMonthAndYearTriple = getMonthNameAndYear(currentMonthPosition)
+                currentYearAndMonthPair = getMonthNameAndYear(currentMonthPosition)
+            }
 
-                eventCalendarRecyclerView.setHasFixedSize(true)
-                eventCalendarRecyclerView.setItemViewCacheSize(1000)
-
-                if (eventCalendarRecyclerView.onFlingListener == null) {
-                    PagerSnapHelper().attachToRecyclerView(eventCalendarRecyclerView)
-                }
-
-                val layoutManager = eventCalendarRecyclerView.layoutManager as LinearLayoutManager
-
-                eventCalendarRecyclerView.addOnScrollListener(object :
-                    RecyclerView.OnScrollListener() {
-                    override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                        super.onScrollStateChanged(recyclerView, newState)
-                        if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                            val position = layoutManager.findFirstVisibleItemPosition()
-                            scrollHelper(position)
-                        }
-                    }
-                })
+            binding.root.post {
+                // We need to make sure that we inform the user about the first scroll after
+                // the initialization is done.
+                scrollHelper(currentRecyclerViewPosition)
             }
         }
     }
@@ -286,7 +288,6 @@ class EventCalendarView @JvmOverloads constructor(
                 binding.eventCalendarRecyclerView.scrollToPosition(position)
                 scrollHelper(position)
             }
-
         }
     }
 
@@ -306,10 +307,10 @@ class EventCalendarView @JvmOverloads constructor(
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     private fun scrollHelper(position: Int) {
         currentRecyclerViewPosition = position
-        currentMonthAndYearTriple = getMonthNameAndYear(position)
+        currentYearAndMonthPair = getMonthNameAndYear(position)
         scrollListener?.onScrolled(
-            month = currentMonthAndYearTriple.third.plus(1),
-            year = currentMonthAndYearTriple.second
+            month = currentYearAndMonthPair.second.plus(1),
+            year = currentYearAndMonthPair.first
         )
     }
 
@@ -384,7 +385,7 @@ class EventCalendarView @JvmOverloads constructor(
      * ```
      * Default is "false"
      */
-    @Suppress("MemberVisibilityCanBePrivate")
+    @Suppress("MemberVisibilityCanBePrivate", "KDocUnresolvedReference")
     var disallowIntercept: Boolean
         get() = _disallowIntercept
         set(value) {
@@ -416,7 +417,7 @@ class EventCalendarView @JvmOverloads constructor(
         state.putInt(SavedState.SAVED_STATE_END_YEAR, eYear)
         state.putParcelableArrayList(SavedState.SAVED_STATE_EVENTS, events)
         state.putSerializable(
-            SavedState.SAVED_STATE_MONTH_AND_YEAR_TRIPLE, currentMonthAndYearTriple
+            SavedState.SAVED_STATE_YEAR_AND_MONTH_PAIR, currentYearAndMonthPair
         )
         return SavedState(superState, state)
     }
@@ -443,15 +444,15 @@ class EventCalendarView @JvmOverloads constructor(
                     ?: ArrayList())
             }
             @Suppress("UNCHECKED_CAST") if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                val clazzName = currentMonthAndYearTriple::class.java
+                val clazzName = currentYearAndMonthPair::class.java
                 (viewState.getSerializable(
-                    SavedState.SAVED_STATE_MONTH_AND_YEAR_TRIPLE, clazzName
+                    SavedState.SAVED_STATE_YEAR_AND_MONTH_PAIR, clazzName
                 ))?.let {
-                    currentMonthAndYearTriple = it
+                    currentYearAndMonthPair = it
                 }
             } else {
-                @Suppress("DEPRECATION") (viewState.getSerializable(SavedState.SAVED_STATE_MONTH_AND_YEAR_TRIPLE) as Triple<String, Int, Int>?)?.let {
-                    currentMonthAndYearTriple = it
+                @Suppress("DEPRECATION") (viewState.getSerializable(SavedState.SAVED_STATE_YEAR_AND_MONTH_PAIR) as Pair<Int, Int>?)?.let {
+                    currentYearAndMonthPair = it
                 }
             }
 
@@ -485,8 +486,7 @@ class EventCalendarView @JvmOverloads constructor(
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     private fun getValidRecyclerViewPosition(): Int {
         val booleanIntPair =
-            monthInRange(currentMonthAndYearTriple.third, currentMonthAndYearTriple.second)
-        booleanIntPair.first
+            monthInRange(currentYearAndMonthPair.second, currentYearAndMonthPair.first)
 
         // First we check if old recyclerview position is still valid for new date range
         val value = if (booleanIntPair.first) {
@@ -524,9 +524,12 @@ class EventCalendarView @JvmOverloads constructor(
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     private fun getMonthNameAndYear(
         position: Int,
-    ): Triple<String, Int, Int> {
-        val monthOffset = (sYear * 12) + sMonth
-        val adjustedPosition = position + monthOffset
+    ): Pair<Int, Int> {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return getYearAndMonthFromPosition(position)
+        }
+
+        val adjustedPosition = position + (sYear * 12) + sMonth
         val year = adjustedPosition / 12
         val month = adjustedPosition % 12
 
@@ -536,9 +539,23 @@ class EventCalendarView @JvmOverloads constructor(
         } else {
             calendar.set(sYear, month, 1)
         }
+        return Pair(first = year, second = calendar.get(Calendar.MONTH))
+    }
 
-        val monthName = calendar.get(Calendar.MONTH).getMonthName(context)
-        return Triple(first = monthName, second = year, third = calendar.get(Calendar.MONTH))
+    /**
+     * Internal method.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun getYearAndMonthFromPosition(position: Int): Pair<Int, Int> {
+        val adjustedPosition = position + (startYear * 12) + startMonth
+        val year = adjustedPosition / 12
+        val month = adjustedPosition % 12
+
+        val yearMonth =
+            YearMonth.of(if (year == endYear && month > endMonth) endYear else startYear, month + 1)
+
+        return Pair(first = year, second = yearMonth.monthValue - 1)
     }
 
 }

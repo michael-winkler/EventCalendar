@@ -38,6 +38,29 @@ class InfiniteAdapter(private val eventCalendarView: EventCalendarView) :
 
         val yearAdapterViewHolder = Calendar.getInstance().get(Calendar.YEAR)
 
+        fun ecvTextviewCircleBindings(): ArrayList<EcvTextviewCircleBinding> {
+            val listOfRows: List<EcvIncludeRowsBinding> = listOf(
+                binding.eventCalendarViewRow1,
+                binding.eventCalendarViewRow2,
+                binding.eventCalendarViewRow3,
+                binding.eventCalendarViewRow4,
+                binding.eventCalendarViewRow5,
+                binding.eventCalendarViewRow6
+            )
+
+            val bindingArrayList = ArrayList<EcvTextviewCircleBinding>()
+            for (row in listOfRows) {
+                bindingArrayList.add(row.eventCalendarViewDay1)
+                bindingArrayList.add(row.eventCalendarViewDay2)
+                bindingArrayList.add(row.eventCalendarViewDay3)
+                bindingArrayList.add(row.eventCalendarViewDay4)
+                bindingArrayList.add(row.eventCalendarViewDay5)
+                bindingArrayList.add(row.eventCalendarViewDay6)
+                bindingArrayList.add(row.eventCalendarViewDay7)
+            }
+            return bindingArrayList
+        }
+
         init {
             binding.eventCalendarViewMonthYearHeader.visibility =
                 if (eventCalendarView.headerVisible) View.VISIBLE else View.GONE
@@ -78,7 +101,10 @@ class InfiniteAdapter(private val eventCalendarView: EventCalendarView) :
             eventCalendarViewMonthYearTextView1?.text = monthYearText
             eventCalendarViewMonthYearTextView2?.text = monthYearText
 
-            initTextViews(this, month.getDaysOfMonthAndGivenYear(year))
+            styleTextViews(
+                month.getDaysOfMonthAndGivenYear(year),
+                holder.ecvTextviewCircleBindings()
+            )
         }
     }
 
@@ -102,34 +128,6 @@ class InfiniteAdapter(private val eventCalendarView: EventCalendarView) :
             put(0, month)
             put(1, year)
         }
-    }
-
-    private fun initTextViews(binding: EcvEventCalendarViewBinding, days: List<Day>) {
-        val listOfRows: List<EcvIncludeRowsBinding> = listOf(
-            binding.eventCalendarViewRow1,
-            binding.eventCalendarViewRow2,
-            binding.eventCalendarViewRow3,
-            binding.eventCalendarViewRow4,
-            binding.eventCalendarViewRow5,
-            binding.eventCalendarViewRow6
-        )
-
-        val bindingArrayList = ArrayList<EcvTextviewCircleBinding>()
-        for (row in listOfRows) {
-            bindingArrayList.add(row.eventCalendarViewDay1)
-            bindingArrayList.add(row.eventCalendarViewDay2)
-            bindingArrayList.add(row.eventCalendarViewDay3)
-            bindingArrayList.add(row.eventCalendarViewDay4)
-            bindingArrayList.add(row.eventCalendarViewDay5)
-            bindingArrayList.add(row.eventCalendarViewDay6)
-            bindingArrayList.add(row.eventCalendarViewDay7)
-        }
-
-        if (days.size != bindingArrayList.size) {
-            throw RuntimeException("Day-List and Bindings-List can not be different!")
-        }
-
-        styleTextViews(days, bindingArrayList)
     }
 
     private fun styleTextViews(days: List<Day>, list: List<EcvTextviewCircleBinding>) {
@@ -156,14 +154,15 @@ class InfiniteAdapter(private val eventCalendarView: EventCalendarView) :
                 isSaveEnabled = false
                 itemAnimator = null
 
-                if (eventCalendarView.countVisible && eventList.isNotEmpty()) {
-                    addItemDecoration(
-                        LastPossibleVisibleItemForUserDecoration(
-                            eventList
-                        )
-                    )
-                }
                 if (eventList.isNotEmpty()) {
+                    if (eventCalendarView.countVisible) {
+                        addItemDecoration(
+                            LastPossibleVisibleItemForUserDecoration(
+                                eventList
+                            )
+                        )
+                    }
+
                     adapter = EventsAdapter(
                         list = eventList,
                         eventItemAutomaticTextColor = eventCalendarView.eventItemAutomaticTextColor.orTrue(),

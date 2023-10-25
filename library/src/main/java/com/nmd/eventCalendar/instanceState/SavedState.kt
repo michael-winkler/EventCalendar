@@ -30,7 +30,7 @@ class SavedState : View.BaseSavedState {
         const val SAVED_STATE_END_MONTH = "end_month"
         const val SAVED_STATE_END_YEAR = "end_year"
         const val SAVED_STATE_EVENTS = "events"
-        const val SAVED_STATE_MONTH_AND_YEAR_TRIPLE = "month_and_year_triple"
+        const val SAVED_STATE_YEAR_AND_MONTH_PAIR = "year_and_month_pair"
 
         @JvmField
         val CREATOR = object : Parcelable.Creator<SavedState> {
