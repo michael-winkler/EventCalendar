@@ -3,12 +3,17 @@ package com.nmd.eventCalendar.utils
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.core.graphics.ColorUtils
 import androidx.recyclerview.widget.RecyclerView
 import com.nmd.eventCalendar.R
 import com.nmd.eventCalendar.model.Day
 import com.nmd.eventCalendar.model.Event
 import java.text.SimpleDateFormat
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -46,9 +51,9 @@ class Utils {
             val days = mutableListOf<Day>()
 
             // Previous month
+            val prevMonth = (this@getDaysOfMonthAndGivenYear + 11) % 12
+            val prevYear = if (prevMonth == 11) year - 1 else year
             val prevMonthDays = (1..numEmptyCells).map {
-                val prevMonth = (this@getDaysOfMonthAndGivenYear + 11) % 12
-                val prevYear = if (prevMonth == 11) year - 1 else year
                 val dayOfMonth =
                     prevMonth.getDaysInMonthAndGivenYear(prevYear).last() - numEmptyCells + it
                 Day(
@@ -79,10 +84,10 @@ class Utils {
             days.addAll(currentMonthDays)
 
             // Next month
+            val nextMonth = (this@getDaysOfMonthAndGivenYear + 1) % 12
+            val nextYear = if (nextMonth == 0) year + 1 else year
             val numRemainingCells = 42 - days.size
             val nextMonthDays = (1..numRemainingCells).map {
-                val nextMonth = (this@getDaysOfMonthAndGivenYear + 1) % 12
-                val nextYear = if (nextMonth == 0) year + 1 else year
                 val dayOfMonth = it
                 Day(
                     value = dayOfMonth.toString(),
@@ -92,11 +97,14 @@ class Utils {
                 )
             }
             days.addAll(nextMonthDays)
-
             return days
         }
 
         fun getDaysForCurrentWeek(): List<Day> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                return getDaysForCurrentWeekApi26Impl()
+            }
+
             val calendar = Calendar.getInstance()
             val currentWeek = calendar.get(Calendar.WEEK_OF_YEAR)
             val currentYear = calendar.get(Calendar.YEAR)
@@ -124,6 +132,33 @@ class Utils {
                 )
 
                 calendar.add(Calendar.DAY_OF_MONTH, 1)
+            }
+
+            return days
+        }
+
+        @RequiresApi(Build.VERSION_CODES.O)
+        fun getDaysForCurrentWeekApi26Impl(): List<Day> {
+            val today = LocalDate.now()
+            val startOfWeek = today.with(DayOfWeek.MONDAY)
+
+            val days = mutableListOf<Day>()
+
+            val dateFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.getDefault())
+
+            for (i in 0 until 7) {
+                val currentDate = startOfWeek.plusDays(i.toLong())
+                val dayOfMonth = currentDate.dayOfMonth
+                val date = dateFormat.format(currentDate)
+
+                days.add(
+                    Day(
+                        value = dayOfMonth.toString(),
+                        isCurrentMonth = true,
+                        isCurrentDay = today == currentDate,
+                        date = date
+                    )
+                )
             }
 
             return days
@@ -173,9 +208,7 @@ class Utils {
             post {
                 try {
                     layoutManager?.smoothScrollToPosition(
-                        this,
-                        RecyclerView.State(),
-                        position
+                        this, RecyclerView.State(), position
                     )
                 } catch (ignored: Exception) {
                 }
