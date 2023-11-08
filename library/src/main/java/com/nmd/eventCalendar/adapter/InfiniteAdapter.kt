@@ -62,19 +62,21 @@ class InfiniteAdapter(private val eventCalendarView: EventCalendarView) :
         }
 
         init {
-            binding.eventCalendarViewMonthYearHeader.visibility =
-                if (eventCalendarView.headerVisible) View.VISIBLE else View.GONE
+            with(binding) {
+                eventCalendarViewMonthYearHeader.visibility =
+                    if (eventCalendarView.headerVisible) View.VISIBLE else View.GONE
 
-            binding.eventCalendarViewMonthYearImageViewLeft.setOnClickListener {
-                eventCalendarView.binding.eventCalendarRecyclerView.smoothScrollTo(
-                    currentItem - 1
-                )
-            }
+                eventCalendarViewMonthYearImageViewLeft.setOnClickListener {
+                    eventCalendarView.binding.eventCalendarRecyclerView.smoothScrollTo(
+                        currentItem - 1
+                    )
+                }
 
-            binding.eventCalendarViewMonthYearImageViewRight.setOnClickListener {
-                eventCalendarView.binding.eventCalendarRecyclerView.smoothScrollTo(
-                    currentItem + 1
-                )
+                eventCalendarViewMonthYearImageViewRight.setOnClickListener {
+                    eventCalendarView.binding.eventCalendarRecyclerView.smoothScrollTo(
+                        currentItem + 1
+                    )
+                }
             }
         }
     }
@@ -100,6 +102,12 @@ class InfiniteAdapter(private val eventCalendarView: EventCalendarView) :
                 if (holder.yearAdapterViewHolder == year) monthName else "$monthName $year"
             eventCalendarViewMonthYearTextView1?.text = monthYearText
             eventCalendarViewMonthYearTextView2?.text = monthYearText
+
+            eventCalendarViewMonthYearImageViewLeft.visibility =
+                if (holder.bindingAdapterPosition == 0) View.INVISIBLE else View.VISIBLE
+
+            eventCalendarViewMonthYearImageViewRight.visibility =
+                if (holder.bindingAdapterPosition == itemCount.minus(1)) View.INVISIBLE else View.VISIBLE
 
             styleTextViews(
                 month.getDaysOfMonthAndGivenYear(year),
