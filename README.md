@@ -168,5 +168,5 @@ If you like this library feel free to "star" it:<br>
 
 ```
 This library has been successfully tested with:
-Android Studio Giraffe | 2022.3.1 Patch 2
+Android Studio Hedgehog | 2023.1.1
 ```
