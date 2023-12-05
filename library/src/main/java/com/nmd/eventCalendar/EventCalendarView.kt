@@ -264,10 +264,16 @@ class EventCalendarView @JvmOverloads constructor(
      * @param month eg. 1 scrolls to January or 12 to December
      * @param year eg. 2023
      * @param smoothScroll Indicates whether scrolling should be smooth or immediate.
+     * @param scrollToLastIfOutOfRange Indicates whether scrolling to the last existing position is executed or not.
      * Default is "false"
      */
     @Suppress("MemberVisibilityCanBePrivate")
-    fun scrollTo(month: Int, year: Int, smoothScroll: Boolean = false) {
+    fun scrollTo(
+        month: Int,
+        year: Int,
+        smoothScroll: Boolean = false,
+        scrollToLastIfOutOfRange: Boolean = false,
+    ) {
         /*
          * Checks if the given month and year are within the range of the calendar.
          * If yes, calculates the position of the month on the horizontal axis.
@@ -277,7 +283,11 @@ class EventCalendarView @JvmOverloads constructor(
         val scrollPosition = if (booleanIntPair1.first) {
             abs(booleanIntPair1.second)
         } else {
-            null
+            if (scrollToLastIfOutOfRange) {
+                binding.eventCalendarRecyclerView.adapter?.itemCount?.minus(1)
+            } else {
+                null
+            }
         }
 
         // Only scroll if the position is not null
@@ -299,10 +309,14 @@ class EventCalendarView @JvmOverloads constructor(
      * Scrolls the calendar to the current month of the current year.
      * If the month and year is not in range, no action is taken.
      * @param smoothScroll Indicates whether scrolling should be smooth or immediate.
+     * @param scrollToLastIfOutOfRange Indicates whether scrolling to the last existing position is executed or not.
      * Default is "false"
      */
-    fun scrollToCurrentMonth(smoothScroll: Boolean = false) {
-        scrollTo(currentMonth.plus(1), currentYear, smoothScroll)
+    fun scrollToCurrentMonth(
+        smoothScroll: Boolean = false,
+        scrollToLastIfOutOfRange: Boolean = false,
+    ) {
+        scrollTo(currentMonth.plus(1), currentYear, smoothScroll, scrollToLastIfOutOfRange)
     }
 
     /**

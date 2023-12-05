@@ -39,6 +39,8 @@ class Utils {
         }
 
         fun Int.getDaysOfMonthAndGivenYear(year: Int): List<Day> {
+            val currentDate = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date())
+
             val calendar = Calendar.getInstance().apply {
                 set(Calendar.MONTH, this@getDaysOfMonthAndGivenYear)
                 set(Calendar.YEAR, year)
@@ -56,11 +58,13 @@ class Utils {
             val prevMonthDays = (1..numEmptyCells).map {
                 val dayOfMonth =
                     prevMonth.getDaysInMonthAndGivenYear(prevYear).last() - numEmptyCells + it
+                val date = String.format("%02d.%02d.%04d", dayOfMonth, prevMonth + 1, prevYear)
+                val isCurrentDay = currentDate == date
                 Day(
                     value = dayOfMonth.toString(),
                     isCurrentMonth = false,
-                    isCurrentDay = false,
-                    date = String.format("%02d.%02d.%04d", dayOfMonth, prevMonth + 1, prevYear)
+                    isCurrentDay = isCurrentDay,
+                    date = date
                 )
             }
             days.addAll(prevMonthDays)
@@ -89,10 +93,12 @@ class Utils {
             val numRemainingCells = 42 - days.size
             val nextMonthDays = (1..numRemainingCells).map {
                 val dayOfMonth = it
+                val date = String.format("%02d.%02d.%04d", dayOfMonth, nextMonth + 1, nextYear)
+                val isCurrentDay = currentDate == date
                 Day(
                     value = dayOfMonth.toString(),
                     isCurrentMonth = false,
-                    isCurrentDay = false,
+                    isCurrentDay = isCurrentDay,
                     date = String.format("%02d.%02d.%04d", dayOfMonth, nextMonth + 1, nextYear)
                 )
             }
