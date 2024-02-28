@@ -339,17 +339,19 @@ class EventCalendarView @JvmOverloads constructor(
      * @param startYear Int. Default is "2020"
      * @param endMonth Int. Default is "DECEMBER"
      * @param endYear Int. Default is "current year + 1"
+     * @param forceRecreate Boolean. Default is "false"
      */
     fun setMonthAndYear(
         startMonth: Int,
         startYear: Int,
         endMonth: Int,
         endYear: Int,
+        forceRecreate: Boolean = false
     ) {
         val isStartMonthYearChanged = sMonth != startMonth - 1 || sYear != startYear
         val isEndMonthYearChanged = eMonth != endMonth - 1 || eYear != endYear
 
-        if (isStartMonthYearChanged || isEndMonthYearChanged) {
+        if (forceRecreate || isStartMonthYearChanged || isEndMonthYearChanged) {
             //val numberOfNewMonths = ((eYear - startYear) * 12 + (eMonth - startMonth)).plus(1)
 
             sMonth = startMonth - 1
