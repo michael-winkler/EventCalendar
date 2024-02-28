@@ -130,11 +130,14 @@ class InfiniteAdapter(private val eventCalendarView: EventCalendarView) :
     }
 
     private fun Int.calculate(): SparseIntArray {
-        val year = eventCalendarView.sYear + this / 12
-        val month = (this % 12 + eventCalendarView.sMonth) % 12
+        val totalMonths = this + eventCalendarView.sMonth
+        val yearOffset = totalMonths / 12
+        val month = totalMonths % 12
+        val adjustedYear = eventCalendarView.sYear + yearOffset
+
         return SparseIntArray().apply {
-            put(0, month)
-            put(1, year)
+            put(0, if (month < 0) month + 12 else month)
+            put(1, adjustedYear)
         }
     }
 
