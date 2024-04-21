@@ -5,6 +5,7 @@
     <color name="colorCharcoalGray">#6C6868</color>
     <color name="colorIconTint">@color/colorCharcoalGray</color>
 
+    <color name="colorBlack">#000000</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorStroke">#AFB1B3</color>
     <color name="alert">#EEE3AF</color>
