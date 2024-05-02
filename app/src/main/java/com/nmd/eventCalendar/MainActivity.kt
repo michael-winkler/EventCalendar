@@ -21,6 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Calendar
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -256,7 +257,13 @@ class MainActivity : AppCompatActivity() {
                             val randomEvent = randomEvents.random()
                             val randomDay = (1..daysInMonth).random()
                             val dateStr =
-                                String.format("%02d.%02d.%04d", randomDay, month, currentYear)
+                                String.format(
+                                    Locale.GERMAN,
+                                    "%02d.%02d.%04d",
+                                    randomDay,
+                                    month,
+                                    currentYear
+                                )
                             val newEvent = Event(dateStr, randomEvent.name, randomEvent.color)
                             eventsForMonth.add(newEvent)
                         }

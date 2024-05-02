@@ -58,7 +58,13 @@ class Utils {
             val prevMonthDays = (1..numEmptyCells).map {
                 val dayOfMonth =
                     prevMonth.getDaysInMonthAndGivenYear(prevYear).last() - numEmptyCells + it
-                val date = String.format("%02d.%02d.%04d", dayOfMonth, prevMonth + 1, prevYear)
+                val date = String.format(
+                    Locale.GERMAN,
+                    "%02d.%02d.%04d",
+                    dayOfMonth,
+                    prevMonth + 1,
+                    prevYear
+                )
                 val isCurrentDay = currentDate == date
                 Day(
                     value = dayOfMonth.toString(),
@@ -81,6 +87,7 @@ class Utils {
                     isCurrentMonth = true,
                     isCurrentDay = isCurrentDay,
                     date = String.format(
+                        Locale.GERMAN,
                         "%02d.%02d.%04d", dayOfMonth, this@getDaysOfMonthAndGivenYear + 1, year
                     )
                 )
@@ -93,13 +100,25 @@ class Utils {
             val numRemainingCells = 42 - days.size
             val nextMonthDays = (1..numRemainingCells).map {
                 val dayOfMonth = it
-                val date = String.format("%02d.%02d.%04d", dayOfMonth, nextMonth + 1, nextYear)
+                val date = String.format(
+                    Locale.GERMAN,
+                    "%02d.%02d.%04d",
+                    dayOfMonth,
+                    nextMonth + 1,
+                    nextYear
+                )
                 val isCurrentDay = currentDate == date
                 Day(
                     value = dayOfMonth.toString(),
                     isCurrentMonth = false,
                     isCurrentDay = isCurrentDay,
-                    date = String.format("%02d.%02d.%04d", dayOfMonth, nextMonth + 1, nextYear)
+                    date = String.format(
+                        Locale.GERMAN,
+                        "%02d.%02d.%04d",
+                        dayOfMonth,
+                        nextMonth + 1,
+                        nextYear
+                    )
                 )
             }
             days.addAll(nextMonthDays)
