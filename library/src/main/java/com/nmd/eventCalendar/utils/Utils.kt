@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.os.Build
+import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.core.graphics.ColorUtils
 import androidx.recyclerview.widget.RecyclerView
@@ -199,6 +200,11 @@ class Utils {
             return calendar[Calendar.YEAR]
         }
 
+        fun getCurrentMonth(): Int {
+            val calendar = Calendar.getInstance()
+            return calendar[Calendar.MONTH]
+        }
+
         private fun Int.getDaysInMonthAndGivenYear(year: Int): List<Int> {
             val calendar = Calendar.getInstance().apply {
                 set(Calendar.MONTH, this@getDaysInMonthAndGivenYear)
@@ -237,6 +243,34 @@ class Utils {
                     )
                 } catch (ignored: Exception) {
                 }
+            }
+        }
+
+        fun View?.showView() {
+            this?.visibility = View.VISIBLE
+        }
+
+        fun View?.hideView() {
+            this?.visibility = View.GONE
+        }
+
+        fun String?.isStringNullOrEmpty(): Boolean {
+            return this == null || this == "null" || this.trim().isEmpty()
+        }
+
+        fun Day.convertStringToCalendarWeek(): String {
+            if (date.isStringNullOrEmpty()) {
+                return ""
+            }
+            return try {
+                val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.GERMAN)
+                val calendar = Calendar.getInstance(Locale.GERMAN)
+                dateFormat.parse(date)?.let {
+                    calendar.time = it
+                    calendar.get(Calendar.WEEK_OF_YEAR).toString()
+                } ?: ""
+            } catch (e: Exception) {
+                ""
             }
         }
 

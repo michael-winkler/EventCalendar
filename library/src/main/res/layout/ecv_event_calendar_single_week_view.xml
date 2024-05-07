@@ -27,6 +27,16 @@
         app:showDividers="beginning|middle|end">
 
         <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/eventCalendarViewHeaderKw"
+            style="@style/ECV_DayName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="0dp"
+            android:layout_weight="1"
+            android:text="@string/ecv_day_name_kw"
+            android:visibility="gone" />
+
+        <com.google.android.material.textview.MaterialTextView
             style="@style/ECV_DayName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -92,6 +102,14 @@
         android:orientation="horizontal"
         app:divider="@drawable/ecv_divider_vertical"
         app:showDividers="middle|beginning|end">
+
+        <include
+            android:id="@+id/eventCalendarViewCalendarWeek"
+            layout="@layout/ecv_textview_cw"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:visibility="gone" />
 
         <include
             android:id="@+id/eventCalendarSingleWeekViewDay1"

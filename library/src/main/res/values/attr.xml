@@ -6,6 +6,10 @@
         Default: true -->
         <attr name="ecv_header_visible" format="boolean" />
 
+        <!-- Determines whether the calendar week, is visible or not.
+        Default: false -->
+        <attr name="ecv_calendar_week_visible" format="boolean" />
+
         <!-- Indicates whether the child view wants to prevent the parent view from intercepting
         touch events.
         Default: false -->

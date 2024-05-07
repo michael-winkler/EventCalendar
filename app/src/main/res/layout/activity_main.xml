@@ -11,7 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorBackground"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        app:liftOnScroll="false">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
@@ -60,6 +61,7 @@
             android:id="@+id/eventCalendarView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:ecv_calendar_week_visible="true"
             app:ecv_count_background_text_color="@android:color/white"
             app:ecv_count_background_tint_color="@android:color/holo_blue_light"
             app:ecv_count_visible="true"

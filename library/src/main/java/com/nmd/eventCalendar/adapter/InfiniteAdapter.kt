@@ -19,14 +19,18 @@ import com.nmd.eventCalendar.R
 import com.nmd.eventCalendar.databinding.EcvEventCalendarViewBinding
 import com.nmd.eventCalendar.databinding.EcvIncludeRowsBinding
 import com.nmd.eventCalendar.databinding.EcvTextviewCircleBinding
+import com.nmd.eventCalendar.databinding.EcvTextviewCwBinding
 import com.nmd.eventCalendar.model.Day
 import com.nmd.eventCalendar.model.Event
+import com.nmd.eventCalendar.utils.Utils.Companion.convertStringToCalendarWeek
 import com.nmd.eventCalendar.utils.Utils.Companion.dayEvents
 import com.nmd.eventCalendar.utils.Utils.Companion.getDaysOfMonthAndGivenYear
 import com.nmd.eventCalendar.utils.Utils.Companion.getMonthName
 import com.nmd.eventCalendar.utils.Utils.Companion.getRealContext
+import com.nmd.eventCalendar.utils.Utils.Companion.hideView
 import com.nmd.eventCalendar.utils.Utils.Companion.orEmptyArrayList
 import com.nmd.eventCalendar.utils.Utils.Companion.orTrue
+import com.nmd.eventCalendar.utils.Utils.Companion.showView
 import com.nmd.eventCalendar.utils.Utils.Companion.smoothScrollTo
 import java.util.Calendar
 
@@ -38,16 +42,16 @@ class InfiniteAdapter(private val eventCalendarView: EventCalendarView) :
 
         val yearAdapterViewHolder = Calendar.getInstance().get(Calendar.YEAR)
 
-        fun ecvTextviewCircleBindings(): ArrayList<EcvTextviewCircleBinding> {
-            val listOfRows: List<EcvIncludeRowsBinding> = listOf(
-                binding.eventCalendarViewRow1,
-                binding.eventCalendarViewRow2,
-                binding.eventCalendarViewRow3,
-                binding.eventCalendarViewRow4,
-                binding.eventCalendarViewRow5,
-                binding.eventCalendarViewRow6
-            )
+        private val listOfRows: List<EcvIncludeRowsBinding> = listOf(
+            binding.eventCalendarViewRow1,
+            binding.eventCalendarViewRow2,
+            binding.eventCalendarViewRow3,
+            binding.eventCalendarViewRow4,
+            binding.eventCalendarViewRow5,
+            binding.eventCalendarViewRow6
+        )
 
+        fun ecvTextviewCircleBindings(): ArrayList<EcvTextviewCircleBinding> {
             val bindingArrayList = ArrayList<EcvTextviewCircleBinding>()
             for (row in listOfRows) {
                 bindingArrayList.add(row.eventCalendarViewDay1)
@@ -61,10 +65,41 @@ class InfiniteAdapter(private val eventCalendarView: EventCalendarView) :
             return bindingArrayList
         }
 
+        fun ecvTextviewCwBinding(): ArrayList<EcvTextviewCwBinding> {
+            val bindingArrayList = ArrayList<EcvTextviewCwBinding>()
+            for (row in listOfRows) {
+                bindingArrayList.add(row.eventCalendarViewCalendarWeek)
+            }
+            return bindingArrayList
+        }
+
         init {
             with(binding) {
-                eventCalendarViewMonthYearHeader.visibility =
-                    if (eventCalendarView.headerVisible) View.VISIBLE else View.GONE
+                if (eventCalendarView.headerVisible) {
+                    eventCalendarViewMonthYearHeader.showView()
+                } else {
+                    eventCalendarViewMonthYearHeader.hideView()
+                }
+
+                if (eventCalendarView.calendarWeekVisible) {
+                    eventCalendarViewHeaderKw.showView()
+                    eventCalendarViewRow1.eventCalendarViewCalendarWeek.root.showView()
+                    eventCalendarViewRow2.eventCalendarViewCalendarWeek.root.showView()
+                    eventCalendarViewRow3.eventCalendarViewCalendarWeek.root.showView()
+                    eventCalendarViewRow4.eventCalendarViewCalendarWeek.root.showView()
+                    eventCalendarViewRow5.eventCalendarViewCalendarWeek.root.showView()
+                    eventCalendarViewRow5.eventCalendarViewCalendarWeek.root.showView()
+                    eventCalendarViewRow6.eventCalendarViewCalendarWeek.root.showView()
+                } else {
+                    eventCalendarViewHeaderKw.hideView()
+                    eventCalendarViewRow1.eventCalendarViewCalendarWeek.root.hideView()
+                    eventCalendarViewRow2.eventCalendarViewCalendarWeek.root.hideView()
+                    eventCalendarViewRow3.eventCalendarViewCalendarWeek.root.hideView()
+                    eventCalendarViewRow4.eventCalendarViewCalendarWeek.root.hideView()
+                    eventCalendarViewRow5.eventCalendarViewCalendarWeek.root.hideView()
+                    eventCalendarViewRow5.eventCalendarViewCalendarWeek.root.hideView()
+                    eventCalendarViewRow6.eventCalendarViewCalendarWeek.root.hideView()
+                }
 
                 eventCalendarViewMonthYearImageViewLeft.setOnClickListener {
                     eventCalendarView.binding.eventCalendarRecyclerView.smoothScrollTo(
@@ -110,8 +145,9 @@ class InfiniteAdapter(private val eventCalendarView: EventCalendarView) :
                 if (holder.bindingAdapterPosition == itemCount.minus(1)) View.INVISIBLE else View.VISIBLE
 
             styleTextViews(
-                month.getDaysOfMonthAndGivenYear(year),
-                holder.ecvTextviewCircleBindings()
+                days = month.getDaysOfMonthAndGivenYear(year),
+                circleBindingList = holder.ecvTextviewCircleBindings(),
+                cwBindingList = holder.ecvTextviewCwBinding()
             )
         }
     }
@@ -141,9 +177,14 @@ class InfiniteAdapter(private val eventCalendarView: EventCalendarView) :
         }
     }
 
-    private fun styleTextViews(days: List<Day>, list: List<EcvTextviewCircleBinding>) {
+    private fun styleTextViews(
+        days: List<Day>,
+        circleBindingList: List<EcvTextviewCircleBinding>,
+        cwBindingList: List<EcvTextviewCwBinding>
+    ) {
+        println("-> TEST: " + circleBindingList.size)
         for ((index, day) in days.withIndex()) {
-            val dayItemLayout = list[index]
+            val dayItemLayout = circleBindingList[index]
 
             dayItemLayout.eventCalendarViewDayFrameLayout.setOnClickListener {
                 eventCalendarView.clickListener?.onClick(day)
@@ -205,6 +246,54 @@ class InfiniteAdapter(private val eventCalendarView: EventCalendarView) :
                     setTypeface(typeface, Typeface.ITALIC)
                 }
             }
+
+            if (eventCalendarView.calendarWeekVisible) {
+                initCalendarWeek(day, index, cwBindingList)
+            }
+        }
+    }
+
+    private fun initCalendarWeek(
+        day: Day,
+        index: Int,
+        ecvTextviewCwBinding: List<EcvTextviewCwBinding>
+    ) {
+        when (index) {
+            0 -> {
+                ecvTextviewCwBinding.setCalendarWeekUi(0, day)
+            }
+
+            7 -> {
+                ecvTextviewCwBinding.setCalendarWeekUi(1, day)
+            }
+
+            14 -> {
+                ecvTextviewCwBinding.setCalendarWeekUi(2, day)
+            }
+
+            21 -> {
+                ecvTextviewCwBinding.setCalendarWeekUi(3, day)
+            }
+
+            28 -> {
+                ecvTextviewCwBinding.setCalendarWeekUi(4, day)
+            }
+
+            35 -> {
+                ecvTextviewCwBinding.setCalendarWeekUi(5, day)
+            }
+        }
+    }
+
+    private fun List<EcvTextviewCwBinding>.setCalendarWeekUi(index: Int, day: Day) {
+        val textView = getOrNull(index)?.eventCalendarViewDayTextView ?: return
+        with(textView) {
+            if (day.isCurrentMonth || day.isCurrentDay) {
+                setTypeface(typeface, Typeface.BOLD)
+            } else {
+                setTypeface(typeface, Typeface.ITALIC)
+            }
+            text = day.convertStringToCalendarWeek()
         }
     }
 

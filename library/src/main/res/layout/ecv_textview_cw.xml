@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/eventCalendarViewDayFrameLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:theme="@style/ECV_RippleColor"
+    app:divider="@drawable/ecv_divider_horizontal"
+    app:showDividers="beginning">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/eventCalendarViewDayTextView"
+            style="@style/ECV_Day"
+            android:layout_gravity="center"
+            tools:text="1" />
+
+    </FrameLayout>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

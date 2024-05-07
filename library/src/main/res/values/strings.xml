@@ -1,4 +1,5 @@
 <resources>
+    <string name="ecv_day_name_kw">CW</string>
     <string name="ecv_day_name_monday">M</string>
     <string name="ecv_day_name_tuesday">T</string>
     <string name="ecv_day_name_wednesday">W</string>

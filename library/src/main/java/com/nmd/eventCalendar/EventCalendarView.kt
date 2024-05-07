@@ -46,7 +46,8 @@ import kotlin.math.abs
  *     app:ecv_current_day_background_tint_color="@android:color/holo_red_dark"
  *     app:ecv_current_day_text_color="@android:color/white"
  *     app:ecv_disallow_intercept="false"
- *     app:ecv_header_visible="true" />
+ *     app:ecv_header_visible="true"
+ *     app:ecv_calendar_week_visible="false"/>
  * ```
  *
  * Now in your class you can get a reference to it like this:
@@ -101,6 +102,7 @@ class EventCalendarView @JvmOverloads constructor(
 
     // For xml layout
     internal var headerVisible = true
+    internal var calendarWeekVisible = false //TODO Let user make changes at runtime to this
     internal var currentDayBackgroundTintColor =
         ContextCompat.getColor(getContext(), R.color.ecv_charcoal_color)
     internal var currentDayTextColor =
@@ -117,6 +119,11 @@ class EventCalendarView @JvmOverloads constructor(
         getContext().withStyledAttributes(attrs, R.styleable.EventCalendarView) {
             headerVisible =
                 getBoolean(R.styleable.EventCalendarView_ecv_header_visible, headerVisible)
+            calendarWeekVisible =
+                getBoolean(
+                    R.styleable.EventCalendarView_ecv_calendar_week_visible,
+                    calendarWeekVisible
+                )
             disallowIntercept =
                 getBoolean(R.styleable.EventCalendarView_ecv_disallow_intercept, disallowIntercept)
             currentDayBackgroundTintColor = getColor(

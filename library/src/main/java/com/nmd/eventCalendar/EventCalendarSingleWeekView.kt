@@ -24,11 +24,15 @@ import com.nmd.eventCalendar.`interface`.EventCalendarDayClickListener
 import com.nmd.eventCalendar.model.Day
 import com.nmd.eventCalendar.model.Event
 import com.nmd.eventCalendar.utils.Utils.Companion.dayEvents
+import com.nmd.eventCalendar.utils.Utils.Companion.getCurrentMonth
 import com.nmd.eventCalendar.utils.Utils.Companion.getCurrentWeekNumber
 import com.nmd.eventCalendar.utils.Utils.Companion.getCurrentYear
 import com.nmd.eventCalendar.utils.Utils.Companion.getDaysForCurrentWeek
+import com.nmd.eventCalendar.utils.Utils.Companion.getMonthName
 import com.nmd.eventCalendar.utils.Utils.Companion.getRealContext
+import com.nmd.eventCalendar.utils.Utils.Companion.hideView
 import com.nmd.eventCalendar.utils.Utils.Companion.orEmptyArrayList
+import com.nmd.eventCalendar.utils.Utils.Companion.showView
 
 class EventCalendarSingleWeekView @JvmOverloads constructor(
     context: Context,
@@ -42,6 +46,7 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
 
     // For xml layout
     private var headerVisible = true
+    private var calendarWeekVisible = false //TODO Let user make changes at runtime to this
     private var currentDayBackgroundTintColor =
         ContextCompat.getColor(getContext(), R.color.ecv_charcoal_color)
     private var currentDayTextColor =
@@ -58,6 +63,11 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
         getContext().withStyledAttributes(attrs, R.styleable.EventCalendarView) {
             headerVisible =
                 getBoolean(R.styleable.EventCalendarView_ecv_header_visible, headerVisible)
+            calendarWeekVisible =
+                getBoolean(
+                    R.styleable.EventCalendarView_ecv_calendar_week_visible,
+                    calendarWeekVisible
+                )
             currentDayBackgroundTintColor = getColor(
                 (R.styleable.EventCalendarView_ecv_current_day_background_tint_color),
                 currentDayBackgroundTintColor
@@ -163,12 +173,25 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     private fun updateLayout() {
         with(binding) {
-            val monthYearText = "" + getCurrentWeekNumber() + " • " + getCurrentYear()
+            val monthYearText = "${getCurrentMonth().getMonthName(context)} ${getCurrentYear()}"
             eventCalendarSingleWeekViewMonthYearTextView1.text = monthYearText
 
             eventCalendarSingleWeekViewMonthYearHeader.post {
-                eventCalendarSingleWeekViewMonthYearHeader.visibility =
-                    if (headerVisible) View.VISIBLE else View.GONE
+                if (headerVisible) {
+                    eventCalendarSingleWeekViewMonthYearHeader.showView()
+                } else {
+                    eventCalendarSingleWeekViewMonthYearHeader.hideView()
+                }
+
+                if (calendarWeekVisible) {
+                    eventCalendarViewHeaderKw.showView()
+                    eventCalendarViewCalendarWeek.root.showView()
+                    eventCalendarViewCalendarWeek.eventCalendarViewDayTextView.text =
+                        "${getCurrentWeekNumber()}"
+                } else {
+                    eventCalendarViewHeaderKw.hideView()
+                    eventCalendarViewCalendarWeek.root.hideView()
+                }
             }
 
             initTextViews(getDaysForCurrentWeek())
