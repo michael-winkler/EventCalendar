@@ -43,7 +43,8 @@ You can create a new `EventCalendarView` inside your XML-Layout like this:
     app:ecv_disallow_intercept="false"
     app:ecv_event_item_automatic_text_color="true"
     app:ecv_event_item_text_color="@android:color/black"
-    app:ecv_header_visible="true" />
+    app:ecv_header_visible="true"
+    app:ecv_calendar_week_visible="true"/>
 ```
 
 Or if you just want the current calendar week you can use this one:
@@ -59,7 +60,8 @@ Or if you just want the current calendar week you can use this one:
     app:ecv_current_day_text_color="@android:color/white"
     app:ecv_event_item_automatic_text_color="true"
     app:ecv_event_item_text_color="@android:color/black"
-    app:ecv_header_visible="true" />
+    app:ecv_header_visible="true"
+    app:ecv_calendar_week_visible="true"/>
 ```
 
 Here you can see all custom `app` parameters which you can use:    
@@ -86,13 +88,24 @@ The `EventCalendarDayClickListener` listener works also for the `EventCalendarSi
 The `Day` object structure is following:
 ```kotlin
 data class Day(
+    /**
+     * eg: 31
+     */
     val value: String,
+    /**
+     * eg: true | false
+     */
     val isCurrentMonth: Boolean,
+    /**
+     * eg: true | false
+     */
     var isCurrentDay: Boolean,
+    /**
+     * eg: 31.12.2024
+     */
     var date: String,
 )
 ```
-The `date` format is "dd.MM.yyyy".
 
 <hr>
 
