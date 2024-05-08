@@ -81,7 +81,7 @@ class InfiniteAdapter(private val eventCalendarView: EventCalendarView) :
                     eventCalendarViewMonthYearHeader.hideView()
                 }
 
-                if (eventCalendarView.calendarWeekVisible) {
+                if (eventCalendarView._calendarWeekVisible) {
                     eventCalendarViewHeaderKw.showView()
                     eventCalendarViewRow1.eventCalendarViewCalendarWeek.root.showView()
                     eventCalendarViewRow2.eventCalendarViewCalendarWeek.root.showView()
@@ -247,7 +247,7 @@ class InfiniteAdapter(private val eventCalendarView: EventCalendarView) :
                 }
             }
 
-            if (eventCalendarView.calendarWeekVisible) {
+            if (eventCalendarView._calendarWeekVisible) {
                 initCalendarWeek(day, index, cwBindingList)
             }
         }

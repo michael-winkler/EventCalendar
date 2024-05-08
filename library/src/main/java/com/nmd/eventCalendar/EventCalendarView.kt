@@ -102,15 +102,13 @@ class EventCalendarView @JvmOverloads constructor(
 
     // For xml layout
     internal var headerVisible = true
-    internal var calendarWeekVisible = false //TODO Let user make changes at runtime to this
+    internal var _calendarWeekVisible = false
     internal var currentDayBackgroundTintColor =
         ContextCompat.getColor(getContext(), R.color.ecv_charcoal_color)
-    internal var currentDayTextColor =
-        ContextCompat.getColor(getContext(), R.color.ecv_white)
+    internal var currentDayTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
     internal var countBackgroundTintColor =
         ContextCompat.getColor(getContext(), R.color.ecv_charcoal_color)
-    internal var countBackgroundTextColor =
-        ContextCompat.getColor(getContext(), R.color.ecv_white)
+    internal var countBackgroundTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
     internal var countVisible = true
     internal var eventItemAutomaticTextColor = true
     internal var eventItemTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
@@ -119,11 +117,9 @@ class EventCalendarView @JvmOverloads constructor(
         getContext().withStyledAttributes(attrs, R.styleable.EventCalendarView) {
             headerVisible =
                 getBoolean(R.styleable.EventCalendarView_ecv_header_visible, headerVisible)
-            calendarWeekVisible =
-                getBoolean(
-                    R.styleable.EventCalendarView_ecv_calendar_week_visible,
-                    calendarWeekVisible
-                )
+            _calendarWeekVisible = getBoolean(
+                R.styleable.EventCalendarView_ecv_calendar_week_visible, _calendarWeekVisible
+            )
             disallowIntercept =
                 getBoolean(R.styleable.EventCalendarView_ecv_disallow_intercept, disallowIntercept)
             currentDayBackgroundTintColor = getColor(
@@ -131,8 +127,7 @@ class EventCalendarView @JvmOverloads constructor(
                 currentDayBackgroundTintColor
             )
             currentDayTextColor = getColor(
-                (R.styleable.EventCalendarView_ecv_current_day_text_color),
-                currentDayTextColor
+                (R.styleable.EventCalendarView_ecv_current_day_text_color), currentDayTextColor
             )
             countBackgroundTintColor = getColor(
                 (R.styleable.EventCalendarView_ecv_count_background_tint_color),
@@ -142,16 +137,13 @@ class EventCalendarView @JvmOverloads constructor(
                 (R.styleable.EventCalendarView_ecv_count_background_text_color),
                 countBackgroundTextColor
             )
-            countVisible =
-                getBoolean(R.styleable.EventCalendarView_ecv_count_visible, countVisible)
-            eventItemAutomaticTextColor =
-                getBoolean(
-                    R.styleable.EventCalendarView_ecv_event_item_automatic_text_color,
-                    eventItemAutomaticTextColor
-                )
+            countVisible = getBoolean(R.styleable.EventCalendarView_ecv_count_visible, countVisible)
+            eventItemAutomaticTextColor = getBoolean(
+                R.styleable.EventCalendarView_ecv_event_item_automatic_text_color,
+                eventItemAutomaticTextColor
+            )
             eventItemTextColor = getColor(
-                (R.styleable.EventCalendarView_ecv_event_item_text_color),
-                eventItemTextColor
+                (R.styleable.EventCalendarView_ecv_event_item_text_color), eventItemTextColor
             )
         }
 
@@ -165,8 +157,7 @@ class EventCalendarView @JvmOverloads constructor(
                     setHasFixedSize(true)
                     setItemViewCacheSize(1000)
                     adapter = InfiniteAdapter(this@EventCalendarView)
-                    attachSnapHelperWithListener(
-                        snapHelper = PagerSnapHelper(),
+                    attachSnapHelperWithListener(snapHelper = PagerSnapHelper(),
                         onSnapPositionChangeListener = object :
                             SnapOnScrollListener.OnSnapPositionChangeListener {
                             override fun onSnapPositionChange(position: Int) {
@@ -280,8 +271,7 @@ class EventCalendarView @JvmOverloads constructor(
         year: Int,
         smoothScroll: Boolean = false,
         scrollToLastIfOutOfRange: Boolean = false,
-    ) {
-        /*
+    ) {/*
          * Checks if the given month and year are within the range of the calendar.
          * If yes, calculates the position of the month on the horizontal axis.
          * If the month/year is not in range, no action is taken.
@@ -334,8 +324,7 @@ class EventCalendarView @JvmOverloads constructor(
         currentRecyclerViewPosition = position
         currentYearAndMonthPair = getMonthNameAndYear(position)
         scrollListener?.onScrolled(
-            month = currentYearAndMonthPair.second.plus(1),
-            year = currentYearAndMonthPair.first
+            month = currentYearAndMonthPair.second.plus(1), year = currentYearAndMonthPair.first
         )
     }
 
@@ -349,11 +338,7 @@ class EventCalendarView @JvmOverloads constructor(
      * @param forceRecreate Boolean. Default is "false"
      */
     fun setMonthAndYear(
-        startMonth: Int,
-        startYear: Int,
-        endMonth: Int,
-        endYear: Int,
-        forceRecreate: Boolean = false
+        startMonth: Int, startYear: Int, endMonth: Int, endYear: Int, forceRecreate: Boolean = false
     ) {
         val isStartMonthYearChanged = sMonth != startMonth - 1 || sYear != startYear
         val isEndMonthYearChanged = eMonth != endMonth - 1 || eYear != endYear
@@ -412,11 +397,27 @@ class EventCalendarView @JvmOverloads constructor(
      * ```
      * Default is "false"
      */
-    @Suppress("MemberVisibilityCanBePrivate", "KDocUnresolvedReference")
+    @Suppress("KDocUnresolvedReference")
     var disallowIntercept: Boolean
         get() = _disallowIntercept
         set(value) {
             _disallowIntercept = value
+        }
+
+    /**
+     * Set this to true if you want to display the calendar week on each week row.
+     *
+     * You can also set this value inside your xml layout:
+     * ```
+     * app:ecv_calendar_week_visible="true"
+     * ```
+     * Default is "false"
+     */
+    var calendarWeekVisible: Boolean
+        get() = _calendarWeekVisible
+        set(value) {
+            _calendarWeekVisible = value
+            updateRecyclerView(false)
         }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -437,6 +438,7 @@ class EventCalendarView @JvmOverloads constructor(
         val superState = super.onSaveInstanceState()
         val state = Bundle()
         state.putBoolean(SavedState.SAVED_STATE_DISALLOW_INTERCEPT, disallowIntercept)
+        state.putBoolean(SavedState.SAVED_STATE_CALENDAR_WEEK_VISIBLE, _calendarWeekVisible)
         state.putInt(SavedState.SAVED_STATE_RECYCLERVIEW_POSITION, currentRecyclerViewPosition)
         state.putInt(SavedState.SAVED_STATE_START_MONTH, sMonth)
         state.putInt(SavedState.SAVED_STATE_START_YEAR, sYear)
@@ -455,6 +457,8 @@ class EventCalendarView @JvmOverloads constructor(
             super.onRestoreInstanceState(state.superState)
             disallowIntercept =
                 viewState.getBoolean(SavedState.SAVED_STATE_DISALLOW_INTERCEPT, true)
+            _calendarWeekVisible =
+                viewState.getBoolean(SavedState.SAVED_STATE_CALENDAR_WEEK_VISIBLE, false)
             currentRecyclerViewPosition =
                 viewState.getInt(SavedState.SAVED_STATE_RECYCLERVIEW_POSITION, 0)
             sMonth = viewState.getInt(SavedState.SAVED_STATE_START_MONTH, Calendar.JANUARY)

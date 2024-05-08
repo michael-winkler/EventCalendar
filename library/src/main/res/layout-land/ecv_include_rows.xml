@@ -8,11 +8,6 @@
     app:divider="@drawable/ecv_divider_vertical"
     app:showDividers="middle">
 
-    <View
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="0" />
-
     <include
         android:id="@+id/eventCalendarViewCalendarWeek"
         layout="@layout/ecv_textview_cw"

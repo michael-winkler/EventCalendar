@@ -45,7 +45,12 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:divider="@drawable/ecv_divider_vertical"
-        app:showDividers="beginning|middle">
+        app:showDividers="middle">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/eventCalendarViewHeaderKw"

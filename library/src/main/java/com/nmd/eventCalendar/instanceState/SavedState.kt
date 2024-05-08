@@ -24,6 +24,7 @@ class SavedState : View.BaseSavedState {
 
     companion object {
         const val SAVED_STATE_DISALLOW_INTERCEPT = "disallowIntercept"
+        const val SAVED_STATE_CALENDAR_WEEK_VISIBLE = "calendarWeekVisible"
         const val SAVED_STATE_RECYCLERVIEW_POSITION = "position"
         const val SAVED_STATE_START_MONTH = "start_month"
         const val SAVED_STATE_START_YEAR = "start_year"

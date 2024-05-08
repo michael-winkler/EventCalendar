@@ -79,7 +79,21 @@
             android:layout_gravity="center" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/floatingActionButton"
+            android:id="@+id/floatingActionButtonCalendarWeekToggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="88dp"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/icon_calendar_week_begin_outline"
+            app:backgroundTint="@color/alert"
+            app:rippleColor="@color/ecv_ripple_color"
+            app:tint="@color/alertStroke" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/floatingActionButtonSingleWeekView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"

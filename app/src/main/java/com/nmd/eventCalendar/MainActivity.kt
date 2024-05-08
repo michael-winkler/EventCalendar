@@ -82,7 +82,11 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            floatingActionButton.setOnClickListener {
+            floatingActionButtonCalendarWeekToggle.setOnClickListener {
+                eventCalendarView.calendarWeekVisible = !eventCalendarView.calendarWeekVisible
+            }
+
+            floatingActionButtonSingleWeekView.setOnClickListener {
                 bottomSheet2()
             }
         }

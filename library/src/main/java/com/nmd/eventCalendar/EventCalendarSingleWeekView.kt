@@ -46,15 +46,13 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
 
     // For xml layout
     private var headerVisible = true
-    private var calendarWeekVisible = false //TODO Let user make changes at runtime to this
+    private var _calendarWeekVisible = false
     private var currentDayBackgroundTintColor =
         ContextCompat.getColor(getContext(), R.color.ecv_charcoal_color)
-    private var currentDayTextColor =
-        ContextCompat.getColor(getContext(), R.color.ecv_white)
+    private var currentDayTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
     internal var countBackgroundTintColor =
         ContextCompat.getColor(getContext(), R.color.ecv_charcoal_color)
-    internal var countBackgroundTextColor =
-        ContextCompat.getColor(getContext(), R.color.ecv_white)
+    internal var countBackgroundTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
     private var countVisible = true
     private var eventItemAutomaticTextColor = true
     private var eventItemTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
@@ -63,18 +61,15 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
         getContext().withStyledAttributes(attrs, R.styleable.EventCalendarView) {
             headerVisible =
                 getBoolean(R.styleable.EventCalendarView_ecv_header_visible, headerVisible)
-            calendarWeekVisible =
-                getBoolean(
-                    R.styleable.EventCalendarView_ecv_calendar_week_visible,
-                    calendarWeekVisible
-                )
+            _calendarWeekVisible = getBoolean(
+                R.styleable.EventCalendarView_ecv_calendar_week_visible, _calendarWeekVisible
+            )
             currentDayBackgroundTintColor = getColor(
                 (R.styleable.EventCalendarView_ecv_current_day_background_tint_color),
                 currentDayBackgroundTintColor
             )
             currentDayTextColor = getColor(
-                (R.styleable.EventCalendarView_ecv_current_day_text_color),
-                currentDayTextColor
+                (R.styleable.EventCalendarView_ecv_current_day_text_color), currentDayTextColor
             )
             countBackgroundTintColor = getColor(
                 (R.styleable.EventCalendarView_ecv_count_background_tint_color),
@@ -84,16 +79,13 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
                 (R.styleable.EventCalendarView_ecv_count_background_text_color),
                 countBackgroundTextColor
             )
-            countVisible =
-                getBoolean(R.styleable.EventCalendarView_ecv_count_visible, countVisible)
-            eventItemAutomaticTextColor =
-                getBoolean(
-                    R.styleable.EventCalendarView_ecv_event_item_automatic_text_color,
-                    eventItemAutomaticTextColor
-                )
+            countVisible = getBoolean(R.styleable.EventCalendarView_ecv_count_visible, countVisible)
+            eventItemAutomaticTextColor = getBoolean(
+                R.styleable.EventCalendarView_ecv_event_item_automatic_text_color,
+                eventItemAutomaticTextColor
+            )
             eventItemTextColor = getColor(
-                (R.styleable.EventCalendarView_ecv_event_item_text_color),
-                eventItemTextColor
+                (R.styleable.EventCalendarView_ecv_event_item_text_color), eventItemTextColor
             )
         }
 
@@ -167,6 +159,22 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
         }
 
     /**
+     * Set this to true if you want to display the calendar week on each week row.
+     *
+     * You can also set this value inside your xml layout:
+     * ```
+     * app:ecv_calendar_week_visible="true"
+     * ```
+     * Default is "false"
+     */
+    var calendarWeekVisible: Boolean
+        get() = _calendarWeekVisible
+        set(value) {
+            _calendarWeekVisible = value
+            updateLayout()
+        }
+
+    /**
      * Internal method.
      */
     @SuppressLint("NotifyDataSetChanged")
@@ -183,7 +191,7 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
                     eventCalendarSingleWeekViewMonthYearHeader.hideView()
                 }
 
-                if (calendarWeekVisible) {
+                if (_calendarWeekVisible) {
                     eventCalendarViewHeaderKw.showView()
                     eventCalendarViewCalendarWeek.root.showView()
                     eventCalendarViewCalendarWeek.eventCalendarViewDayTextView.text =
@@ -194,11 +202,13 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
                 }
             }
 
-            initTextViews(getDaysForCurrentWeek())
+            initTextViews(
+                getDaysForCurrentWeek(), eventCalendarViewCalendarWeek.eventCalendarViewDayTextView
+            )
         }
     }
 
-    private fun initTextViews(days: List<Day>) {
+    private fun initTextViews(days: List<Day>, materialTextView: MaterialTextView) {
         val bindingArrayList = arrayListOf(
             binding.eventCalendarSingleWeekViewDay1,
             binding.eventCalendarSingleWeekViewDay2,
@@ -218,13 +228,14 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
             eventArrayList1.addAll(eventArrayList.filter { it.date == day.date })
         }
 
-        styleTextViews(days, bindingArrayList, ArrayList(eventArrayList1))
+        styleTextViews(days, bindingArrayList, ArrayList(eventArrayList1), materialTextView)
     }
 
     private fun styleTextViews(
         days: List<Day>,
         list: List<EcvTextviewCircleBinding>,
         eventsList: ArrayList<Event>,
+        materialTextView: MaterialTextView
     ) {
         for (index in days.indices) {
             val day = days[index]
@@ -261,32 +272,40 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
 
             if (eventList.isNotEmpty()) {
                 recyclerView.adapter = EventsAdapter(
-                    eventList,
-                    eventItemAutomaticTextColor,
-                    eventItemTextColor
+                    eventList, eventItemAutomaticTextColor, eventItemTextColor
                 )
             }
 
-            textView.text = day.value
+            with(textView) {
+                text = day.value
 
-            if (day.isCurrentDay) {
-                textView.setTextColor(currentDayTextColor)
+                if (day.isCurrentDay) {
+                    setTextColor(currentDayTextColor)
 
-                context.getRealContext()?.let {
-                    textView.background =
-                        ContextCompat.getDrawable(it, R.drawable.ecv_circle)
+                    context.getRealContext()?.let {
+                        background = ContextCompat.getDrawable(it, R.drawable.ecv_circle)
+                    }
+
+                    ViewCompat.setBackgroundTintList(
+                        this, ColorStateList.valueOf(currentDayBackgroundTintColor)
+                    )
                 }
 
-                ViewCompat.setBackgroundTintList(
-                    textView,
-                    ColorStateList.valueOf(currentDayBackgroundTintColor)
-                )
+                if (day.isCurrentMonth || day.isCurrentDay) {
+                    setTypeface(typeface, Typeface.BOLD)
+                } else {
+                    setTypeface(typeface, Typeface.ITALIC)
+                }
             }
 
-            if (day.isCurrentMonth || day.isCurrentDay) {
-                textView.setTypeface(textView.typeface, Typeface.BOLD)
-            } else {
-                textView.setTypeface(textView.typeface, Typeface.ITALIC)
+            if (index == 0 && _calendarWeekVisible) {
+                with(materialTextView) {
+                    if (day.isCurrentMonth || day.isCurrentDay) {
+                        setTypeface(typeface, Typeface.BOLD)
+                    } else {
+                        setTypeface(typeface, Typeface.ITALIC)
+                    }
+                }
             }
         }
     }
@@ -313,8 +332,7 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
                     textView.setTypeface(textView.typeface, Typeface.BOLD)
 
                     ViewCompat.setBackgroundTintList(
-                        textView,
-                        ColorStateList.valueOf(countBackgroundTintColor)
+                        textView, ColorStateList.valueOf(countBackgroundTintColor)
                     )
                 }
             }
