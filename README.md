@@ -158,6 +158,22 @@ Each function has also a javadoc documentation.
 ## Sample app
 https://github.com/michael-winkler/EventCalendar/releases/download/1.2.0/app-release.apk
 
+## Troubleshoot
+If you receive a `android.os.TransactionTooLargeException` exception then you can use https://developer.android.com/reference/android/view/View.html#setSaveEnabled(boolean)
+and set it to false.
+
+Example:
+```kotlin
+<com.nmd.eventCalendar.EventCalendarView
+    android:id="@+id/eventCalendarView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    ...
+    android:saveEnabled="false"/>
+```
+The library stores by default all settings, events etc. with `onSaveInstanceState` and restore all values with `onRestoreInstanceState`.
+This is usually called on device orientation change as example.
+
 
 ## License
 ```
