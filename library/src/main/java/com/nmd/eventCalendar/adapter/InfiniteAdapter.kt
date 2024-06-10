@@ -182,7 +182,6 @@ class InfiniteAdapter(private val eventCalendarView: EventCalendarView) :
         circleBindingList: List<EcvTextviewCircleBinding>,
         cwBindingList: List<EcvTextviewCwBinding>
     ) {
-        println("-> TEST: " + circleBindingList.size)
         for ((index, day) in days.withIndex()) {
             val dayItemLayout = circleBindingList[index]
 

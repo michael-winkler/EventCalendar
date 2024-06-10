@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
-import android.os.Bundle
 import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -21,10 +20,12 @@ import com.nmd.eventCalendar.adapter.InfiniteAdapter
 import com.nmd.eventCalendar.custom.SnapOnScrollListener
 import com.nmd.eventCalendar.custom.SnapOnScrollListener.Companion.attachSnapHelperWithListener
 import com.nmd.eventCalendar.databinding.EcvEventCalendarBinding
-import com.nmd.eventCalendar.instanceState.SavedState
 import com.nmd.eventCalendar.`interface`.EventCalendarDayClickListener
 import com.nmd.eventCalendar.`interface`.EventCalendarScrollListener
 import com.nmd.eventCalendar.model.Event
+import com.nmd.eventCalendar.model.SharedPreferencesModel
+import com.nmd.eventCalendar.shared.SharedPreferences
+import com.nmd.eventCalendar.shared.SharedPreferences.initSharedPreferences
 import com.nmd.eventCalendar.utils.Utils.Companion.getActivity
 import com.nmd.eventCalendar.utils.Utils.Companion.smoothScrollTo
 import java.time.YearMonth
@@ -114,6 +115,9 @@ class EventCalendarView @JvmOverloads constructor(
     internal var eventItemTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
 
     init {
+        // Initialize our shared preferences class
+        getContext().initSharedPreferences()
+
         getContext().withStyledAttributes(attrs, R.styleable.EventCalendarView) {
             headerVisible =
                 getBoolean(R.styleable.EventCalendarView_ecv_header_visible, headerVisible)
@@ -434,63 +438,43 @@ class EventCalendarView @JvmOverloads constructor(
         return super.dispatchTouchEvent(ev)
     }
 
-    override fun onSaveInstanceState(): Parcelable {
-        val superState = super.onSaveInstanceState()
-        val state = Bundle()
-        state.putBoolean(SavedState.SAVED_STATE_DISALLOW_INTERCEPT, disallowIntercept)
-        state.putBoolean(SavedState.SAVED_STATE_CALENDAR_WEEK_VISIBLE, _calendarWeekVisible)
-        state.putInt(SavedState.SAVED_STATE_RECYCLERVIEW_POSITION, currentRecyclerViewPosition)
-        state.putInt(SavedState.SAVED_STATE_START_MONTH, sMonth)
-        state.putInt(SavedState.SAVED_STATE_START_YEAR, sYear)
-        state.putInt(SavedState.SAVED_STATE_END_MONTH, eMonth)
-        state.putInt(SavedState.SAVED_STATE_END_YEAR, eYear)
-        state.putParcelableArrayList(SavedState.SAVED_STATE_EVENTS, events)
-        state.putSerializable(
-            SavedState.SAVED_STATE_YEAR_AND_MONTH_PAIR, currentYearAndMonthPair
+    override fun onSaveInstanceState(): Parcelable? {
+        // Save the last state
+        val sharedPreferencesModel = SharedPreferencesModel(
+            disallowIntercept = disallowIntercept,
+            calendarWeekVisible = _calendarWeekVisible,
+            currentRecyclerViewPosition = currentRecyclerViewPosition,
+            startMonth = sMonth,
+            startYear = sYear,
+            endMonth = eMonth,
+            endYear = eYear,
+            currentYearAndMonthPair = currentYearAndMonthPair,
+            events = events
         )
-        return SavedState(superState, state)
+        SharedPreferences.saveInstanceState(sharedPreferencesModel)
+
+        return super.onSaveInstanceState()
     }
 
-    override fun onRestoreInstanceState(state: Parcelable?) {
-        if (state is SavedState) {
-            val viewState = state.state
-            super.onRestoreInstanceState(state.superState)
-            disallowIntercept =
-                viewState.getBoolean(SavedState.SAVED_STATE_DISALLOW_INTERCEPT, true)
-            _calendarWeekVisible =
-                viewState.getBoolean(SavedState.SAVED_STATE_CALENDAR_WEEK_VISIBLE, false)
-            currentRecyclerViewPosition =
-                viewState.getInt(SavedState.SAVED_STATE_RECYCLERVIEW_POSITION, 0)
-            sMonth = viewState.getInt(SavedState.SAVED_STATE_START_MONTH, Calendar.JANUARY)
-            sYear = viewState.getInt(SavedState.SAVED_STATE_START_YEAR, 2020)
-            eMonth = viewState.getInt(SavedState.SAVED_STATE_END_MONTH, Calendar.DECEMBER)
-            eYear = viewState.getInt(
-                SavedState.SAVED_STATE_END_YEAR, Calendar.getInstance().get(Calendar.YEAR).plus(1)
-            )
-            events = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                val clazzName = ArrayList<Event>()::class.java
-                viewState.getParcelable(SavedState.SAVED_STATE_EVENTS, clazzName) ?: ArrayList()
-            } else {
-                @Suppress("DEPRECATION") (viewState.getParcelableArrayList(SavedState.SAVED_STATE_EVENTS)
-                    ?: ArrayList())
-            }
-            @Suppress("UNCHECKED_CAST") if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                val clazzName = currentYearAndMonthPair::class.java
-                (viewState.getSerializable(
-                    SavedState.SAVED_STATE_YEAR_AND_MONTH_PAIR, clazzName
-                ))?.let {
-                    currentYearAndMonthPair = it
-                }
-            } else {
-                @Suppress("DEPRECATION") (viewState.getSerializable(SavedState.SAVED_STATE_YEAR_AND_MONTH_PAIR) as Pair<Int, Int>?)?.let {
-                    currentYearAndMonthPair = it
-                }
-            }
+    override fun onRestoreInstanceState(state: Parcelable) {
+        // Restore to the last state
+        val sharedPreferencesModel = SharedPreferences.restoreInstanceState()
 
-            binding.eventCalendarRecyclerView.scrollToPosition(currentRecyclerViewPosition)
-        } else {
-            super.onRestoreInstanceState(state)
-        }
+        disallowIntercept = sharedPreferencesModel.disallowIntercept
+        _calendarWeekVisible = sharedPreferencesModel.calendarWeekVisible
+        currentRecyclerViewPosition = sharedPreferencesModel.currentRecyclerViewPosition
+        sMonth = sharedPreferencesModel.startMonth
+        sYear = sharedPreferencesModel.startYear
+        eMonth = sharedPreferencesModel.endMonth
+        eYear = sharedPreferencesModel.endYear
+        currentYearAndMonthPair = sharedPreferencesModel.currentYearAndMonthPair
+        events = sharedPreferencesModel.events
+
+        // Now we clear the stored values from shared preferences
+        SharedPreferences.clearSharedPreferences()
+
+        binding.eventCalendarRecyclerView.scrollToPosition(currentRecyclerViewPosition)
+        super.onRestoreInstanceState(state)
     }
 
     /**

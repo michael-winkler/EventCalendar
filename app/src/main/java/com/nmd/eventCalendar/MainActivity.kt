@@ -36,6 +36,10 @@ class MainActivity : AppCompatActivity() {
         initialize()
     }
 
+    companion object {
+        private var randomEventList = ArrayList<Event>()
+    }
+
     private fun initialize() {
         with(binding) {
             progressBar.visibility = View.VISIBLE
@@ -54,6 +58,7 @@ class MainActivity : AppCompatActivity() {
                 eventCalendarView.visibility = View.GONE
 
                 createRandomEventList(256) {
+                    randomEventList = it
                     eventCalendarView.events = it
                     eventCalendarView.post {
                         progressBar.visibility = View.GONE
@@ -74,8 +79,17 @@ class MainActivity : AppCompatActivity() {
                 }
             })
 
-            createRandomEventList(256) {
-                eventCalendarView.events = it
+            if (randomEventList.isEmpty()) {
+                createRandomEventList(256) {
+                    randomEventList = it
+                    eventCalendarView.events = it
+                    eventCalendarView.post {
+                        progressBar.visibility = View.GONE
+                        eventCalendarView.visibility = View.VISIBLE
+                    }
+                }
+            } else {
+                eventCalendarView.events = randomEventList
                 eventCalendarView.post {
                     progressBar.visibility = View.GONE
                     eventCalendarView.visibility = View.VISIBLE
