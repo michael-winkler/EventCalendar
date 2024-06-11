@@ -23,6 +23,8 @@
 -keep class com.nmd.eventCalendar.model.Event { *; }
 -keep class com.nmd.eventCalendar.model.SharedPreferencesModel { *; }
 -keep class com.nmd.eventCalendar.shared.SharedPreferences { *; }
+-keep class * implements com.nmd.eventCalendar.shared.EventSerializer
+-keep class * implements com.nmd.eventCalendar.shared.EventDeserializer
 
 ############################################## GSON ################################################
 # Gson uses generic type information stored in a class file when working with fields. Proguard
