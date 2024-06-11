@@ -21,3 +21,5 @@
 #-renamesourcefileattribute SourceFile
 -keep class com.nmd.eventCalendar.model.Day { *; }
 -keep class com.nmd.eventCalendar.model.Event { *; }
+-keep class com.nmd.eventCalendar.model.SharedPreferencesModel { *; }
+-keep class com.nmd.eventCalendar.shared.SharedPreferences { *; }
