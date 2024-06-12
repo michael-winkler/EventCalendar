@@ -3,7 +3,6 @@ package com.nmd.eventCalendar.shared
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
-import com.google.gson.reflect.TypeToken
 import com.nmd.eventCalendar.model.Event
 import java.lang.reflect.Type
 
@@ -18,8 +17,13 @@ class EventDeserializer : JsonDeserializer<Event> {
         val name = jsonObject?.get("name")?.asString ?: ""
         val backgroundHexColor = jsonObject?.get("backgroundHexColor")?.asString ?: ""
         val data = jsonObject?.get("data")
-        val dataType = object : TypeToken<Any>() {}.type
-        val dataObject = context?.deserialize<Any>(data, dataType)
+        val dataType = jsonObject?.get("dataType")?.asString ?: ""
+
+        val dataClass = Class.forName(dataType)
+        val dataTypeType: Type = dataClass as Type
+        val dataObject = context?.deserialize<Any>(data, dataTypeType)
+
         return Event(date, name, backgroundHexColor, dataObject)
     }
+
 }

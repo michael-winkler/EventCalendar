@@ -14,10 +14,16 @@ class EventSerializer : JsonSerializer<Event> {
         context: JsonSerializationContext?
     ): JsonElement {
         val jsonObject = JsonObject()
-        jsonObject.addProperty("date", src?.date)
-        jsonObject.addProperty("name", src?.name)
-        jsonObject.addProperty("backgroundHexColor", src?.backgroundHexColor)
-        jsonObject.add("data", context?.serialize(src?.data))
+        if (src != null) {
+            jsonObject.addProperty("date", src.date)
+            jsonObject.addProperty("name", src.name)
+            jsonObject.addProperty("backgroundHexColor", src.backgroundHexColor)
+
+            if (src.data != null) {
+                jsonObject.add("data", context?.serialize(src.data))
+                jsonObject.addProperty("dataType", src.data.javaClass.name)
+            }
+        }
         return jsonObject
     }
 }
