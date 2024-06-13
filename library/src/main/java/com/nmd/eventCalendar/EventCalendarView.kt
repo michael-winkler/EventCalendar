@@ -23,9 +23,7 @@ import com.nmd.eventCalendar.databinding.EcvEventCalendarBinding
 import com.nmd.eventCalendar.`interface`.EventCalendarDayClickListener
 import com.nmd.eventCalendar.`interface`.EventCalendarScrollListener
 import com.nmd.eventCalendar.model.Event
-import com.nmd.eventCalendar.model.SharedPreferencesModel
-import com.nmd.eventCalendar.shared.SharedPreferences
-import com.nmd.eventCalendar.shared.SharedPreferences.initSharedPreferences
+import com.nmd.eventCalendar.state.InstanceState
 import com.nmd.eventCalendar.utils.Utils.Companion.getActivity
 import com.nmd.eventCalendar.utils.Utils.Companion.smoothScrollTo
 import java.time.YearMonth
@@ -115,9 +113,6 @@ class EventCalendarView @JvmOverloads constructor(
     internal var eventItemTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
 
     init {
-        // Initialize our shared preferences class
-        getContext().initSharedPreferences()
-
         getContext().withStyledAttributes(attrs, R.styleable.EventCalendarView) {
             headerVisible =
                 getBoolean(R.styleable.EventCalendarView_ecv_header_visible, headerVisible)
@@ -440,38 +435,37 @@ class EventCalendarView @JvmOverloads constructor(
 
     override fun onSaveInstanceState(): Parcelable? {
         // Save the last state
-        val sharedPreferencesModel = SharedPreferencesModel(
-            disallowIntercept = disallowIntercept,
-            calendarWeekVisible = _calendarWeekVisible,
-            currentRecyclerViewPosition = currentRecyclerViewPosition,
-            startMonth = sMonth,
-            startYear = sYear,
-            endMonth = eMonth,
-            endYear = eYear,
-            currentYearAndMonthPair = currentYearAndMonthPair,
-            events = events
+        InstanceState().saveInstanceState(
+            id = id, stateModel = InstanceState.StateModel(
+                disallowIntercept = disallowIntercept,
+                calendarWeekVisible = _calendarWeekVisible,
+                currentRecyclerViewPosition = currentRecyclerViewPosition,
+                startMonth = sMonth,
+                startYear = sYear,
+                endMonth = eMonth,
+                endYear = eYear,
+                currentYearAndMonthPair = currentYearAndMonthPair,
+                events = events
+            )
         )
-        SharedPreferences.saveInstanceState(sharedPreferencesModel)
 
         return super.onSaveInstanceState()
     }
 
     override fun onRestoreInstanceState(state: Parcelable) {
         // Restore to the last state
-        val sharedPreferencesModel = SharedPreferences.restoreInstanceState()
-
-        disallowIntercept = sharedPreferencesModel.disallowIntercept
-        _calendarWeekVisible = sharedPreferencesModel.calendarWeekVisible
-        currentRecyclerViewPosition = sharedPreferencesModel.currentRecyclerViewPosition
-        sMonth = sharedPreferencesModel.startMonth
-        sYear = sharedPreferencesModel.startYear
-        eMonth = sharedPreferencesModel.endMonth
-        eYear = sharedPreferencesModel.endYear
-        currentYearAndMonthPair = sharedPreferencesModel.currentYearAndMonthPair
-        events = sharedPreferencesModel.events
-
-        // Now we clear the stored values from shared preferences
-        SharedPreferences.clearSharedPreferences()
+        InstanceState().restoreInstanceState(id)?.let { sharedPreferencesModel ->
+            disallowIntercept = sharedPreferencesModel.disallowIntercept
+            _calendarWeekVisible = sharedPreferencesModel.calendarWeekVisible
+            currentRecyclerViewPosition = sharedPreferencesModel.currentRecyclerViewPosition
+            sMonth = sharedPreferencesModel.startMonth
+            sYear = sharedPreferencesModel.startYear
+            eMonth = sharedPreferencesModel.endMonth
+            eYear = sharedPreferencesModel.endYear
+            currentYearAndMonthPair = sharedPreferencesModel.currentYearAndMonthPair
+            events = sharedPreferencesModel.events
+        }
+        InstanceState().removeArrayListEventById(id)
 
         binding.eventCalendarRecyclerView.scrollToPosition(currentRecyclerViewPosition)
         super.onRestoreInstanceState(state)

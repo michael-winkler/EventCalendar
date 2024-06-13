@@ -1,5 +1,8 @@
 package com.nmd.eventCalendar.model
 
+import androidx.annotation.Keep
+
+@Keep
 data class Day(
     /**
      * eg: 31
