@@ -1,10 +1,12 @@
 package com.nmd.eventCalendar.state
 
 import androidx.annotation.Keep
+import androidx.annotation.RestrictTo
 import com.nmd.eventCalendar.model.Event
 import java.util.Calendar
 
-class InstanceState {
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+internal class InstanceState {
 
     companion object {
         private var instanceStateModels = ArrayList<InstanceStateModel>()

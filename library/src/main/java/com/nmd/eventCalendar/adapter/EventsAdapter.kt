@@ -4,6 +4,7 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.annotation.RestrictTo
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -12,7 +13,8 @@ import com.nmd.eventCalendar.databinding.EcvEventViewBinding
 import com.nmd.eventCalendar.model.Event
 import com.nmd.eventCalendar.utils.Utils.Companion.isDarkColor
 
-class EventsAdapter(
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+internal class EventsAdapter(
     private val list: ArrayList<Event>,
     private val eventItemAutomaticTextColor: Boolean,
     private val eventItemTextColor: Int,

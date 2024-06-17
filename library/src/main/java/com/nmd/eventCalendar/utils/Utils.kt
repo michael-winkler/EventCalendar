@@ -6,6 +6,7 @@ import android.content.ContextWrapper
 import android.os.Build
 import android.view.View
 import androidx.annotation.RequiresApi
+import androidx.annotation.RestrictTo
 import androidx.core.graphics.ColorUtils
 import androidx.recyclerview.widget.RecyclerView
 import com.nmd.eventCalendar.R
@@ -19,7 +20,8 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-class Utils {
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+internal class Utils {
 
     companion object {
 

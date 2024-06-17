@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RestrictTo
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,7 +35,8 @@ import com.nmd.eventCalendar.utils.Utils.Companion.showView
 import com.nmd.eventCalendar.utils.Utils.Companion.smoothScrollTo
 import java.util.Calendar
 
-class InfiniteAdapter(private val eventCalendarView: EventCalendarView) :
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+internal class InfiniteAdapter(private val eventCalendarView: EventCalendarView) :
     RecyclerView.Adapter<InfiniteAdapter.AdapterViewHolder>() {
 
     inner class AdapterViewHolder(val binding: EcvEventCalendarViewBinding) :

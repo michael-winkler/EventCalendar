@@ -1,5 +1,6 @@
 package com.nmd.eventCalendar.custom
 
+import androidx.annotation.RestrictTo
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
 
@@ -7,7 +8,8 @@ import androidx.recyclerview.widget.SnapHelper
  * Credit to: Nick Rout - https://medium.com/@ricknout
  * https://medium.com/over-engineering/detecting-snap-changes-with-androids-recyclerview-snaphelper-9e9f5e95c424
  */
-class SnapOnScrollListener(
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+internal class SnapOnScrollListener(
     private val snapHelper: SnapHelper,
     private var behavior: Behavior = Behavior.NOTIFY_ON_SCROLL,
     private var onSnapPositionChangeListener: OnSnapPositionChangeListener? = null,
