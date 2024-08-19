@@ -189,5 +189,5 @@ If you like this library feel free to "star" it:<br>
 
 ```
 This library has been successfully tested with:
-Android Studio Jellyfish | 2023.3.1 Patch 1
+Android Studio Koala | 2024.1.1 Patch 2
 ```
