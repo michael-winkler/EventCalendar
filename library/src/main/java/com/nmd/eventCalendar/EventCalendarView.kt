@@ -63,12 +63,12 @@ import kotlin.math.abs
  * It is really to easy to add events to the calendar.
  * Here is an example code:
  * ```
- * binding.eventCalendarView.events = ArrayList<Event>().apply {
- *     add(Event(date = "15.04.2023", name = "Vacation", backgroundHexColor = "#4badeb"))
- *     add(Event(date = "16.04.2023", name = "Home office", backgroundHexColor = "#e012ad"))
- *     add(Event(date = "17.04.2023", name = "Meeting", backgroundHexColor = "#e07912"))
- *     add(Event(date = "18.04.2023", name = "Vacation", backgroundHexColor = "#4badeb", data = "Let's go!"))
- *     }
+ * binding.eventCalendarView.events = arrayListOf(
+ *     Event(date = "15.04.2023", name = "Vacation", backgroundHexColor = "#4badeb"),
+ *     Event(date = "16.04.2023", name = "Home office", backgroundHexColor = "#e012ad"),
+ *     Event(date = "17.04.2023", name = "Meeting", backgroundHexColor = "#e07912"),
+ *     Event(date = "18.04.2023", name = "Vacation", backgroundHexColor = "#4badeb", data = "Let's go!")
+ * )
  * ```
  * The date format have to be in format "dd.MM.yyyy".
  * For more details about how a event model should be
@@ -111,6 +111,7 @@ class EventCalendarView @JvmOverloads constructor(
     internal var countVisible = true
     internal var eventItemAutomaticTextColor = true
     internal var eventItemTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
+    internal var edgeToEdgeEnabled = false
 
     init {
         getContext().withStyledAttributes(attrs, R.styleable.EventCalendarView) {
@@ -143,6 +144,11 @@ class EventCalendarView @JvmOverloads constructor(
             )
             eventItemTextColor = getColor(
                 (R.styleable.EventCalendarView_ecv_event_item_text_color), eventItemTextColor
+            )
+
+            edgeToEdgeEnabled = getBoolean(
+                R.styleable.EventCalendarView_ecv_edge_to_edge_enabled,
+                edgeToEdgeEnabled
             )
         }
 

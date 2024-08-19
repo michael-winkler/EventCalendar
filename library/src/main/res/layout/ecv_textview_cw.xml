@@ -11,6 +11,7 @@
     app:showDividers="beginning">
 
     <FrameLayout
+        android:id="@+id/eventCalendarViewDayTextViewFrameLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

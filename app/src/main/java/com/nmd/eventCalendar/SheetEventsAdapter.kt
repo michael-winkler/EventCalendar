@@ -5,8 +5,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.nmd.eventCalendar.Utils.Companion.isDarkColor
 import com.nmd.eventCalendar.model.Event
-import com.nmd.eventCalendar.utils.Utils.Companion.isDarkColor
 import com.nmd.eventCalendarSample.databinding.RecyclerViewSheetEventBinding
 
 class SheetEventsAdapter(private var list: ArrayList<Event>) :

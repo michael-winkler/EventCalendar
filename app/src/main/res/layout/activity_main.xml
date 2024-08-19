@@ -4,20 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     tools:ignore="ContentDescription">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/activityMainAppBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorBackground"
-        android:fitsSystemWindows="true"
         app:liftOnScroll="false">
 
         <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/activityMainMaterialToolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize">
+            android:layout_height="wrap_content"
+            app:title="@string/app_name">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -26,7 +26,7 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:id="@+id/eventCalendarViewCalendarImageView"
+                    android:id="@+id/activityMainCalendarImageView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="?android:attr/actionBarItemBackground"
@@ -36,7 +36,7 @@
                     app:tint="@color/colorIconTint" />
 
                 <ImageView
-                    android:id="@+id/eventCalendarViewShuffleImageView"
+                    android:id="@+id/activityMainShuffleImageView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="?android:attr/actionBarItemBackground"
@@ -58,7 +58,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <com.nmd.eventCalendar.EventCalendarView
-            android:id="@+id/eventCalendarView"
+            android:id="@+id/activityMainEventCalendarView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:ecv_calendar_week_visible="true"
@@ -68,40 +68,50 @@
             app:ecv_current_day_background_tint_color="@android:color/holo_red_dark"
             app:ecv_current_day_text_color="@android:color/white"
             app:ecv_disallow_intercept="false"
+            app:ecv_edge_to_edge_enabled="true"
             app:ecv_event_item_automatic_text_color="true"
             app:ecv_event_item_text_color="@color/ecv_black"
             app:ecv_header_visible="true" />
 
         <ProgressBar
-            android:id="@+id/progressBar"
+            android:id="@+id/activityMainProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/floatingActionButtonCalendarWeekToggle"
+        <RelativeLayout
+            android:id="@+id/activityMainFloatingActionButtonHolder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="88dp"
-            android:layout_marginBottom="16dp"
-            android:src="@drawable/icon_calendar_week_begin_outline"
-            app:backgroundTint="@color/alert"
-            app:rippleColor="@color/ecv_ripple_color"
-            app:tint="@color/alertStroke" />
+            android:layout_gravity="bottom|end">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/floatingActionButtonSingleWeekView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="16dp"
-            android:src="@drawable/icon_calendar_today_outline"
-            app:backgroundTint="@color/colorPrimary"
-            app:rippleColor="@color/ecv_ripple_color"
-            app:tint="@color/colorWhite" />
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/activityMainFloatingActionButtonCalendarWeekToggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
+                android:layout_toStartOf="@+id/activityMainFloatingActionButtonSingleWeekView"
+                android:src="@drawable/icon_calendar_week_begin_outline"
+                app:backgroundTint="@color/alert"
+                app:rippleColor="@color/ecv_ripple_color"
+                app:tint="@color/alertStroke" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/activityMainFloatingActionButtonSingleWeekView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginVertical="16dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/icon_calendar_today_outline"
+                app:backgroundTint="@color/colorPrimary"
+                app:rippleColor="@color/ecv_ripple_color"
+                app:tint="@color/colorWhite" />
+
+        </RelativeLayout>
 
     </FrameLayout>
 

@@ -5,7 +5,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.nmd.eventCalendar.MainActivity.RandomEventList.Companion.createRandomEventList
@@ -27,11 +31,30 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.toolbar)
+        setSupportActionBar(binding.activityMainMaterialToolbar)
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, windowInsets ->
+            val insets =
+                windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() + WindowInsetsCompat.Type.displayCutout())
+
+            binding.activityMainAppBarLayout.updatePadding(
+                left = insets.left,
+                top = insets.top,
+                right = insets.right
+            )
+
+            binding.activityMainFloatingActionButtonHolder.updatePadding(
+                bottom = insets.bottom,
+                right = insets.right
+            )
+
+            ViewCompat.onApplyWindowInsets(view, windowInsets)
+        }
 
         initialize()
     }
@@ -42,38 +65,41 @@ class MainActivity : AppCompatActivity() {
 
     private fun initialize() {
         with(binding) {
-            progressBar.visibility = View.VISIBLE
-            eventCalendarView.visibility = View.GONE
+            activityMainProgressBar.visibility = View.VISIBLE
+            activityMainEventCalendarView.visibility = View.GONE
 
             val year = Calendar.getInstance().get(Calendar.YEAR)
-            eventCalendarView.setMonthAndYear(
+            activityMainEventCalendarView.setMonthAndYear(
                 startMonth = 1, startYear = year, endMonth = 12, endYear = year
             )
-            eventCalendarViewCalendarImageView.setOnClickListener {
-                eventCalendarView.scrollToCurrentMonth(false, true)
+            activityMainCalendarImageView.setOnClickListener {
+                activityMainEventCalendarView.scrollToCurrentMonth(false, true)
             }
 
-            eventCalendarViewShuffleImageView.setOnClickListener {
-                progressBar.visibility = View.VISIBLE
-                eventCalendarView.visibility = View.GONE
+            activityMainShuffleImageView.setOnClickListener {
+                activityMainProgressBar.visibility = View.VISIBLE
+                activityMainEventCalendarView.visibility = View.GONE
 
                 createRandomEventList(256) {
                     randomEventList = it
-                    eventCalendarView.events = it
-                    eventCalendarView.post {
-                        progressBar.visibility = View.GONE
-                        eventCalendarView.visibility = View.VISIBLE
+                    activityMainEventCalendarView.events = it
+                    activityMainEventCalendarView.post {
+                        activityMainProgressBar.visibility = View.GONE
+                        activityMainEventCalendarView.visibility = View.VISIBLE
                     }
                 }
             }
 
-            eventCalendarView.addOnDayClickListener(object : EventCalendarDayClickListener {
+            activityMainEventCalendarView.addOnDayClickListener(object :
+                EventCalendarDayClickListener {
                 override fun onClick(day: Day) {
-                    val eventList = eventCalendarView.events.filter { it.date == day.date }
+                    val eventList =
+                        activityMainEventCalendarView.events.filter { it.date == day.date }
                     bottomSheet(day, eventList)
                 }
             })
-            eventCalendarView.addOnCalendarScrollListener(object : EventCalendarScrollListener {
+            activityMainEventCalendarView.addOnCalendarScrollListener(object :
+                EventCalendarScrollListener {
                 override fun onScrolled(month: Int, year: Int) {
                     Log.i("ECV", "Scrolled to: $month $year")
                 }
@@ -82,25 +108,26 @@ class MainActivity : AppCompatActivity() {
             if (randomEventList.isEmpty()) {
                 createRandomEventList(256) {
                     randomEventList = it
-                    eventCalendarView.events = it
-                    eventCalendarView.post {
-                        progressBar.visibility = View.GONE
-                        eventCalendarView.visibility = View.VISIBLE
+                    activityMainEventCalendarView.events = it
+                    activityMainEventCalendarView.post {
+                        activityMainProgressBar.visibility = View.GONE
+                        activityMainEventCalendarView.visibility = View.VISIBLE
                     }
                 }
             } else {
-                eventCalendarView.events = randomEventList
-                eventCalendarView.post {
-                    progressBar.visibility = View.GONE
-                    eventCalendarView.visibility = View.VISIBLE
+                activityMainEventCalendarView.events = randomEventList
+                activityMainEventCalendarView.post {
+                    activityMainProgressBar.visibility = View.GONE
+                    activityMainEventCalendarView.visibility = View.VISIBLE
                 }
             }
 
-            floatingActionButtonCalendarWeekToggle.setOnClickListener {
-                eventCalendarView.calendarWeekVisible = !eventCalendarView.calendarWeekVisible
+            activityMainFloatingActionButtonCalendarWeekToggle.setOnClickListener {
+                activityMainEventCalendarView.calendarWeekVisible =
+                    !activityMainEventCalendarView.calendarWeekVisible
             }
 
-            floatingActionButtonSingleWeekView.setOnClickListener {
+            activityMainFloatingActionButtonSingleWeekView.setOnClickListener {
                 bottomSheet2()
             }
         }
@@ -132,14 +159,14 @@ class MainActivity : AppCompatActivity() {
             BottomSheetDialog(this, com.nmd.eventCalendarSample.R.style.BottomSheetDialog)
 
         binding.bottomSheetEventCalendarSingleWeekView.events =
-            this@MainActivity.binding.eventCalendarView.events
+            this@MainActivity.binding.activityMainEventCalendarView.events
         binding.bottomSheetEventCalendarSingleWeekView.addOnDayClickListener(object :
             EventCalendarDayClickListener {
             override fun onClick(day: Day) {
                 bottomSheetDialog.dismiss()
 
                 val eventList =
-                    this@MainActivity.binding.eventCalendarView.events.filter { it.date == day.date }
+                    this@MainActivity.binding.activityMainEventCalendarView.events.filter { it.date == day.date }
                 bottomSheet(day, eventList)
             }
         })
@@ -157,98 +184,98 @@ class MainActivity : AppCompatActivity() {
         val color: String,
     ) {
         companion object {
-            private val list = ArrayList<RandomEventList>().apply {
-                add(RandomEventList("Meeting", "#e07912"))
-                add(RandomEventList("Vacation", "#4badeb"))
-                add(RandomEventList("Birthday Party", "#ff6f00"))
-                add(RandomEventList("Concert", "#d500f9"))
-                add(RandomEventList("Job Interview", "#7cb342"))
-                add(RandomEventList("Doctor's Appointment", "#29b6f6"))
-                add(RandomEventList("Gym Session", "#ef5350"))
-                add(RandomEventList("Networking Event", "#ab47bc"))
-                add(RandomEventList("Movie Night", "#ffee58"))
-                add(RandomEventList("Dinner Date", "#26a69a"))
-                add(RandomEventList("Business Trip", "#8d6e63"))
-                add(RandomEventList("Charity Event", "#ff9800"))
-                add(RandomEventList("Book Club Meeting", "#b71c1c"))
-                add(RandomEventList("Coffee with Friends", "#9ccc65"))
-                add(RandomEventList("Music Festival", "#7e57c2"))
-                add(RandomEventList("Volunteering", "#78909c"))
-                add(RandomEventList("Sports Game", "#f44336"))
-                add(RandomEventList("Art Exhibition", "#9c27b0"))
-                add(RandomEventList("Language Exchange", "#4caf50"))
-                add(RandomEventList("Hiking Trip", "#cddc39"))
-                add(RandomEventList("Yoga Class", "#26c6da"))
-                add(RandomEventList("Baking Workshop", "#ffab00"))
-                add(RandomEventList("Science Fair", "#6a1b9a"))
-                add(RandomEventList("Board Game Night", "#607d8b"))
-                add(RandomEventList("Fashion Show", "#f57c00"))
-                add(RandomEventList("Political Rally", "#009688"))
-                add(RandomEventList("Writing Workshop", "#ff4081"))
-                add(RandomEventList("Tech Conference", "#1565c0"))
-                add(RandomEventList("Wine Tasting", "#8bc34a"))
-                add(RandomEventList("Cooking Class", "#f4511e"))
-                add(RandomEventList("Open Mic Night", "#673ab7"))
-                add(RandomEventList("Karaoke Night", "#ff5252"))
-                add(RandomEventList("Outdoor Concert", "#64dd17"))
-                add(RandomEventList("Flea Market", "#9e9e9e"))
-                add(RandomEventList("Art Museum Tour", "#ff1744"))
-                add(RandomEventList("Escape Room", "#00bcd4"))
-                add(RandomEventList("Photography Workshop", "#ffd600"))
-                add(RandomEventList("Ballet Performance", "#9fa8da"))
-                add(RandomEventList("Fashion Design Course", "#4caf4f"))
-                add(RandomEventList("Community Service", "#c2185b"))
-                add(RandomEventList("Trivia Night", "#2196f3"))
-                add(RandomEventList("Chess Tournament", "#afb42b"))
-                add(RandomEventList("Stand-up Comedy Show", "#795548"))
-                add(RandomEventList("Book Signing", "#e91e63"))
-                add(RandomEventList("Potluck Party", "#689f38"))
-                add(RandomEventList("Art Auction", "#ba68c8"))
-                add(RandomEventList("Game Night", "#00897b"))
-                add(RandomEventList("Beer Tasting", "#ffd54f"))
-                add(RandomEventList("Stand-up Paddleboarding", "#0277bd"))
-                add(RandomEventList("Charity Run", "#f57f17"))
-                add(RandomEventList("Poetry Slam", "#f44336"))
-                add(RandomEventList("Salsa Dancing", "#4caf50"))
-                add(RandomEventList("Board Game Cafe", "#8bc34a"))
-                add(RandomEventList("Movie Marathon", "#b71c1c"))
-                add(RandomEventList("Bike Tour", "#4db6ac"))
-                add(RandomEventList("Outdoor Yoga", "#7cb342"))
-                add(RandomEventList("Art Walk", "#00bcd4"))
-                add(RandomEventList("Wine and Paint Night", "#9c27b0"))
-                add(RandomEventList("Plant Swap", "#388e3c"))
-                add(RandomEventList("Beach Clean-up", "#009688"))
-                add(RandomEventList("Indoor Skydiving", "#ff6f00"))
-                add(RandomEventList("Ice Skating", "#0277bd"))
-                add(RandomEventList("Farmers Market", "#cddc39"))
-                add(RandomEventList("Game of Thrones Marathon", "#6d4c41"))
-                add(RandomEventList("Soap Making Workshop", "#26a69a"))
-                add(RandomEventList("Beer and Cheese Pairing", "#ffab00"))
-                add(RandomEventList("Group Painting Session", "#ffa000"))
-                add(RandomEventList("Food Truck Festival", "#f06292"))
-                add(RandomEventList("Ghost Tour", "#7e57c2"))
-                add(RandomEventList("Sushi Making Class", "#0091ea"))
-                add(RandomEventList("Aquarium Visit", "#b2ff59"))
-                add(RandomEventList("Murder Mystery Dinner", "#d500f9"))
-                add(RandomEventList("Vintage Clothing Market", "#f57c00"))
-                add(RandomEventList("Rock Climbing", "#6a1b9a"))
-                add(RandomEventList("DIY Woodworking Class", "#795548"))
-                add(RandomEventList("Meditation Retreat", "#0097a7"))
-                add(RandomEventList("Group Bike Ride", "#d32f2f"))
-                add(RandomEventList("Cooking Competition", "#ff5252"))
-                add(RandomEventList("Ice Cream Social", "#00bcd4"))
-                add(RandomEventList("Haunted House Visit", "#ba68c8"))
-                add(RandomEventList("Photography Walk", "#4caf50"))
-                add(RandomEventList("Beach Volleyball", "#ffa000"))
-                add(RandomEventList("Gardening Workshop", "#4db6ac"))
-                add(RandomEventList("Laser Tag", "#673ab7"))
-                add(RandomEventList("Bird Watching Tour", "#ff4081"))
-                add(RandomEventList("Movie in the Park", "#43a047"))
-                add(RandomEventList("Cider Tasting", "#ef5350"))
-                add(RandomEventList("Escape Game", "#29b6f6"))
-                add(RandomEventList("Cheese Making Class", "#ffc107"))
-                add(RandomEventList("Farm Visit", "#7cb342"))
-            }
+            private val list = arrayListOf(
+                RandomEventList("Meeting", "#e07912"),
+                RandomEventList("Vacation", "#4badeb"),
+                RandomEventList("Birthday Party", "#ff6f00"),
+                RandomEventList("Concert", "#d500f9"),
+                RandomEventList("Job Interview", "#7cb342"),
+                RandomEventList("Doctor's Appointment", "#29b6f6"),
+                RandomEventList("Gym Session", "#ef5350"),
+                RandomEventList("Networking Event", "#ab47bc"),
+                RandomEventList("Movie Night", "#ffee58"),
+                RandomEventList("Dinner Date", "#26a69a"),
+                RandomEventList("Business Trip", "#8d6e63"),
+                RandomEventList("Charity Event", "#ff9800"),
+                RandomEventList("Book Club Meeting", "#b71c1c"),
+                RandomEventList("Coffee with Friends", "#9ccc65"),
+                RandomEventList("Music Festival", "#7e57c2"),
+                RandomEventList("Volunteering", "#78909c"),
+                RandomEventList("Sports Game", "#f44336"),
+                RandomEventList("Art Exhibition", "#9c27b0"),
+                RandomEventList("Language Exchange", "#4caf50"),
+                RandomEventList("Hiking Trip", "#cddc39"),
+                RandomEventList("Yoga Class", "#26c6da"),
+                RandomEventList("Baking Workshop", "#ffab00"),
+                RandomEventList("Science Fair", "#6a1b9a"),
+                RandomEventList("Board Game Night", "#607d8b"),
+                RandomEventList("Fashion Show", "#f57c00"),
+                RandomEventList("Political Rally", "#009688"),
+                RandomEventList("Writing Workshop", "#ff4081"),
+                RandomEventList("Tech Conference", "#1565c0"),
+                RandomEventList("Wine Tasting", "#8bc34a"),
+                RandomEventList("Cooking Class", "#f4511e"),
+                RandomEventList("Open Mic Night", "#673ab7"),
+                RandomEventList("Karaoke Night", "#ff5252"),
+                RandomEventList("Outdoor Concert", "#64dd17"),
+                RandomEventList("Flea Market", "#9e9e9e"),
+                RandomEventList("Art Museum Tour", "#ff1744"),
+                RandomEventList("Escape Room", "#00bcd4"),
+                RandomEventList("Photography Workshop", "#ffd600"),
+                RandomEventList("Ballet Performance", "#9fa8da"),
+                RandomEventList("Fashion Design Course", "#4caf4f"),
+                RandomEventList("Community Service", "#c2185b"),
+                RandomEventList("Trivia Night", "#2196f3"),
+                RandomEventList("Chess Tournament", "#afb42b"),
+                RandomEventList("Stand-up Comedy Show", "#795548"),
+                RandomEventList("Book Signing", "#e91e63"),
+                RandomEventList("Potluck Party", "#689f38"),
+                RandomEventList("Art Auction", "#ba68c8"),
+                RandomEventList("Game Night", "#00897b"),
+                RandomEventList("Beer Tasting", "#ffd54f"),
+                RandomEventList("Stand-up Paddleboarding", "#0277bd"),
+                RandomEventList("Charity Run", "#f57f17"),
+                RandomEventList("Poetry Slam", "#f44336"),
+                RandomEventList("Salsa Dancing", "#4caf50"),
+                RandomEventList("Board Game Cafe", "#8bc34a"),
+                RandomEventList("Movie Marathon", "#b71c1c"),
+                RandomEventList("Bike Tour", "#4db6ac"),
+                RandomEventList("Outdoor Yoga", "#7cb342"),
+                RandomEventList("Art Walk", "#00bcd4"),
+                RandomEventList("Wine and Paint Night", "#9c27b0"),
+                RandomEventList("Plant Swap", "#388e3c"),
+                RandomEventList("Beach Clean-up", "#009688"),
+                RandomEventList("Indoor Skydiving", "#ff6f00"),
+                RandomEventList("Ice Skating", "#0277bd"),
+                RandomEventList("Farmers Market", "#cddc39"),
+                RandomEventList("Game of Thrones Marathon", "#6d4c41"),
+                RandomEventList("Soap Making Workshop", "#26a69a"),
+                RandomEventList("Beer and Cheese Pairing", "#ffab00"),
+                RandomEventList("Group Painting Session", "#ffa000"),
+                RandomEventList("Food Truck Festival", "#f06292"),
+                RandomEventList("Ghost Tour", "#7e57c2"),
+                RandomEventList("Sushi Making Class", "#0091ea"),
+                RandomEventList("Aquarium Visit", "#b2ff59"),
+                RandomEventList("Murder Mystery Dinner", "#d500f9"),
+                RandomEventList("Vintage Clothing Market", "#f57c00"),
+                RandomEventList("Rock Climbing", "#6a1b9a"),
+                RandomEventList("DIY Woodworking Class", "#795548"),
+                RandomEventList("Meditation Retreat", "#0097a7"),
+                RandomEventList("Group Bike Ride", "#d32f2f"),
+                RandomEventList("Cooking Competition", "#ff5252"),
+                RandomEventList("Ice Cream Social", "#00bcd4"),
+                RandomEventList("Haunted House Visit", "#ba68c8"),
+                RandomEventList("Photography Walk", "#4caf50"),
+                RandomEventList("Beach Volleyball", "#ffa000"),
+                RandomEventList("Gardening Workshop", "#4db6ac"),
+                RandomEventList("Laser Tag", "#673ab7"),
+                RandomEventList("Bird Watching Tour", "#ff4081"),
+                RandomEventList("Movie in the Park", "#43a047"),
+                RandomEventList("Cider Tasting", "#ef5350"),
+                RandomEventList("Escape Game", "#29b6f6"),
+                RandomEventList("Cheese Making Class", "#ffc107"),
+                RandomEventList("Farm Visit", "#7cb342")
+            )
 
             fun createRandomEventList(numRandomEvents: Int, callback: (ArrayList<Event>) -> Unit) {
                 CoroutineScope(Dispatchers.IO).launch {

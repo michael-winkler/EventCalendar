@@ -9,9 +9,13 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.MarginLayoutParams
 import androidx.annotation.RestrictTo
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textview.MaterialTextView
@@ -83,7 +87,7 @@ internal class InfiniteAdapter(private val eventCalendarView: EventCalendarView)
                     eventCalendarViewMonthYearHeader.hideView()
                 }
 
-                if (eventCalendarView._calendarWeekVisible) {
+                if (eventCalendarView.calendarWeekVisible) {
                     eventCalendarViewHeaderKw.showView()
                     eventCalendarViewRow1.eventCalendarViewCalendarWeek.root.showView()
                     eventCalendarViewRow2.eventCalendarViewCalendarWeek.root.showView()
@@ -101,6 +105,121 @@ internal class InfiniteAdapter(private val eventCalendarView: EventCalendarView)
                     eventCalendarViewRow5.eventCalendarViewCalendarWeek.root.hideView()
                     eventCalendarViewRow5.eventCalendarViewCalendarWeek.root.hideView()
                     eventCalendarViewRow6.eventCalendarViewCalendarWeek.root.hideView()
+                }
+
+                if (eventCalendarView.edgeToEdgeEnabled) {
+                    eventCalendarView.post {
+                        val insets = ViewCompat.getRootWindowInsets(eventCalendarView)?.getInsets(
+                            WindowInsetsCompat.Type.systemBars() + WindowInsetsCompat.Type.displayCutout()
+                        )
+
+                        val isPortrait = (binding.root.tag?.toString()?.toIntOrNull() ?: 0) == 0
+
+                        val left = insets?.left ?: 0
+                        val right = insets?.right ?: 0
+                        val bottom = insets?.bottom ?: 0
+
+                        if (isPortrait) {
+                            eventCalendarViewRow6.eventCalendarViewCalendarWeek.root.updatePadding(
+                                bottom = bottom
+                            )
+                            eventCalendarViewRow6.eventCalendarViewDay1.root.updatePadding(
+                                bottom = bottom
+                            )
+                            eventCalendarViewRow6.eventCalendarViewDay2.root.updatePadding(
+                                bottom = bottom
+                            )
+                            eventCalendarViewRow6.eventCalendarViewDay3.root.updatePadding(
+                                bottom = bottom
+                            )
+                            eventCalendarViewRow6.eventCalendarViewDay4.root.updatePadding(
+                                bottom = bottom
+                            )
+                            eventCalendarViewRow6.eventCalendarViewDay5.root.updatePadding(
+                                bottom = bottom
+                            )
+                            eventCalendarViewRow6.eventCalendarViewDay6.root.updatePadding(
+                                bottom = bottom
+                            )
+                            eventCalendarViewRow6.eventCalendarViewDay7.root.updatePadding(
+                                bottom = bottom
+                            )
+                        } else {
+                            eventCalendarViewLandscapeEdgeHelper?.updatePadding(
+                                right = right
+                            )
+
+                            if (eventCalendarView.headerVisible) {
+                                eventCalendarViewMonthYearHeader.updatePadding(
+                                    left = left
+                                )
+                            } else {
+                                if (eventCalendarView.calendarWeekVisible) {
+                                    eventCalendarViewHeaderKw.updatePadding(
+                                        left = left
+                                    )
+                                    eventCalendarViewRow1.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewFrameLayout.updatePadding(
+                                        left = left
+                                    )
+                                    eventCalendarViewRow2.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewFrameLayout.updatePadding(
+                                        left = left
+                                    )
+                                    eventCalendarViewRow3.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewFrameLayout.updatePadding(
+                                        left = left
+                                    )
+                                    eventCalendarViewRow4.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewFrameLayout.updatePadding(
+                                        left = left
+                                    )
+                                    eventCalendarViewRow5.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewFrameLayout.updatePadding(
+                                        left = left
+                                    )
+                                    eventCalendarViewRow6.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewFrameLayout.updatePadding(
+                                        left = left
+                                    )
+                                } else {
+                                    eventCalendarViewHeaderMonday.updatePadding(
+                                        left = left
+                                    )
+                                    eventCalendarViewRow1.eventCalendarViewDay1.eventCalendarViewDayTextView.updateLayoutParams<MarginLayoutParams> {
+                                        marginStart = left
+                                    }
+                                    eventCalendarViewRow1.eventCalendarViewDay1.eventCalendarViewDayRecyclerView.updatePadding(
+                                        left = left
+                                    )
+                                    eventCalendarViewRow2.eventCalendarViewDay1.eventCalendarViewDayTextView.updateLayoutParams<MarginLayoutParams> {
+                                        marginStart = left
+                                    }
+                                    eventCalendarViewRow2.eventCalendarViewDay1.eventCalendarViewDayRecyclerView.updatePadding(
+                                        left = left
+                                    )
+                                    eventCalendarViewRow3.eventCalendarViewDay1.eventCalendarViewDayTextView.updateLayoutParams<MarginLayoutParams> {
+                                        marginStart = left
+                                    }
+                                    eventCalendarViewRow3.eventCalendarViewDay1.eventCalendarViewDayRecyclerView.updatePadding(
+                                        left = left
+                                    )
+                                    eventCalendarViewRow4.eventCalendarViewDay1.eventCalendarViewDayTextView.updateLayoutParams<MarginLayoutParams> {
+                                        marginStart = left
+                                    }
+                                    eventCalendarViewRow4.eventCalendarViewDay1.eventCalendarViewDayRecyclerView.updatePadding(
+                                        left = left
+                                    )
+                                    eventCalendarViewRow5.eventCalendarViewDay1.eventCalendarViewDayTextView.updateLayoutParams<MarginLayoutParams> {
+                                        marginStart = left
+                                    }
+                                    eventCalendarViewRow5.eventCalendarViewDay1.eventCalendarViewDayRecyclerView.updatePadding(
+                                        left = left
+                                    )
+                                    eventCalendarViewRow6.eventCalendarViewDay1.eventCalendarViewDayTextView.updateLayoutParams<MarginLayoutParams> {
+                                        marginStart = left
+                                    }
+                                    eventCalendarViewRow6.eventCalendarViewDay1.eventCalendarViewDayRecyclerView.updatePadding(
+                                        left = left
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
 
                 eventCalendarViewMonthYearImageViewLeft.setOnClickListener {
@@ -121,9 +240,7 @@ internal class InfiniteAdapter(private val eventCalendarView: EventCalendarView)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterViewHolder {
         return AdapterViewHolder(
             EcvEventCalendarViewBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
+                LayoutInflater.from(parent.context), parent, false
             )
         )
     }
@@ -231,8 +348,7 @@ internal class InfiniteAdapter(private val eventCalendarView: EventCalendarView)
                     setTextColor(eventCalendarView.currentDayTextColor)
 
                     context.getRealContext()?.let {
-                        background =
-                            ContextCompat.getDrawable(it, R.drawable.ecv_circle)
+                        background = ContextCompat.getDrawable(it, R.drawable.ecv_circle)
                     }
 
                     ViewCompat.setBackgroundTintList(
@@ -255,9 +371,7 @@ internal class InfiniteAdapter(private val eventCalendarView: EventCalendarView)
     }
 
     private fun initCalendarWeek(
-        day: Day,
-        index: Int,
-        ecvTextviewCwBinding: List<EcvTextviewCwBinding>
+        day: Day, index: Int, ecvTextviewCwBinding: List<EcvTextviewCwBinding>
     ) {
         when (index) {
             0 -> {
@@ -321,8 +435,7 @@ internal class InfiniteAdapter(private val eventCalendarView: EventCalendarView)
                     textView.setTypeface(textView.typeface, Typeface.BOLD)
 
                     ViewCompat.setBackgroundTintList(
-                        textView,
-                        ColorStateList.valueOf(eventCalendarView.countBackgroundTintColor)
+                        textView, ColorStateList.valueOf(eventCalendarView.countBackgroundTintColor)
                     )
                 }
             }

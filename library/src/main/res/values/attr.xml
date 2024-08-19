@@ -46,5 +46,10 @@
         "ecv_event_item_automatic_text_color" is set to false.
         Default: @color/ecv_white-->
         <attr name="ecv_event_item_text_color" format="color" />
+
+        <!-- Indicates whether the event calendar view should handle edge to edge or not.
+        Default: false -->
+        <attr name="ecv_edge_to_edge_enabled" format="boolean" />
+
     </declare-styleable>
 </resources>

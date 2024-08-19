@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:tag="0">
 
     <RelativeLayout
         android:id="@+id/eventCalendarViewMonthYearHeader"
@@ -63,6 +64,7 @@
             android:visibility="gone" />
 
         <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/eventCalendarViewHeaderMonday"
             style="@style/ECV_DayName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

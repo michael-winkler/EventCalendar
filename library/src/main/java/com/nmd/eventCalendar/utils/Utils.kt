@@ -25,7 +25,7 @@ internal class Utils {
 
     companion object {
 
-        fun Context?.getRealContext(): Context? {
+        internal fun Context?.getRealContext(): Context? {
             return when (this) {
                 is ContextWrapper -> this.baseContext
                 is Context -> this
@@ -33,7 +33,7 @@ internal class Utils {
             }
         }
 
-        fun Context?.getActivity(): Activity? {
+        internal fun Context?.getActivity(): Activity? {
             return when (this) {
                 is Activity -> this
                 is ContextWrapper -> this.baseContext.getActivity()
@@ -41,7 +41,7 @@ internal class Utils {
             }
         }
 
-        fun Int.getDaysOfMonthAndGivenYear(year: Int): List<Day> {
+        internal fun Int.getDaysOfMonthAndGivenYear(year: Int): List<Day> {
             val currentDate = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date())
 
             val calendar = Calendar.getInstance().apply {
@@ -128,7 +128,7 @@ internal class Utils {
             return days
         }
 
-        fun getDaysForCurrentWeek(): List<Day> {
+        internal fun getDaysForCurrentWeek(): List<Day> {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 return getDaysForCurrentWeekApi26Impl()
             }
@@ -166,7 +166,7 @@ internal class Utils {
         }
 
         @RequiresApi(Build.VERSION_CODES.O)
-        fun getDaysForCurrentWeekApi26Impl(): List<Day> {
+        internal fun getDaysForCurrentWeekApi26Impl(): List<Day> {
             val today = LocalDate.now()
             val startOfWeek = today.with(DayOfWeek.MONDAY)
 
@@ -192,17 +192,17 @@ internal class Utils {
             return days
         }
 
-        fun getCurrentWeekNumber(): Int {
+        internal fun getCurrentWeekNumber(): Int {
             val calendar = Calendar.getInstance()
             return calendar[Calendar.WEEK_OF_YEAR]
         }
 
-        fun getCurrentYear(): Int {
+        internal fun getCurrentYear(): Int {
             val calendar = Calendar.getInstance()
             return calendar[Calendar.YEAR]
         }
 
-        fun getCurrentMonth(): Int {
+        internal fun getCurrentMonth(): Int {
             val calendar = Calendar.getInstance()
             return calendar[Calendar.MONTH]
         }
@@ -217,27 +217,27 @@ internal class Utils {
             return (1..numDaysInMonth).toList()
         }
 
-        fun Int.getMonthName(context: Context?): String {
+        internal fun Int.getMonthName(context: Context?): String {
             context ?: return ""
             val array = context.resources.getStringArray(R.array.ecv_month_names)
             return array[this]
         }
 
-        fun Day.dayEvents(events: ArrayList<Event>): ArrayList<Event> {
+        internal fun Day.dayEvents(events: ArrayList<Event>): ArrayList<Event> {
             return ArrayList(events.filter { it.date == date })
         }
 
-        fun Int.isDarkColor(): Boolean {
+        internal fun Int.isDarkColor(): Boolean {
             return ColorUtils.calculateLuminance(this) < 0.5
         }
 
-        fun <T> ArrayList<T>?.orEmptyArrayList(): ArrayList<T> {
+        internal fun <T> ArrayList<T>?.orEmptyArrayList(): ArrayList<T> {
             return this ?: ArrayList()
         }
 
-        fun Boolean?.orTrue(): Boolean = this ?: true
+        internal fun Boolean?.orTrue(): Boolean = this ?: true
 
-        fun RecyclerView.smoothScrollTo(position: Int) {
+        internal fun RecyclerView.smoothScrollTo(position: Int) {
             post {
                 try {
                     layoutManager?.smoothScrollToPosition(
@@ -248,19 +248,19 @@ internal class Utils {
             }
         }
 
-        fun View?.showView() {
+        internal fun View?.showView() {
             this?.visibility = View.VISIBLE
         }
 
-        fun View?.hideView() {
+        internal fun View?.hideView() {
             this?.visibility = View.GONE
         }
 
-        fun String?.isStringNullOrEmpty(): Boolean {
+        private fun String?.isStringNullOrEmpty(): Boolean {
             return this == null || this == "null" || this.trim().isEmpty()
         }
 
-        fun Day.convertStringToCalendarWeek(): String {
+        internal fun Day.convertStringToCalendarWeek(): String {
             if (date.isStringNullOrEmpty()) {
                 return ""
             }

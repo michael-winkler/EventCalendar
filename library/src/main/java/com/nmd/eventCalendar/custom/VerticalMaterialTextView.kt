@@ -4,10 +4,8 @@ import android.content.Context
 import android.graphics.Canvas
 import android.text.TextPaint
 import android.util.AttributeSet
-import androidx.annotation.RestrictTo
 import com.google.android.material.textview.MaterialTextView
 
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 internal class VerticalMaterialTextView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
