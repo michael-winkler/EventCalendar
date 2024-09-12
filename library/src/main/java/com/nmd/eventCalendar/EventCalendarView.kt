@@ -147,8 +147,7 @@ class EventCalendarView @JvmOverloads constructor(
             )
 
             edgeToEdgeEnabled = getBoolean(
-                R.styleable.EventCalendarView_ecv_edge_to_edge_enabled,
-                edgeToEdgeEnabled
+                R.styleable.EventCalendarView_ecv_edge_to_edge_enabled, edgeToEdgeEnabled
             )
         }
 
@@ -258,17 +257,17 @@ class EventCalendarView @JvmOverloads constructor(
         }
         set(events) {
             eventArrayList = events
-            updateRecyclerView(false)
+            updateRecyclerView(dateRangeChanged = false, scrollToLastIfOutOfRange = false)
         }
 
     /**
-     * Scrolls the calendar to the given month and year.
-     * If the month and year is not in range, no action is taken.
-     * @param month eg. 1 scrolls to January or 12 to December
-     * @param year eg. 2023
-     * @param smoothScroll Indicates whether scrolling should be smooth or immediate.
-     * @param scrollToLastIfOutOfRange Indicates whether scrolling to the last existing position is executed or not.
-     * Default is `false`
+     * Scrolls the calendar to the specified month and year.
+     * If the given month and year are out of range, no action is taken.
+     *
+     * @param month Int - The month to scroll to (e.g., 1 for January, 12 for December).
+     * @param year Int - The year to scroll to (e.g., 2023).
+     * @param smoothScroll Boolean - If `true`, the scroll will be smooth. If `false`, it will be immediate. Default is `false`.
+     * @param scrollToLastIfOutOfRange Boolean - If `true`, scrolls to the last existing position if the given month/year is out of range. Default is `false`.
      */
     @Suppress("MemberVisibilityCanBePrivate")
     fun scrollTo(
@@ -276,8 +275,7 @@ class EventCalendarView @JvmOverloads constructor(
         year: Int,
         smoothScroll: Boolean = false,
         scrollToLastIfOutOfRange: Boolean = false,
-    ) {
-        /*
+    ) {/*
          * Checks if the given month and year are within the range of the calendar.
          * If yes, calculates the position of the month on the horizontal axis.
          * If the month/year is not in range, no action is taken accept `scrollToLastIfOutOfRange` is
@@ -311,10 +309,10 @@ class EventCalendarView @JvmOverloads constructor(
 
     /**
      * Scrolls the calendar to the current month of the current year.
-     * If the month and year is not in range, no action is taken.
-     * @param smoothScroll Indicates whether scrolling should be smooth or immediate.
-     * @param scrollToLastIfOutOfRange Indicates whether scrolling to the last existing position is executed or not.
-     * Default is `false`
+     * If the current month and year are out of the defined range, no action is taken.
+     *
+     * @param smoothScroll Boolean - If `true`, the scroll will be smooth. If `false`, it will be immediate. Default is `false`.
+     * @param scrollToLastIfOutOfRange Boolean - If `true`, scrolls to the last existing position if the current month is out of range. Default is `false`.
      */
     fun scrollToCurrentMonth(
         smoothScroll: Boolean = false,
@@ -336,16 +334,23 @@ class EventCalendarView @JvmOverloads constructor(
     }
 
     /**
-     * Set the start/end month and year to the [EventCalendarView].
-     * Use eg. 4 as "startMonth" to set the start month to april.
-     * @param startMonth Int. Default is `JANUARY`
-     * @param startYear Int. Default is `2020`
-     * @param endMonth Int. Default is `DECEMBER`
-     * @param endYear Int. Default is `current year + 1`
-     * @param forceRecreate Boolean. Default is `false`
+     * Set the start and end month/year for the [EventCalendarView].
+     * Use, for example, 4 as "startMonth" to set April as the start month.
+     *
+     * @param startMonth Int - The start month (1 = January, 12 = December). Default is `January`.
+     * @param startYear Int - The start year. Default is `2020`.
+     * @param endMonth Int - The end month (1 = January, 12 = December). Default is `December`.
+     * @param endYear Int - The end year. Default is `current year + 1`.
+     * @param forceRecreate Boolean - If `true`, the view will be recreated, even if the date range is unchanged. Default is `false`.
+     * @param scrollToLastIfOutOfRange Boolean - If `true`, scrolls to the last existing month if the current month is out of range. Default is `false`.
      */
     fun setMonthAndYear(
-        startMonth: Int, startYear: Int, endMonth: Int, endYear: Int, forceRecreate: Boolean = false
+        startMonth: Int,
+        startYear: Int,
+        endMonth: Int,
+        endYear: Int,
+        forceRecreate: Boolean = false,
+        scrollToLastIfOutOfRange: Boolean = false
     ) {
         val isStartMonthYearChanged = sMonth != startMonth - 1 || sYear != startYear
         val isEndMonthYearChanged = eMonth != endMonth - 1 || eYear != endYear
@@ -358,7 +363,9 @@ class EventCalendarView @JvmOverloads constructor(
             eMonth = endMonth - 1
             eYear = endYear
 
-            updateRecyclerView(true)
+            updateRecyclerView(
+                dateRangeChanged = true, scrollToLastIfOutOfRange = scrollToLastIfOutOfRange
+            )
         }
     }
 
@@ -395,14 +402,14 @@ class EventCalendarView @JvmOverloads constructor(
         }
 
     /**
-     * Set this to true if you want to display the [EventCalendarView] inside on a [ViewPager2] object.
-     * Then the [EventCalendarView] will consume the scroll event and not the [ViewPager2].
+     * Set this to `true` if you want the [EventCalendarView] to handle scroll events instead of the [ViewPager2].
+     * When this is enabled, the [EventCalendarView] will consume the scroll events, preventing them from being intercepted by the [ViewPager2].
      *
-     * You can also set this value inside your xml layout:
+     * You can also set this value in your XML layout as follows:
      * ```
      * app:ecv_disallow_intercept="true"
      * ```
-     * Default is `false`
+     * Default is `false`.
      */
     @Suppress("KDocUnresolvedReference")
     var disallowIntercept: Boolean
@@ -412,19 +419,20 @@ class EventCalendarView @JvmOverloads constructor(
         }
 
     /**
-     * Set this to true if you want to display the calendar week on each week row.
+     * Indicates whether to display the calendar week on each week row.
      *
-     * You can also set this value inside your xml layout:
+     * Set this property to `true` to show the calendar week on each row. By default, this is `false`.
+     *
+     * You can also set this value in your XML layout as follows:
      * ```
      * app:ecv_calendar_week_visible="true"
      * ```
-     * Default is `false`
      */
     var calendarWeekVisible: Boolean
         get() = _calendarWeekVisible
         set(value) {
             _calendarWeekVisible = value
-            updateRecyclerView(false)
+            updateRecyclerView(dateRangeChanged = false, scrollToLastIfOutOfRange = false)
         }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -484,13 +492,20 @@ class EventCalendarView @JvmOverloads constructor(
      */
     @SuppressLint("NotifyDataSetChanged")
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    private fun updateRecyclerView(dateRangeChanged: Boolean) {
+    private fun updateRecyclerView(dateRangeChanged: Boolean, scrollToLastIfOutOfRange: Boolean) {
         with(binding) {
             eventCalendarRecyclerView.adapter = eventCalendarRecyclerView.adapter
             if (dateRangeChanged) {
                 val validPosition = getValidRecyclerViewPosition()
-                eventCalendarRecyclerView.scrollToPosition(validPosition)
-                currentRecyclerViewPosition = validPosition
+                val itemCount = eventCalendarRecyclerView.adapter?.itemCount ?: 0
+
+                val scrollTo = when {
+                    scrollToLastIfOutOfRange && validPosition == 0 -> maxOf(itemCount - 1, 0)
+                    else -> validPosition
+                }
+
+                eventCalendarRecyclerView.scrollToPosition(scrollTo)
+                currentRecyclerViewPosition = scrollTo
             } else {
                 eventCalendarRecyclerView.scrollToPosition(currentRecyclerViewPosition)
             }
