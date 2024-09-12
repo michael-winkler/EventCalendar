@@ -154,7 +154,7 @@ Each function has also a javadoc documentation.
 ## Edge to edge support
 The `EventCalendarView` does also support edge to edge.
 ```kotlin
-    app:ecv_edge_to_edge_enabled="true"
+app:ecv_edge_to_edge_enabled="true"
 ```
 You can enable or disable the edge to edge handling inside your xml configuration.
 The default value is `false`.

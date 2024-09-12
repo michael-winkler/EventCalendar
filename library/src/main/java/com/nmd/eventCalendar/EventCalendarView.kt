@@ -268,7 +268,7 @@ class EventCalendarView @JvmOverloads constructor(
      * @param year eg. 2023
      * @param smoothScroll Indicates whether scrolling should be smooth or immediate.
      * @param scrollToLastIfOutOfRange Indicates whether scrolling to the last existing position is executed or not.
-     * Default is "false"
+     * Default is `false`
      */
     @Suppress("MemberVisibilityCanBePrivate")
     fun scrollTo(
@@ -276,10 +276,12 @@ class EventCalendarView @JvmOverloads constructor(
         year: Int,
         smoothScroll: Boolean = false,
         scrollToLastIfOutOfRange: Boolean = false,
-    ) {/*
+    ) {
+        /*
          * Checks if the given month and year are within the range of the calendar.
          * If yes, calculates the position of the month on the horizontal axis.
-         * If the month/year is not in range, no action is taken.
+         * If the month/year is not in range, no action is taken accept `scrollToLastIfOutOfRange` is
+         * set to `true`.
          */
         val booleanIntPair1 = monthInRange(month.minus(1), year)
         val scrollPosition = if (booleanIntPair1.first) {
@@ -312,7 +314,7 @@ class EventCalendarView @JvmOverloads constructor(
      * If the month and year is not in range, no action is taken.
      * @param smoothScroll Indicates whether scrolling should be smooth or immediate.
      * @param scrollToLastIfOutOfRange Indicates whether scrolling to the last existing position is executed or not.
-     * Default is "false"
+     * Default is `false`
      */
     fun scrollToCurrentMonth(
         smoothScroll: Boolean = false,
@@ -336,11 +338,11 @@ class EventCalendarView @JvmOverloads constructor(
     /**
      * Set the start/end month and year to the [EventCalendarView].
      * Use eg. 4 as "startMonth" to set the start month to april.
-     * @param startMonth Int. Default is "JANUARY"
-     * @param startYear Int. Default is "2020"
-     * @param endMonth Int. Default is "DECEMBER"
-     * @param endYear Int. Default is "current year + 1"
-     * @param forceRecreate Boolean. Default is "false"
+     * @param startMonth Int. Default is `JANUARY`
+     * @param startYear Int. Default is `2020`
+     * @param endMonth Int. Default is `DECEMBER`
+     * @param endYear Int. Default is `current year + 1`
+     * @param forceRecreate Boolean. Default is `false`
      */
     fun setMonthAndYear(
         startMonth: Int, startYear: Int, endMonth: Int, endYear: Int, forceRecreate: Boolean = false
@@ -400,7 +402,7 @@ class EventCalendarView @JvmOverloads constructor(
      * ```
      * app:ecv_disallow_intercept="true"
      * ```
-     * Default is "false"
+     * Default is `false`
      */
     @Suppress("KDocUnresolvedReference")
     var disallowIntercept: Boolean
@@ -416,7 +418,7 @@ class EventCalendarView @JvmOverloads constructor(
      * ```
      * app:ecv_calendar_week_visible="true"
      * ```
-     * Default is "false"
+     * Default is `false`
      */
     var calendarWeekVisible: Boolean
         get() = _calendarWeekVisible
