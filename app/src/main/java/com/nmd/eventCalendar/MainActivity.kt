@@ -73,7 +73,10 @@ class MainActivity : AppCompatActivity() {
                 startMonth = 1, startYear = year, endMonth = 12, endYear = year
             )
             activityMainCalendarImageView.setOnClickListener {
-                activityMainEventCalendarView.scrollToCurrentMonth(false, true)
+                activityMainEventCalendarView.scrollToCurrentMonth(
+                    smoothScroll = false,
+                    scrollToLastIfOutOfRange = true
+                )
             }
 
             activityMainShuffleImageView.setOnClickListener {
