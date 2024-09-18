@@ -43,7 +43,7 @@ dependencies {
     implementation('androidx.fragment:fragment-ktx:1.8.3')
 
     // Google Material Design
-    implementation 'com.google.android.material:material:1.13.0-alpha05'
+    implementation 'com.google.android.material:material:1.13.0-alpha06'
 
     // This library
     implementation project(path: ':library')
