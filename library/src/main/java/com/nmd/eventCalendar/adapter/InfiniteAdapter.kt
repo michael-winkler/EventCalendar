@@ -108,115 +108,113 @@ internal class InfiniteAdapter(private val eventCalendarView: EventCalendarView)
                 }
 
                 if (eventCalendarView.edgeToEdgeEnabled) {
-                    eventCalendarView.post {
-                        val insets = ViewCompat.getRootWindowInsets(eventCalendarView)?.getInsets(
-                            WindowInsetsCompat.Type.systemBars() + WindowInsetsCompat.Type.displayCutout()
+                    val insets = ViewCompat.getRootWindowInsets(eventCalendarView)?.getInsets(
+                        WindowInsetsCompat.Type.systemBars() + WindowInsetsCompat.Type.displayCutout()
+                    )
+
+                    val isPortrait = (binding.root.tag?.toString()?.toIntOrNull() ?: 0) == 0
+
+                    val left = insets?.left ?: 0
+                    val right = insets?.right ?: 0
+                    val bottom = insets?.bottom ?: 0
+
+                    if (isPortrait) {
+                        eventCalendarViewRow6.eventCalendarViewCalendarWeek.root.updatePadding(
+                            bottom = bottom
+                        )
+                        eventCalendarViewRow6.eventCalendarViewDay1.root.updatePadding(
+                            bottom = bottom
+                        )
+                        eventCalendarViewRow6.eventCalendarViewDay2.root.updatePadding(
+                            bottom = bottom
+                        )
+                        eventCalendarViewRow6.eventCalendarViewDay3.root.updatePadding(
+                            bottom = bottom
+                        )
+                        eventCalendarViewRow6.eventCalendarViewDay4.root.updatePadding(
+                            bottom = bottom
+                        )
+                        eventCalendarViewRow6.eventCalendarViewDay5.root.updatePadding(
+                            bottom = bottom
+                        )
+                        eventCalendarViewRow6.eventCalendarViewDay6.root.updatePadding(
+                            bottom = bottom
+                        )
+                        eventCalendarViewRow6.eventCalendarViewDay7.root.updatePadding(
+                            bottom = bottom
+                        )
+                    } else {
+                        eventCalendarViewLandscapeEdgeHelper?.updatePadding(
+                            right = right
                         )
 
-                        val isPortrait = (binding.root.tag?.toString()?.toIntOrNull() ?: 0) == 0
-
-                        val left = insets?.left ?: 0
-                        val right = insets?.right ?: 0
-                        val bottom = insets?.bottom ?: 0
-
-                        if (isPortrait) {
-                            eventCalendarViewRow6.eventCalendarViewCalendarWeek.root.updatePadding(
-                                bottom = bottom
-                            )
-                            eventCalendarViewRow6.eventCalendarViewDay1.root.updatePadding(
-                                bottom = bottom
-                            )
-                            eventCalendarViewRow6.eventCalendarViewDay2.root.updatePadding(
-                                bottom = bottom
-                            )
-                            eventCalendarViewRow6.eventCalendarViewDay3.root.updatePadding(
-                                bottom = bottom
-                            )
-                            eventCalendarViewRow6.eventCalendarViewDay4.root.updatePadding(
-                                bottom = bottom
-                            )
-                            eventCalendarViewRow6.eventCalendarViewDay5.root.updatePadding(
-                                bottom = bottom
-                            )
-                            eventCalendarViewRow6.eventCalendarViewDay6.root.updatePadding(
-                                bottom = bottom
-                            )
-                            eventCalendarViewRow6.eventCalendarViewDay7.root.updatePadding(
-                                bottom = bottom
+                        if (eventCalendarView.headerVisible) {
+                            eventCalendarViewMonthYearHeader.updatePadding(
+                                left = left
                             )
                         } else {
-                            eventCalendarViewLandscapeEdgeHelper?.updatePadding(
-                                right = right
-                            )
-
-                            if (eventCalendarView.headerVisible) {
-                                eventCalendarViewMonthYearHeader.updatePadding(
+                            if (eventCalendarView.calendarWeekVisible) {
+                                eventCalendarViewHeaderKw.updatePadding(
+                                    left = left
+                                )
+                                eventCalendarViewRow1.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewFrameLayout.updatePadding(
+                                    left = left
+                                )
+                                eventCalendarViewRow2.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewFrameLayout.updatePadding(
+                                    left = left
+                                )
+                                eventCalendarViewRow3.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewFrameLayout.updatePadding(
+                                    left = left
+                                )
+                                eventCalendarViewRow4.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewFrameLayout.updatePadding(
+                                    left = left
+                                )
+                                eventCalendarViewRow5.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewFrameLayout.updatePadding(
+                                    left = left
+                                )
+                                eventCalendarViewRow6.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewFrameLayout.updatePadding(
                                     left = left
                                 )
                             } else {
-                                if (eventCalendarView.calendarWeekVisible) {
-                                    eventCalendarViewHeaderKw.updatePadding(
-                                        left = left
-                                    )
-                                    eventCalendarViewRow1.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewFrameLayout.updatePadding(
-                                        left = left
-                                    )
-                                    eventCalendarViewRow2.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewFrameLayout.updatePadding(
-                                        left = left
-                                    )
-                                    eventCalendarViewRow3.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewFrameLayout.updatePadding(
-                                        left = left
-                                    )
-                                    eventCalendarViewRow4.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewFrameLayout.updatePadding(
-                                        left = left
-                                    )
-                                    eventCalendarViewRow5.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewFrameLayout.updatePadding(
-                                        left = left
-                                    )
-                                    eventCalendarViewRow6.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewFrameLayout.updatePadding(
-                                        left = left
-                                    )
-                                } else {
-                                    eventCalendarViewHeaderMonday.updatePadding(
-                                        left = left
-                                    )
-                                    eventCalendarViewRow1.eventCalendarViewDay1.eventCalendarViewDayTextView.updateLayoutParams<MarginLayoutParams> {
-                                        marginStart = left
-                                    }
-                                    eventCalendarViewRow1.eventCalendarViewDay1.eventCalendarViewDayRecyclerView.updatePadding(
-                                        left = left
-                                    )
-                                    eventCalendarViewRow2.eventCalendarViewDay1.eventCalendarViewDayTextView.updateLayoutParams<MarginLayoutParams> {
-                                        marginStart = left
-                                    }
-                                    eventCalendarViewRow2.eventCalendarViewDay1.eventCalendarViewDayRecyclerView.updatePadding(
-                                        left = left
-                                    )
-                                    eventCalendarViewRow3.eventCalendarViewDay1.eventCalendarViewDayTextView.updateLayoutParams<MarginLayoutParams> {
-                                        marginStart = left
-                                    }
-                                    eventCalendarViewRow3.eventCalendarViewDay1.eventCalendarViewDayRecyclerView.updatePadding(
-                                        left = left
-                                    )
-                                    eventCalendarViewRow4.eventCalendarViewDay1.eventCalendarViewDayTextView.updateLayoutParams<MarginLayoutParams> {
-                                        marginStart = left
-                                    }
-                                    eventCalendarViewRow4.eventCalendarViewDay1.eventCalendarViewDayRecyclerView.updatePadding(
-                                        left = left
-                                    )
-                                    eventCalendarViewRow5.eventCalendarViewDay1.eventCalendarViewDayTextView.updateLayoutParams<MarginLayoutParams> {
-                                        marginStart = left
-                                    }
-                                    eventCalendarViewRow5.eventCalendarViewDay1.eventCalendarViewDayRecyclerView.updatePadding(
-                                        left = left
-                                    )
-                                    eventCalendarViewRow6.eventCalendarViewDay1.eventCalendarViewDayTextView.updateLayoutParams<MarginLayoutParams> {
-                                        marginStart = left
-                                    }
-                                    eventCalendarViewRow6.eventCalendarViewDay1.eventCalendarViewDayRecyclerView.updatePadding(
-                                        left = left
-                                    )
+                                eventCalendarViewHeaderMonday.updatePadding(
+                                    left = left
+                                )
+                                eventCalendarViewRow1.eventCalendarViewDay1.eventCalendarViewDayTextView.updateLayoutParams<MarginLayoutParams> {
+                                    marginStart = left
                                 }
+                                eventCalendarViewRow1.eventCalendarViewDay1.eventCalendarViewDayRecyclerView.updatePadding(
+                                    left = left
+                                )
+                                eventCalendarViewRow2.eventCalendarViewDay1.eventCalendarViewDayTextView.updateLayoutParams<MarginLayoutParams> {
+                                    marginStart = left
+                                }
+                                eventCalendarViewRow2.eventCalendarViewDay1.eventCalendarViewDayRecyclerView.updatePadding(
+                                    left = left
+                                )
+                                eventCalendarViewRow3.eventCalendarViewDay1.eventCalendarViewDayTextView.updateLayoutParams<MarginLayoutParams> {
+                                    marginStart = left
+                                }
+                                eventCalendarViewRow3.eventCalendarViewDay1.eventCalendarViewDayRecyclerView.updatePadding(
+                                    left = left
+                                )
+                                eventCalendarViewRow4.eventCalendarViewDay1.eventCalendarViewDayTextView.updateLayoutParams<MarginLayoutParams> {
+                                    marginStart = left
+                                }
+                                eventCalendarViewRow4.eventCalendarViewDay1.eventCalendarViewDayRecyclerView.updatePadding(
+                                    left = left
+                                )
+                                eventCalendarViewRow5.eventCalendarViewDay1.eventCalendarViewDayTextView.updateLayoutParams<MarginLayoutParams> {
+                                    marginStart = left
+                                }
+                                eventCalendarViewRow5.eventCalendarViewDay1.eventCalendarViewDayRecyclerView.updatePadding(
+                                    left = left
+                                )
+                                eventCalendarViewRow6.eventCalendarViewDay1.eventCalendarViewDayTextView.updateLayoutParams<MarginLayoutParams> {
+                                    marginStart = left
+                                }
+                                eventCalendarViewRow6.eventCalendarViewDay1.eventCalendarViewDayRecyclerView.updatePadding(
+                                    left = left
+                                )
                             }
                         }
                     }
