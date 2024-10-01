@@ -20,7 +20,7 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.github.michael-winkler:EventCalendar:1.3.6'
+    implementation 'com.github.michael-winkler:EventCalendar:1.3.7'
 }
 ```
 
@@ -164,7 +164,7 @@ The default value is `false`.
 
 
 ## Sample app
-https://github.com/michael-winkler/EventCalendar/releases/download/1.3.6/app-release.apk
+https://github.com/michael-winkler/EventCalendar/releases/download/1.3.7/app-release.apk
 
 
 ## License
@@ -189,5 +189,5 @@ If you like this library feel free to "star" it:<br>
 
 ```
 This library has been successfully tested with:
-Android Studio Koala | 2024.1.1 Patch 2
+Android Studio Koala Feature Drop | 2024.1.2 Patch 1
 ```
