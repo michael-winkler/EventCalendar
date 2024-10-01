@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.os.Build
-import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
 import androidx.core.graphics.ColorUtils
@@ -246,14 +245,6 @@ internal class Utils {
                 } catch (ignored: Exception) {
                 }
             }
-        }
-
-        internal fun View?.showView() {
-            this?.visibility = View.VISIBLE
-        }
-
-        internal fun View?.hideView() {
-            this?.visibility = View.GONE
         }
 
         private fun String?.isStringNullOrEmpty(): Boolean {

@@ -8,12 +8,12 @@ import android.graphics.Typeface
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.MotionEvent
-import android.view.View
 import android.widget.FrameLayout
 import androidx.annotation.RestrictTo
 import androidx.core.content.ContextCompat
 import androidx.core.content.withStyledAttributes
 import androidx.core.view.ViewCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textview.MaterialTextView
@@ -30,9 +30,7 @@ import com.nmd.eventCalendar.utils.Utils.Companion.getCurrentYear
 import com.nmd.eventCalendar.utils.Utils.Companion.getDaysForCurrentWeek
 import com.nmd.eventCalendar.utils.Utils.Companion.getMonthName
 import com.nmd.eventCalendar.utils.Utils.Companion.getRealContext
-import com.nmd.eventCalendar.utils.Utils.Companion.hideView
 import com.nmd.eventCalendar.utils.Utils.Companion.orEmptyArrayList
-import com.nmd.eventCalendar.utils.Utils.Companion.showView
 
 class EventCalendarSingleWeekView @JvmOverloads constructor(
     context: Context,
@@ -185,21 +183,15 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
             eventCalendarSingleWeekViewMonthYearTextView1.text = monthYearText
 
             eventCalendarSingleWeekViewMonthYearHeader.post {
-                if (headerVisible) {
-                    eventCalendarSingleWeekViewMonthYearHeader.showView()
-                } else {
-                    eventCalendarSingleWeekViewMonthYearHeader.hideView()
-                }
+                eventCalendarSingleWeekViewMonthYearHeader.isVisible = headerVisible
 
                 if (_calendarWeekVisible) {
-                    eventCalendarViewHeaderKw.showView()
-                    eventCalendarViewCalendarWeek.root.showView()
                     eventCalendarViewCalendarWeek.eventCalendarViewDayTextView.text =
                         "${getCurrentWeekNumber()}"
-                } else {
-                    eventCalendarViewHeaderKw.hideView()
-                    eventCalendarViewCalendarWeek.root.hideView()
                 }
+
+                eventCalendarViewHeaderKw.isVisible = _calendarWeekVisible
+                eventCalendarViewCalendarWeek.root.isVisible = _calendarWeekVisible
             }
 
             initTextViews(
@@ -339,7 +331,7 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
 
             for (i in lastCompleteVisiblePosition + 1..eventList.lastIndex) {
                 val view = parent.findViewHolderForAdapterPosition(i)?.itemView ?: continue
-                view.visibility = View.GONE
+                view.isVisible = false
             }
         }
     }

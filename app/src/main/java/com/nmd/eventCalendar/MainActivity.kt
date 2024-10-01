@@ -4,11 +4,11 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -65,8 +65,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun initialize() {
         with(binding) {
-            activityMainProgressBar.visibility = View.VISIBLE
-            activityMainEventCalendarView.visibility = View.GONE
+            activityMainProgressBar.isVisible = true
+            activityMainEventCalendarView.isVisible = false
 
             val year = Calendar.getInstance().get(Calendar.YEAR)
             activityMainEventCalendarView.setMonthAndYear(
@@ -80,15 +80,15 @@ class MainActivity : AppCompatActivity() {
             }
 
             activityMainShuffleImageView.setOnClickListener {
-                activityMainProgressBar.visibility = View.VISIBLE
-                activityMainEventCalendarView.visibility = View.GONE
+                activityMainProgressBar.isVisible = true
+                activityMainEventCalendarView.isVisible = false
 
                 createRandomEventList(256) {
                     randomEventList = it
                     activityMainEventCalendarView.events = it
                     activityMainEventCalendarView.post {
-                        activityMainProgressBar.visibility = View.GONE
-                        activityMainEventCalendarView.visibility = View.VISIBLE
+                        activityMainProgressBar.isVisible = false
+                        activityMainEventCalendarView.isVisible = true
                     }
                 }
             }
@@ -113,15 +113,15 @@ class MainActivity : AppCompatActivity() {
                     randomEventList = it
                     activityMainEventCalendarView.events = it
                     activityMainEventCalendarView.post {
-                        activityMainProgressBar.visibility = View.GONE
-                        activityMainEventCalendarView.visibility = View.VISIBLE
+                        activityMainProgressBar.isVisible = false
+                        activityMainEventCalendarView.isVisible = true
                     }
                 }
             } else {
                 activityMainEventCalendarView.events = randomEventList
                 activityMainEventCalendarView.post {
-                    activityMainProgressBar.visibility = View.GONE
-                    activityMainEventCalendarView.visibility = View.VISIBLE
+                    activityMainProgressBar.isVisible = false
+                    activityMainEventCalendarView.isVisible = true
                 }
             }
 
@@ -139,47 +139,56 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun bottomSheet(day: Day, eventList: List<Event>) {
         val binding = BottomSheetBinding.inflate(LayoutInflater.from(this))
-        val bottomSheetDialog =
-            BottomSheetDialog(this, com.nmd.eventCalendarSample.R.style.BottomSheetDialog)
+        with(binding) {
+            val bottomSheetDialog =
+                BottomSheetDialog(
+                    this@MainActivity,
+                    com.nmd.eventCalendarSample.R.style.BottomSheetDialog
+                )
 
-        binding.bottomSheetMaterialTextView.text = day.date + " (" + eventList.size + ")"
-        binding.bottomSheetNoEventsMaterialTextView.visibility =
-            if (eventList.isEmpty()) View.VISIBLE else View.GONE
+            bottomSheetMaterialTextView.text = day.date + " (" + eventList.size + ")"
+            bottomSheetNoEventsMaterialTextView.isVisible = eventList.isEmpty()
 
-        binding.bottomSheetRecyclerView.adapter = SheetEventsAdapter(ArrayList(eventList))
+            bottomSheetRecyclerView.adapter = SheetEventsAdapter(ArrayList(eventList))
 
-        bottomSheetDialog.setContentView(binding.root)
-        bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
-        bottomSheetDialog.behavior.skipCollapsed = true
-        bottomSheetDialog.setCancelable(true)
+            bottomSheetDialog.setContentView(root)
+            bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            bottomSheetDialog.behavior.skipCollapsed = true
+            bottomSheetDialog.setCancelable(true)
 
-        bottomSheetDialog.show()
+            bottomSheetDialog.show()
+        }
     }
 
     private fun bottomSheet2() {
         val binding = BottomSheetSingleWeekBinding.inflate(LayoutInflater.from(this))
-        val bottomSheetDialog =
-            BottomSheetDialog(this, com.nmd.eventCalendarSample.R.style.BottomSheetDialog)
+        with(binding) {
+            val bottomSheetDialog =
+                BottomSheetDialog(
+                    this@MainActivity,
+                    com.nmd.eventCalendarSample.R.style.BottomSheetDialog
+                )
 
-        binding.bottomSheetEventCalendarSingleWeekView.events =
-            this@MainActivity.binding.activityMainEventCalendarView.events
-        binding.bottomSheetEventCalendarSingleWeekView.addOnDayClickListener(object :
-            EventCalendarDayClickListener {
-            override fun onClick(day: Day) {
-                bottomSheetDialog.dismiss()
+            bottomSheetEventCalendarSingleWeekView.events =
+                this@MainActivity.binding.activityMainEventCalendarView.events
+            bottomSheetEventCalendarSingleWeekView.addOnDayClickListener(object :
+                EventCalendarDayClickListener {
+                override fun onClick(day: Day) {
+                    bottomSheetDialog.dismiss()
 
-                val eventList =
-                    this@MainActivity.binding.activityMainEventCalendarView.events.filter { it.date == day.date }
-                bottomSheet(day, eventList)
-            }
-        })
+                    val eventList =
+                        this@MainActivity.binding.activityMainEventCalendarView.events.filter { it.date == day.date }
+                    bottomSheet(day, eventList)
+                }
+            })
 
-        bottomSheetDialog.setContentView(binding.root)
-        bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
-        bottomSheetDialog.behavior.skipCollapsed = true
-        bottomSheetDialog.setCancelable(true)
+            bottomSheetDialog.setContentView(root)
+            bottomSheetDialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+            bottomSheetDialog.behavior.skipCollapsed = true
+            bottomSheetDialog.setCancelable(true)
 
-        bottomSheetDialog.show()
+            bottomSheetDialog.show()
+        }
     }
 
     data class RandomEventList(
