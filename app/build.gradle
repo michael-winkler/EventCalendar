@@ -10,7 +10,7 @@ android {
         minSdk 23
         targetSdk 35
         versionCode 1
-        versionName "1.3.7"
+        versionName "1.4.0"
     }
     buildFeatures {
         viewBinding true

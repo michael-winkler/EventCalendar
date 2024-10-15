@@ -20,7 +20,7 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.github.michael-winkler:EventCalendar:1.3.7'
+    implementation 'com.github.michael-winkler:EventCalendar:1.3.8'
 }
 ```
 
@@ -164,7 +164,7 @@ The default value is `false`.
 
 
 ## Sample app
-https://github.com/michael-winkler/EventCalendar/releases/download/1.3.7/app-release.apk
+https://github.com/michael-winkler/EventCalendar/releases/download/1.4.0/app-release.apk
 
 
 ## License
