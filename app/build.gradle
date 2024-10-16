@@ -5,6 +5,7 @@ plugins {
 android {
     compileSdk 35
     namespace 'com.nmd.eventCalendarSample'
+
     defaultConfig {
         applicationId "com.nmd.eventCalendar"
         minSdk 23
@@ -12,9 +13,11 @@ android {
         versionCode 1
         versionName "1.4.0"
     }
+
     buildFeatures {
         viewBinding true
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -25,10 +28,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+
     kotlin {
         jvmToolchain(17)
     }
