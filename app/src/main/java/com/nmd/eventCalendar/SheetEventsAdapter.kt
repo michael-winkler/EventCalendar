@@ -16,12 +16,11 @@ class SheetEventsAdapter(private var list: ArrayList<Event>) :
         RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterViewHolder {
-        val binding = RecyclerViewSheetEventBinding.inflate(
+        return AdapterViewHolder(RecyclerViewSheetEventBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
-        )
-        return AdapterViewHolder(binding)
+        ))
     }
 
     override fun onBindViewHolder(holder: AdapterViewHolder, position: Int) {
