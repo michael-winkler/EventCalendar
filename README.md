@@ -20,7 +20,7 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.github.michael-winkler:EventCalendar:1.3.8'
+    implementation 'com.github.michael-winkler:EventCalendar:1.5.0'
 }
 ```
 
@@ -164,7 +164,7 @@ The default value is `false`.
 
 
 ## Sample app
-https://github.com/michael-winkler/EventCalendar/releases/download/1.4.0/app-release.apk
+https://github.com/michael-winkler/EventCalendar/releases/download/1.5.0/app-release.apk
 
 
 ## License
@@ -189,5 +189,5 @@ If you like this library feel free to "star" it:<br>
 
 ```
 This library has been successfully tested with:
-Android Studio Ladybug | 2024.2.1 Patch 1
+Android Studio Ladybug | 2024.2.1 Patch 2
 ```
