@@ -26,7 +26,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/ecv_item_day_name_color"
                 tools:ignore="ContentDescription" />
 
             <com.nmd.eventCalendar.custom.VerticalMaterialTextView
@@ -51,7 +50,6 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:tint="@color/ecv_item_day_name_color"
                 tools:ignore="ContentDescription" />
 
 

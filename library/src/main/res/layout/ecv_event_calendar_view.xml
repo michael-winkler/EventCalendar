@@ -19,7 +19,6 @@
             android:layout_centerInParent="true"
             android:src="@drawable/ecv_chevron_left"
             android:theme="@style/ECV_RippleColor"
-            app:tint="@color/ecv_item_day_name_color"
             tools:ignore="ContentDescription" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -36,7 +35,6 @@
             android:layout_centerInParent="true"
             android:src="@drawable/ecv_chevron_right"
             android:theme="@style/ECV_RippleColor"
-            app:tint="@color/ecv_item_day_name_color"
             tools:ignore="ContentDescription" />
 
     </RelativeLayout>

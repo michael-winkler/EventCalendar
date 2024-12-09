@@ -44,6 +44,7 @@ You can create a new `EventCalendarView` inside your XML-Layout like this:
     app:ecv_edge_to_edge_enabled="true"
     app:ecv_event_item_automatic_text_color="true"
     app:ecv_event_item_text_color="@android:color/black"
+    app:ecv_event_item_dark_text_color="@android:color/black"
     app:ecv_header_visible="true"
     app:ecv_calendar_week_visible="true"/>
 ```
@@ -61,6 +62,7 @@ Or if you just want the current calendar week you can use this one:
     app:ecv_current_day_text_color="@android:color/white"
     app:ecv_event_item_automatic_text_color="true"
     app:ecv_event_item_text_color="@android:color/black"
+    app:ecv_event_item_dark_text_color="@android:color/black"
     app:ecv_header_visible="true"
     app:ecv_calendar_week_visible="true"/>
 ```
@@ -158,6 +160,16 @@ app:ecv_edge_to_edge_enabled="true"
 ```
 You can enable or disable the edge to edge handling inside your xml configuration.
 The default value is `false`.
+
+## More color control
+If you want to change the tint of the forward and back arrows or the text color
+of the month/weekdays/calendar week, you can simply override the style in "values/themes".
+```
+<style name="ECV_TEXT_ICON_COLOR">
+    <item name="android:textColor">#FF5733</item> <!-- Text color -->
+    <item name="tint">#FF5733</item> <!-- Icon tint -->
+</style>
+```
 
 ## Screenshots
 <img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot.png" height=400px> <img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot2.png" height=400px>

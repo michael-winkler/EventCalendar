@@ -18,6 +18,7 @@ internal class EventsAdapter(
     private val list: ArrayList<Event>,
     private val eventItemAutomaticTextColor: Boolean,
     private val eventItemTextColor: Int,
+    private val eventItemDarkTextColor: Int
 ) :
     RecyclerView.Adapter<EventsAdapter.AdapterViewHolder>() {
 
@@ -45,12 +46,13 @@ internal class EventsAdapter(
 
             val color = Color.parseColor(item.backgroundHexColor)
             if (eventItemAutomaticTextColor) {
-                setTextColor(
-                    ContextCompat.getColor(
-                        context,
-                        if (color.isDarkColor()) R.color.ecv_white else R.color.ecv_charcoal_color
-                    )
-                )
+                val colorToUse = if (color.isDarkColor()) {
+                    ContextCompat.getColor(context, R.color.ecv_white)
+                } else {
+                    eventItemDarkTextColor
+                }
+
+                setTextColor(colorToUse)
             } else {
                 setTextColor(eventItemTextColor)
             }

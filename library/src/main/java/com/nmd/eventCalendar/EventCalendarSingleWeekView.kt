@@ -54,6 +54,8 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
     private var countVisible = true
     private var eventItemAutomaticTextColor = true
     private var eventItemTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
+    private var eventItemDarkTextColor =
+        ContextCompat.getColor(getContext(), R.color.ecv_charcoal_color)
 
     init {
         getContext().withStyledAttributes(attrs, R.styleable.EventCalendarView) {
@@ -84,6 +86,10 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
             )
             eventItemTextColor = getColor(
                 (R.styleable.EventCalendarView_ecv_event_item_text_color), eventItemTextColor
+            )
+            eventItemDarkTextColor = getColor(
+                (R.styleable.EventCalendarView_ecv_event_item_dark_text_color),
+                eventItemDarkTextColor
             )
         }
 
@@ -264,7 +270,10 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
 
             if (eventList.isNotEmpty()) {
                 recyclerView.adapter = EventsAdapter(
-                    eventList, eventItemAutomaticTextColor, eventItemTextColor
+                    list = eventList,
+                    eventItemAutomaticTextColor = eventItemAutomaticTextColor,
+                    eventItemTextColor = eventItemTextColor,
+                    eventItemDarkTextColor = eventItemDarkTextColor
                 )
             }
 

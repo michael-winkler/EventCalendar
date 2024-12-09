@@ -70,6 +70,7 @@
             app:ecv_disallow_intercept="false"
             app:ecv_edge_to_edge_enabled="true"
             app:ecv_event_item_automatic_text_color="true"
+            app:ecv_event_item_dark_text_color="@color/ecv_black"
             app:ecv_event_item_text_color="@color/ecv_black"
             app:ecv_header_visible="true" />
 

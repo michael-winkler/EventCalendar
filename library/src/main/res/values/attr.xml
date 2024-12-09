@@ -47,6 +47,11 @@
         Default: @color/ecv_white-->
         <attr name="ecv_event_item_text_color" format="color" />
 
+        <!-- Sets the text color for event items for dark. Will only be used if
+        "ecv_event_item_automatic_text_color" is set to false.
+        Default: @color/ecv_charcoal_color-->
+        <attr name="ecv_event_item_dark_text_color" format="color" />
+
         <!-- Indicates whether the event calendar view should handle edge to edge or not.
         Default: false -->
         <attr name="ecv_edge_to_edge_enabled" format="boolean" />

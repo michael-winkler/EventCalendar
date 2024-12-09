@@ -111,6 +111,8 @@ class EventCalendarView @JvmOverloads constructor(
     internal var countVisible = true
     internal var eventItemAutomaticTextColor = true
     internal var eventItemTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
+    internal var eventItemDarkTextColor =
+        ContextCompat.getColor(getContext(), R.color.ecv_charcoal_color)
     internal var edgeToEdgeEnabled = false
 
     init {
@@ -145,7 +147,10 @@ class EventCalendarView @JvmOverloads constructor(
             eventItemTextColor = getColor(
                 (R.styleable.EventCalendarView_ecv_event_item_text_color), eventItemTextColor
             )
-
+            eventItemDarkTextColor = getColor(
+                (R.styleable.EventCalendarView_ecv_event_item_dark_text_color),
+                eventItemDarkTextColor
+            )
             edgeToEdgeEnabled = getBoolean(
                 R.styleable.EventCalendarView_ecv_edge_to_edge_enabled, edgeToEdgeEnabled
             )

@@ -289,7 +289,8 @@ internal class InfiniteAdapter(private val eventCalendarView: EventCalendarView)
                     adapter = EventsAdapter(
                         list = eventList,
                         eventItemAutomaticTextColor = eventCalendarView.eventItemAutomaticTextColor.orTrue(),
-                        eventItemTextColor = eventCalendarView.eventItemTextColor
+                        eventItemTextColor = eventCalendarView.eventItemTextColor,
+                        eventItemDarkTextColor = eventCalendarView.eventItemDarkTextColor
                     )
                 }
             }
