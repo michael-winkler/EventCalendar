@@ -39,11 +39,15 @@ android {
     }
 }
 
+// TODO publications
+//  See here an example:
+//  https://github.com/material-components/material-components-android/commit/2c2a26cd9e711fd52f1bd8cdfabce9fc5f4a4ee7
+
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
     // Android X
-    implementation 'androidx.activity:activity-ktx:1.10.0'
+    implementation 'androidx.activity:activity-ktx:1.10.1'
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'androidx.core:core-ktx:1.15.0'
     implementation('androidx.fragment:fragment-ktx:1.8.6')
@@ -54,5 +58,5 @@ dependencies {
     implementation('com.google.code.gson:gson:2.12.1')
 
     // Google Material Design
-    implementation 'com.google.android.material:material:1.13.0-alpha10'
+    implementation 'com.google.android.material:material:1.13.0-alpha11'
 }
