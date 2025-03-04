@@ -201,5 +201,5 @@ If you like this library feel free to "star" it:<br>
 
 ```
 This library has been successfully tested with:
-Android Studio Ladybug Feature Drop | 2024.2.2 Patch 1
+Android Studio Meerkat | 2024.3.1
 ```
