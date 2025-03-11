@@ -2,6 +2,7 @@ plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
     id 'org.jetbrains.kotlin.plugin.parcelize'
+    id 'maven-publish'
 }
 
 android {
@@ -37,11 +38,51 @@ android {
     kotlin {
         jvmToolchain(17)
     }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
 
-// TODO publications
-//  See here an example:
-//  https://github.com/material-components/material-components-android/commit/2c2a26cd9e711fd52f1bd8cdfabce9fc5f4a4ee7
+publishing {
+    publications {
+        release(MavenPublication) {
+            from components.findByName("release")
+            groupId = "com.nmd"
+            artifactId = "eventCalendar"
+            version = project.property("VERSION_NAME") as String
+
+            pom {
+                name.set(artifactId)
+                description.set("An Android event calendar library written in Kotlin, offering customizable views and event handling, supporting calendar week display and edge-to-edge functionality.")
+                url.set("https://github.com/michael-winkler/EventCalendar")
+
+                licenses {
+                    license {
+                        name.set("Apache License 2.0")
+                        url.set("https://www.apache.org/licenses/LICENSE-2.0")
+                    }
+                }
+
+                developers {
+                    developer {
+                        id.set("michael-winkler")
+                        name.set("Michael Winkler")
+                    }
+                }
+
+                scm {
+                    connection.set("scm:git:git://github.com/michael-winkler/EventCalendar.git")
+                    developerConnection.set("scm:git:ssh://github.com/michael-winkler/EventCalendar.git")
+                    url.set("https://github.com/michael-winkler/EventCalendar")
+                }
+            }
+        }
+    }
+}
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
