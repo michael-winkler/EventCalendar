@@ -20,7 +20,7 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.github.michael-winkler:EventCalendar:1.6.2'
+    implementation 'com.github.michael-winkler:EventCalendar:1.6.3'
 }
 ```
 
@@ -176,7 +176,7 @@ of the month/weekdays/calendar week, you can simply override the style in "value
 
 
 ## Sample app
-https://github.com/michael-winkler/EventCalendar/releases/download/1.6.2/app-release.apk
+https://github.com/michael-winkler/EventCalendar/releases/download/1.6.3/app-release.apk
 
 
 ## License

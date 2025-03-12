@@ -41,7 +41,7 @@ android {
 }
 
 // Sources-Task
-tasks.register("sourcesJar", Jar) {
+tasks.register("androidSourcesJar", Jar) {
     archiveClassifier.set("sources")
     from android.sourceSets.main.java.srcDirs
 }
@@ -49,18 +49,12 @@ tasks.register("sourcesJar", Jar) {
 publishing {
     publications {
         release(MavenPublication) {
-            afterEvaluate {
-                from components.release
-            }
             groupId = "com.nmd"
             artifactId = "eventCalendar"
             version = project.property("VERSION_NAME") as String
 
-            // AAR
-            artifact("$buildDir/outputs/aar/library-release.aar")
-
             // Sources-Jar
-            artifact(tasks.named("sourcesJar").get())
+            artifact(tasks.named("androidSourcesJar"))
 
             pom {
                 name.set(artifactId)
@@ -86,6 +80,10 @@ publishing {
                     developerConnection.set("scm:git:ssh://github.com/michael-winkler/EventCalendar.git")
                     url.set("https://github.com/michael-winkler/EventCalendar")
                 }
+            }
+
+            afterEvaluate {
+                from components.findByName("release")
             }
         }
     }
