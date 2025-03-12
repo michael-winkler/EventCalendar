@@ -40,58 +40,44 @@ android {
     }
 }
 
-// Sources-Task
-tasks.register("androidSourcesJar", Jar) {
-    archiveClassifier.set("sources")
-    from android.sourceSets.main.java.srcDirs
-}
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                groupId = "com.nmd"
+                artifactId = "eventCalendar"
+                version = project.property("VERSION_NAME") as String
 
-publishing {
-    publications {
-        release(MavenPublication) {
-            groupId = "com.nmd"
-            artifactId = "eventCalendar"
-            version = project.property("VERSION_NAME") as String
+                from components.release
 
-            // Sources-Jar
-            artifact(tasks.named("androidSourcesJar"))
-
-            pom {
-                name.set(artifactId)
-                description.set("An Android event calendar library written in Kotlin, offering customizable views and event handling, supporting calendar week display and edge-to-edge functionality.")
-                url.set("https://github.com/michael-winkler/EventCalendar")
-
-                licenses {
-                    license {
-                        name.set("Apache License 2.0")
-                        url.set("https://www.apache.org/licenses/LICENSE-2.0")
-                    }
-                }
-
-                developers {
-                    developer {
-                        id.set("michael-winkler")
-                        name.set("Michael Winkler")
-                    }
-                }
-
-                scm {
-                    connection.set("scm:git:git://github.com/michael-winkler/EventCalendar.git")
-                    developerConnection.set("scm:git:ssh://github.com/michael-winkler/EventCalendar.git")
+                pom {
+                    name.set(artifactId)
+                    description.set("An Android event calendar library written in Kotlin, offering customizable views and event handling, supporting calendar week display and edge-to-edge functionality.")
                     url.set("https://github.com/michael-winkler/EventCalendar")
-                }
-            }
 
-            afterEvaluate {
-                from components.findByName("release")
+                    licenses {
+                        license {
+                            name.set("Apache License 2.0")
+                            url.set("https://www.apache.org/licenses/LICENSE-2.0")
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id.set("michael-winkler")
+                            name.set("Michael Winkler")
+                        }
+                    }
+
+                    scm {
+                        connection.set("scm:git:git://github.com/michael-winkler/EventCalendar.git")
+                        developerConnection.set("scm:git:ssh://github.com/michael-winkler/EventCalendar.git")
+                        url.set("https://github.com/michael-winkler/EventCalendar")
+                    }
+                }
             }
         }
     }
-}
-
-// Declare dependency to ensure proper task order
-tasks.named("generateMetadataFileForReleasePublication") {
-    dependsOn(tasks.named("androidSourcesJar"))
 }
 
 dependencies {
