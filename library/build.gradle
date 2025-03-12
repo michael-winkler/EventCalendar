@@ -89,6 +89,11 @@ publishing {
     }
 }
 
+// Declare dependency to ensure proper task order
+tasks.named("generateMetadataFileForReleasePublication") {
+    dependsOn(tasks.named("androidSourcesJar"))
+}
+
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
