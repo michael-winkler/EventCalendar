@@ -95,5 +95,5 @@ dependencies {
     implementation('com.google.code.gson:gson:2.12.1')
 
     // Google Material Design
-    implementation 'com.google.android.material:material:1.13.0-alpha11'
+    implementation 'com.google.android.material:material:1.13.0-alpha12'
 }
