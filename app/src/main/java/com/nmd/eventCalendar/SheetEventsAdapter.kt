@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.nmd.eventCalendar.Utils.Companion.isDarkColor
 import com.nmd.eventCalendar.model.Event
 import com.nmd.eventCalendarSample.databinding.RecyclerViewSheetEventBinding
+import androidx.core.graphics.toColorInt
 
 class SheetEventsAdapter(private var list: ArrayList<Event>) :
     RecyclerView.Adapter<SheetEventsAdapter.AdapterViewHolder>() {
@@ -30,7 +31,7 @@ class SheetEventsAdapter(private var list: ArrayList<Event>) :
             val item = list[position]
             binding.itemEventMaterialTextView.text = item.name
 
-            val color = Color.parseColor(item.backgroundHexColor)
+            val color = item.backgroundHexColor.toColorInt()
             binding.itemEventMaterialTextView.setTextColor(
                 ContextCompat.getColor(
                     binding.itemEventMaterialTextView.context,

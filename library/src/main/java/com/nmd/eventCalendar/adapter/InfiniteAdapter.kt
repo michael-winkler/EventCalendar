@@ -39,8 +39,9 @@ import com.nmd.eventCalendar.utils.Utils.Companion.smoothScrollTo
 import java.util.Calendar
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-internal class InfiniteAdapter(private val eventCalendarView: EventCalendarView) :
-    RecyclerView.Adapter<InfiniteAdapter.AdapterViewHolder>() {
+internal class InfiniteAdapter(
+    private val eventCalendarView: EventCalendarView
+) : RecyclerView.Adapter<InfiniteAdapter.AdapterViewHolder>() {
 
     inner class AdapterViewHolder(val binding: EcvEventCalendarViewBinding) :
         RecyclerView.ViewHolder(binding.root) {

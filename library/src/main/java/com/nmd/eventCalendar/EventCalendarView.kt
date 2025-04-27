@@ -166,7 +166,8 @@ class EventCalendarView @JvmOverloads constructor(
                     setHasFixedSize(true)
                     setItemViewCacheSize(1000)
                     adapter = InfiniteAdapter(this@EventCalendarView)
-                    attachSnapHelperWithListener(snapHelper = PagerSnapHelper(),
+                    attachSnapHelperWithListener(
+                        snapHelper = PagerSnapHelper(),
                         onSnapPositionChangeListener = object :
                             SnapOnScrollListener.OnSnapPositionChangeListener {
                             override fun onSnapPositionChange(position: Int) {
@@ -377,6 +378,7 @@ class EventCalendarView @JvmOverloads constructor(
     /**
      * @return The current start month
      */
+    @Suppress("MemberVisibilityCanBePrivate")
     val startMonth: Int
         get() {
             return sMonth
@@ -385,6 +387,7 @@ class EventCalendarView @JvmOverloads constructor(
     /**
      * @return The current start year
      */
+    @Suppress("MemberVisibilityCanBePrivate")
     val startYear: Int
         get() {
             return sYear
@@ -393,6 +396,7 @@ class EventCalendarView @JvmOverloads constructor(
     /**
      * @return The current end month
      */
+    @Suppress("MemberVisibilityCanBePrivate")
     val endMonth: Int
         get() {
             return eMonth
@@ -401,6 +405,7 @@ class EventCalendarView @JvmOverloads constructor(
     /**
      * @return The current end year
      */
+    @Suppress("MemberVisibilityCanBePrivate")
     val endYear: Int
         get() {
             return eYear
@@ -416,7 +421,7 @@ class EventCalendarView @JvmOverloads constructor(
      * ```
      * Default is `false`.
      */
-    @Suppress("KDocUnresolvedReference")
+    @Suppress("KDocUnresolvedReference", "MemberVisibilityCanBePrivate")
     var disallowIntercept: Boolean
         get() = _disallowIntercept
         set(value) {

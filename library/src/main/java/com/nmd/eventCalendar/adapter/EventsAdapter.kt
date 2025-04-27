@@ -12,6 +12,7 @@ import com.nmd.eventCalendar.R
 import com.nmd.eventCalendar.databinding.EcvEventViewBinding
 import com.nmd.eventCalendar.model.Event
 import com.nmd.eventCalendar.utils.Utils.Companion.isDarkColor
+import androidx.core.graphics.toColorInt
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 internal class EventsAdapter(
@@ -19,8 +20,7 @@ internal class EventsAdapter(
     private val eventItemAutomaticTextColor: Boolean,
     private val eventItemTextColor: Int,
     private val eventItemDarkTextColor: Int
-) :
-    RecyclerView.Adapter<EventsAdapter.AdapterViewHolder>() {
+) : RecyclerView.Adapter<EventsAdapter.AdapterViewHolder>() {
 
     init {
         setHasStableIds(true)
@@ -44,7 +44,7 @@ internal class EventsAdapter(
             val item = list.getOrNull(position) ?: return
             text = item.name
 
-            val color = Color.parseColor(item.backgroundHexColor)
+            val color = item.backgroundHexColor.toColorInt()
             if (eventItemAutomaticTextColor) {
                 val colorToUse = if (color.isDarkColor()) {
                     ContextCompat.getColor(context, R.color.ecv_white)

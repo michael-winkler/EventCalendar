@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.text.TextPaint
 import android.util.AttributeSet
+import androidx.core.graphics.withTranslation
 import com.google.android.material.textview.MaterialTextView
 
 internal class VerticalMaterialTextView @JvmOverloads constructor(
@@ -21,11 +22,10 @@ internal class VerticalMaterialTextView @JvmOverloads constructor(
         val textPaint: TextPaint? = paint
         textPaint?.color = currentTextColor
         textPaint?.drawableState = drawableState
-        canvas.save()
-        canvas.translate(0f, height.toFloat())
-        canvas.rotate(-90f)
-        canvas.translate(compoundPaddingLeft.toFloat(), extendedPaddingTop.toFloat())
-        layout.draw(canvas)
-        canvas.restore()
+        canvas.withTranslation(0f, height.toFloat()) {
+            rotate(-90f)
+            translate(compoundPaddingLeft.toFloat(), extendedPaddingTop.toFloat())
+            layout.draw(this)
+        }
     }
 }
