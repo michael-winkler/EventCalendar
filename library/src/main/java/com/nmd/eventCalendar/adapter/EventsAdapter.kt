@@ -1,18 +1,17 @@
 package com.nmd.eventCalendar.adapter
 
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.RestrictTo
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.toColorInt
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.nmd.eventCalendar.R
 import com.nmd.eventCalendar.databinding.EcvEventViewBinding
 import com.nmd.eventCalendar.model.Event
 import com.nmd.eventCalendar.utils.Utils.Companion.isDarkColor
-import androidx.core.graphics.toColorInt
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 internal class EventsAdapter(
