@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Kalendář událostí</string>
+    <string name="event_calendar_no_events">Pro tento den nebyly nalezeny žádné události!</string>
+    <string name="event_calendar_current_week">Aktuální týden</string>
+</resources>

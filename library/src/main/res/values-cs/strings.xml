@@ -1,0 +1,25 @@
+<resources>
+    <string name="ecv_day_name_kw">KT</string>
+    <string name="ecv_day_name_monday">Po</string>
+    <string name="ecv_day_name_tuesday">Út</string>
+    <string name="ecv_day_name_wednesday">St</string>
+    <string name="ecv_day_name_thursday">Čt</string>
+    <string name="ecv_day_name_friday">Pá</string>
+    <string name="ecv_day_name_saturday">So</string>
+    <string name="ecv_day_name_sunday">Ne</string>
+
+    <string-array name="ecv_month_names">
+        <item>Leden</item>
+        <item>Únor</item>
+        <item>Březen</item>
+        <item>Duben</item>
+        <item>Květen</item>
+        <item>Červen</item>
+        <item>Červenec</item>
+        <item>Srpen</item>
+        <item>Září</item>
+        <item>Říjen</item>
+        <item>Listopad</item>
+        <item>Prosinec</item>
+    </string-array>
+</resources>

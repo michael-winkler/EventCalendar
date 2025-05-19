@@ -171,6 +171,21 @@ of the month/weekdays/calendar week, you can simply override the style in "value
 </style>
 ```
 
+## More text control
+If you want to change the short text for the days, then you can override the
+strings eg. in "values-en/strings".
+
+```
+<string name="ecv_day_name_kw">CW</string>
+<string name="ecv_day_name_monday">M</string>
+<string name="ecv_day_name_tuesday">T</string>
+<string name="ecv_day_name_wednesday">W</string>
+<string name="ecv_day_name_thursday">T</string>
+<string name="ecv_day_name_friday">F</string>
+<string name="ecv_day_name_saturday">S</string>
+<string name="ecv_day_name_sunday">S</string>
+```
+
 ## Screenshots
 <img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot.png" height=400px> <img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot2.png" height=400px>
 
@@ -198,8 +213,3 @@ limitations under the License.
 ## Last words
 If you like this library feel free to "star" it:<br>
 ![star](https://github.com/michael-winkler/Screenshot/blob/master/Images/star.png)
-
-```
-This library has been successfully tested with:
-Android Studio Meerkat | 2024.3.1
-```

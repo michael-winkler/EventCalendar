@@ -1,12 +1,12 @@
 <resources>
     <string name="ecv_day_name_kw">KW</string>
-    <string name="ecv_day_name_monday">M</string>
-    <string name="ecv_day_name_tuesday">D</string>
-    <string name="ecv_day_name_wednesday">M</string>
-    <string name="ecv_day_name_thursday">D</string>
-    <string name="ecv_day_name_friday">F</string>
-    <string name="ecv_day_name_saturday">S</string>
-    <string name="ecv_day_name_sunday">S</string>
+    <string name="ecv_day_name_monday">Mo</string>
+    <string name="ecv_day_name_tuesday">Di</string>
+    <string name="ecv_day_name_wednesday">Mi</string>
+    <string name="ecv_day_name_thursday">Do</string>
+    <string name="ecv_day_name_friday">Fr</string>
+    <string name="ecv_day_name_saturday">Sa</string>
+    <string name="ecv_day_name_sunday">So</string>
 
     <string-array name="ecv_month_names">
         <item>Januar</item>
@@ -22,5 +22,4 @@
         <item>November</item>
         <item>Dezember</item>
     </string-array>
-
 </resources>

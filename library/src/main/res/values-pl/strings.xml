@@ -1,0 +1,25 @@
+<resources>
+    <string name="ecv_day_name_kw">TY</string>
+    <string name="ecv_day_name_monday">Pon</string>
+    <string name="ecv_day_name_tuesday">Wto</string>
+    <string name="ecv_day_name_wednesday">Śro</string>
+    <string name="ecv_day_name_thursday">Czw</string>
+    <string name="ecv_day_name_friday">Pią</string>
+    <string name="ecv_day_name_saturday">Sob</string>
+    <string name="ecv_day_name_sunday">Nie</string>
+
+    <string-array name="ecv_month_names">
+        <item>Styczeń</item>
+        <item>Luty</item>
+        <item>Marzec</item>
+        <item>Kwiecień</item>
+        <item>Maj</item>
+        <item>Czerwiec</item>
+        <item>Lipiec</item>
+        <item>Sierpień</item>
+        <item>Wrzesień</item>
+        <item>Październik</item>
+        <item>Listopad</item>
+        <item>Grudzień</item>
+    </string-array>
+</resources>

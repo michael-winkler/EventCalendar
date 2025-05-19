@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Kalendarz wydarzeń</string>
+    <string name="event_calendar_no_events">Nie znaleziono wydarzeń na ten dzień!</string>
+    <string name="event_calendar_current_week">Bieżący tydzień</string>
+</resources>
