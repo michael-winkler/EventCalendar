@@ -20,7 +20,7 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.github.michael-winkler:EventCalendar:1.7.0'
+    implementation 'com.github.michael-winkler:EventCalendar:1.7.1'
 }
 ```
 
@@ -191,7 +191,7 @@ strings eg. in "values-en/strings".
 
 
 ## Sample app
-https://github.com/michael-winkler/EventCalendar/releases/download/1.7.0/app-release.apk
+https://github.com/michael-winkler/EventCalendar/releases/download/1.7.1/app-release.apk
 
 
 ## License
