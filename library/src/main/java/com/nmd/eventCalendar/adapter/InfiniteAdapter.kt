@@ -97,7 +97,7 @@ internal class InfiniteAdapter(
 
                 if (eventCalendarView.edgeToEdgeEnabled) {
                     val insets = ViewCompat.getRootWindowInsets(eventCalendarView)?.getInsets(
-                        WindowInsetsCompat.Type.systemBars() + WindowInsetsCompat.Type.displayCutout()
+                        WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
                     )
 
                     val isPortrait = (binding.root.tag?.toString()?.toIntOrNull() ?: 0) == 0

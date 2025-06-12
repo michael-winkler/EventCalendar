@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, windowInsets ->
             val insets =
-                windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() + WindowInsetsCompat.Type.displayCutout())
+                windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
 
             binding.activityMainAppBarLayout.updatePadding(
                 left = insets.left,
@@ -138,13 +138,9 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun bottomSheet(day: Day, eventList: List<Event>) {
-        val binding = BottomSheetBinding.inflate(LayoutInflater.from(this))
-        with(binding) {
-            val bottomSheetDialog =
-                BottomSheetDialog(
-                    this@MainActivity,
-                    com.nmd.eventCalendarSample.R.style.BottomSheetDialog
-                )
+        val dialogBinding = BottomSheetBinding.inflate(LayoutInflater.from(this))
+        with(dialogBinding) {
+            val bottomSheetDialog = BottomSheetDialog(this@MainActivity)
 
             bottomSheetMaterialTextView.text = day.date + " (" + eventList.size + ")"
             bottomSheetNoEventsMaterialTextView.isVisible = eventList.isEmpty()
@@ -161,23 +157,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun bottomSheet2() {
-        val binding = BottomSheetSingleWeekBinding.inflate(LayoutInflater.from(this))
-        with(binding) {
-            val bottomSheetDialog =
-                BottomSheetDialog(
-                    this@MainActivity,
-                    com.nmd.eventCalendarSample.R.style.BottomSheetDialog
-                )
+        val dialogBinding = BottomSheetSingleWeekBinding.inflate(LayoutInflater.from(this))
+        with(dialogBinding) {
+            val bottomSheetDialog = BottomSheetDialog(this@MainActivity)
 
             bottomSheetEventCalendarSingleWeekView.events =
-                this@MainActivity.binding.activityMainEventCalendarView.events
+                binding.activityMainEventCalendarView.events
             bottomSheetEventCalendarSingleWeekView.addOnDayClickListener(object :
                 EventCalendarDayClickListener {
                 override fun onClick(day: Day) {
                     bottomSheetDialog.dismiss()
 
                     val eventList =
-                        this@MainActivity.binding.activityMainEventCalendarView.events.filter { it.date == day.date }
+                        binding.activityMainEventCalendarView.events.filter { it.date == day.date }
                     bottomSheet(day, eventList)
                 }
             })

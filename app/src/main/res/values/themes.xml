@@ -11,9 +11,12 @@
         <item name="android:navigationBarColor">@color/colorBlack</item>
         <item name="android:windowLightNavigationBar" tools:ignore="NewApi">false</item>
         <item name="android:windowLightStatusBar">true</item>
+
+        <item name="bottomSheetDialogTheme">@style/BottomSheetDialogTheme</item>
+        <item name="bottomSheetDragHandleStyle">@style/BottomSheetDialog.DragHandleView</item>
     </style>
 
-    <style name="BottomSheetDialog" parent="ThemeOverlay.Material3.BottomSheetDialog">
+    <style name="BottomSheetDialogTheme" parent="ThemeOverlay.Material3.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/bottomSheetStyleWrapper</item>
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowSoftInputMode">adjustResize|stateHidden</item>
