@@ -3,19 +3,19 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 android {
-    compileSdk 36
-    namespace 'com.nmd.eventCalendarSample'
+    compileSdk = 36
+    namespace = 'com.nmd.eventCalendarSample'
 
     defaultConfig {
         applicationId "com.nmd.eventCalendar"
-        minSdk 23
-        targetSdk 36
+        minSdk = 23
+        targetSdk = 36
         versionCode 1
         versionName project.property("VERSION_NAME") as String
     }
 
     buildFeatures {
-        viewBinding true
+        viewBinding = true
     }
 
     buildTypes {

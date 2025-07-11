@@ -6,12 +6,12 @@ plugins {
 }
 
 android {
-    namespace 'com.nmd.eventCalendar'
-    compileSdk 36
+    namespace = 'com.nmd.eventCalendar'
+    compileSdk = 36
 
     defaultConfig {
-        minSdk 21
-        targetSdk 36
+        minSdk = 21
+        targetSdk = 36
     }
 
     buildTypes {
