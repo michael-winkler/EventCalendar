@@ -43,19 +43,20 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
     private var eventArrayList: ArrayList<Event> = ArrayList()
 
     // For xml layout
-    private var headerVisible = true
+    internal var headerVisible = true
     private var _calendarWeekVisible = false
-    private var currentDayBackgroundTintColor =
+    internal var currentDayBackgroundTintColor =
         ContextCompat.getColor(getContext(), R.color.ecv_charcoal_color)
-    private var currentDayTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
+    internal var currentDayTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
     internal var countBackgroundTintColor =
         ContextCompat.getColor(getContext(), R.color.ecv_charcoal_color)
     internal var countBackgroundTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
-    private var countVisible = true
-    private var eventItemAutomaticTextColor = true
-    private var eventItemTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
-    private var eventItemDarkTextColor =
+    internal var countVisible = true
+    internal var eventItemAutomaticTextColor = true
+    internal var eventItemTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
+    internal var eventItemDarkTextColor =
         ContextCompat.getColor(getContext(), R.color.ecv_charcoal_color)
+    internal var expressiveUi = false
 
     init {
         getContext().withStyledAttributes(attrs, R.styleable.EventCalendarView) {
@@ -91,6 +92,7 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
                 (R.styleable.EventCalendarView_ecv_event_item_dark_text_color),
                 eventItemDarkTextColor
             )
+            expressiveUi = getBoolean(R.styleable.EventCalendarView_ecv_expressive_ui, expressiveUi)
         }
 
         addView(binding.root)
@@ -229,6 +231,7 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
         styleTextViews(days, bindingArrayList, ArrayList(eventArrayList1), materialTextView)
     }
 
+    // TODO Expressive ui
     private fun styleTextViews(
         days: List<Day>,
         list: List<EcvTextviewCircleBinding>,
@@ -239,7 +242,7 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
             val day = days[index]
             val dayItemLayout = list[index]
 
-            dayItemLayout.eventCalendarViewDayFrameLayout.setOnClickListener {
+            dayItemLayout.eventCalendarViewDayLinearLayoutCompat.setOnClickListener {
                 clickListener?.onClick(day)
             }
 

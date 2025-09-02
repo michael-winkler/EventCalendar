@@ -56,5 +56,9 @@
         Default: false -->
         <attr name="ecv_edge_to_edge_enabled" format="boolean" />
 
+        <!-- Indicates whether the event calendar view should use an expressive UI.
+        Default: false -->
+        <attr name="ecv_expressive_ui" format="boolean" />
+
     </declare-styleable>
 </resources>

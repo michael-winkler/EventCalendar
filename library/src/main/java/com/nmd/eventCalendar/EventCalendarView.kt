@@ -27,7 +27,7 @@ import com.nmd.eventCalendar.state.InstanceState
 import com.nmd.eventCalendar.utils.Utils.Companion.getActivity
 import com.nmd.eventCalendar.utils.Utils.Companion.smoothScrollTo
 import java.time.YearMonth
-import java.util.*
+import java.util.Calendar
 import kotlin.math.abs
 
 /**
@@ -115,6 +115,8 @@ class EventCalendarView @JvmOverloads constructor(
         ContextCompat.getColor(getContext(), R.color.ecv_charcoal_color)
     internal var edgeToEdgeEnabled = false
 
+    internal var expressiveUi = false
+
     init {
         getContext().withStyledAttributes(attrs, R.styleable.EventCalendarView) {
             headerVisible =
@@ -154,6 +156,7 @@ class EventCalendarView @JvmOverloads constructor(
             edgeToEdgeEnabled = getBoolean(
                 R.styleable.EventCalendarView_ecv_edge_to_edge_enabled, edgeToEdgeEnabled
             )
+            expressiveUi = getBoolean(R.styleable.EventCalendarView_ecv_expressive_ui, expressiveUi)
         }
 
         addView(binding.root)

@@ -250,6 +250,7 @@ internal class InfiniteAdapter(
         }
     }
 
+    // TODO Expressive ui
     private fun styleTextViews(
         days: List<Day>,
         circleBindingList: List<EcvTextviewCircleBinding>,
@@ -258,7 +259,7 @@ internal class InfiniteAdapter(
         for ((index, day) in days.withIndex()) {
             val dayItemLayout = circleBindingList[index]
 
-            dayItemLayout.eventCalendarViewDayFrameLayout.setOnClickListener {
+            dayItemLayout.eventCalendarViewDayLinearLayoutCompat.setOnClickListener {
                 eventCalendarView.clickListener?.onClick(day)
             }
 
