@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.widget.FrameLayout
 import androidx.annotation.RestrictTo
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.withStyledAttributes
 import androidx.core.view.ViewCompat
@@ -198,17 +199,37 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
                         "${getCurrentWeekNumber()}"
                 }
 
+                if (expressiveUi) {
+                    eventCalendarViewLinearLayoutCompat.showDividers =
+                        LinearLayoutCompat.SHOW_DIVIDER_NONE
+
+                    eventCalendarSingleWeekViewRowsLinearLayoutCompat.showDividers =
+                        LinearLayoutCompat.SHOW_DIVIDER_NONE
+                } else {
+                    eventCalendarViewLinearLayoutCompat.showDividers =
+                        LinearLayoutCompat.SHOW_DIVIDER_BEGINNING or LinearLayoutCompat.SHOW_DIVIDER_MIDDLE or LinearLayoutCompat.SHOW_DIVIDER_END
+
+                    eventCalendarSingleWeekViewRowsLinearLayoutCompat.showDividers =
+                        LinearLayoutCompat.SHOW_DIVIDER_BEGINNING or LinearLayoutCompat.SHOW_DIVIDER_MIDDLE or LinearLayoutCompat.SHOW_DIVIDER_END
+                }
+
                 eventCalendarViewHeaderKw.isVisible = _calendarWeekVisible
                 eventCalendarViewCalendarWeek.root.isVisible = _calendarWeekVisible
             }
 
             initTextViews(
-                getDaysForCurrentWeek(), eventCalendarViewCalendarWeek.eventCalendarViewDayTextView
+                days = getDaysForCurrentWeek(),
+                materialTextView = eventCalendarViewCalendarWeek.eventCalendarViewDayTextView,
+                linearLayoutCompat = eventCalendarViewCalendarWeek.root
             )
         }
     }
 
-    private fun initTextViews(days: List<Day>, materialTextView: MaterialTextView) {
+    private fun initTextViews(
+        days: List<Day>,
+        materialTextView: MaterialTextView,
+        linearLayoutCompat: LinearLayoutCompat
+    ) {
         val bindingArrayList = arrayListOf(
             binding.eventCalendarSingleWeekViewDay1,
             binding.eventCalendarSingleWeekViewDay2,
@@ -229,6 +250,20 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
         }
 
         styleTextViews(days, bindingArrayList, ArrayList(eventArrayList1), materialTextView)
+
+        bindingArrayList.forEach {
+            if (expressiveUi) {
+                it.root.showDividers = LinearLayoutCompat.SHOW_DIVIDER_NONE
+            } else {
+                it.root.showDividers = LinearLayoutCompat.SHOW_DIVIDER_BEGINNING
+            }
+        }
+
+        if (expressiveUi) {
+            linearLayoutCompat.showDividers = LinearLayoutCompat.SHOW_DIVIDER_NONE
+        } else {
+            linearLayoutCompat.showDividers = LinearLayoutCompat.SHOW_DIVIDER_BEGINNING
+        }
     }
 
     // TODO Expressive ui

@@ -20,6 +20,7 @@
     </RelativeLayout>
 
     <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/eventCalendarViewLinearLayoutCompat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -95,13 +96,13 @@
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/eventCalendarSingleWeekViewRow1"
+        android:id="@+id/eventCalendarSingleWeekViewRowsLinearLayoutCompat"
         android:layout_width="match_parent"
         android:layout_height="126dp"
         android:baselineAligned="false"
         android:orientation="horizontal"
         app:divider="@drawable/ecv_divider_vertical"
-        app:showDividers="middle|beginning|end">
+        app:showDividers="beginning|middle|end">
 
         <include
             android:id="@+id/eventCalendarViewCalendarWeek"

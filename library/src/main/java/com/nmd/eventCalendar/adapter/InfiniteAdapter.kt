@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.annotation.RestrictTo
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -82,6 +83,29 @@ internal class InfiniteAdapter(
         init {
             with(binding) {
                 eventCalendarViewMonthYearHeader.isVisible = eventCalendarView.headerVisible
+
+                if (eventCalendarView.expressiveUi) {
+                    eventCalendarViewLinearLayoutCompat.showDividers =
+                        LinearLayoutCompat.SHOW_DIVIDER_NONE
+                } else {
+                    eventCalendarViewLinearLayoutCompat.showDividers =
+                        LinearLayoutCompat.SHOW_DIVIDER_MIDDLE
+                }
+
+                listOf(
+                    eventCalendarViewRow1.eventCalendarViewRowsLinearLayoutCompat,
+                    eventCalendarViewRow2.eventCalendarViewRowsLinearLayoutCompat,
+                    eventCalendarViewRow3.eventCalendarViewRowsLinearLayoutCompat,
+                    eventCalendarViewRow4.eventCalendarViewRowsLinearLayoutCompat,
+                    eventCalendarViewRow5.eventCalendarViewRowsLinearLayoutCompat,
+                    eventCalendarViewRow6.eventCalendarViewRowsLinearLayoutCompat
+                ).forEach {
+                    if (eventCalendarView.expressiveUi) {
+                        it.showDividers = LinearLayoutCompat.SHOW_DIVIDER_NONE
+                    } else {
+                        it.showDividers = LinearLayoutCompat.SHOW_DIVIDER_MIDDLE
+                    }
+                }
 
                 listOf(
                     eventCalendarViewHeaderKw,
@@ -263,6 +287,12 @@ internal class InfiniteAdapter(
                 eventCalendarView.clickListener?.onClick(day)
             }
 
+            if (eventCalendarView.expressiveUi) {
+                dayItemLayout.root.showDividers = LinearLayoutCompat.SHOW_DIVIDER_NONE
+            } else {
+                dayItemLayout.root.showDividers = LinearLayoutCompat.SHOW_DIVIDER_MIDDLE
+            }
+
             val textView: MaterialTextView = dayItemLayout.eventCalendarViewDayTextView
 
             val eventList = day.dayEvents(eventCalendarView.eventArrayList.orEmptyArrayList())
@@ -321,7 +351,7 @@ internal class InfiniteAdapter(
             }
 
             if (eventCalendarView._calendarWeekVisible) {
-                initCalendarWeek(day, index, cwBindingList)
+                initCalendarWeek(day = day, index = index, ecvTextviewCwBinding = cwBindingList)
             }
         }
     }
@@ -365,6 +395,13 @@ internal class InfiniteAdapter(
                 setTypeface(typeface, Typeface.ITALIC)
             }
             text = day.convertStringToCalendarWeek()
+        }
+
+        val root = getOrNull(index)?.root ?: return
+        if (eventCalendarView.expressiveUi) {
+            root.showDividers = LinearLayoutCompat.SHOW_DIVIDER_NONE
+        } else {
+            root.showDividers = LinearLayoutCompat.SHOW_DIVIDER_BEGINNING
         }
     }
 
