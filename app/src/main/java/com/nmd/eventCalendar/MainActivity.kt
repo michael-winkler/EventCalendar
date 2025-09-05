@@ -20,6 +20,7 @@ import com.nmd.eventCalendar.model.Event
 import com.nmd.eventCalendarSample.databinding.ActivityMainBinding
 import com.nmd.eventCalendarSample.databinding.BottomSheetBinding
 import com.nmd.eventCalendarSample.databinding.BottomSheetSingleWeekBinding
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -49,8 +50,8 @@ class MainActivity : AppCompatActivity() {
             )
 
             binding.activityMainFloatingActionButtonHolder.updatePadding(
-                bottom = insets.bottom,
-                right = insets.right
+                bottom = insets.bottom + com.nmd.eventCalendarSample.R.dimen.dp_8.getDimensInt(),
+                right = insets.right + com.nmd.eventCalendarSample.R.dimen.dp_8.getDimensInt()
             )
 
             ViewCompat.onApplyWindowInsets(view, windowInsets)
@@ -63,76 +64,98 @@ class MainActivity : AppCompatActivity() {
         private var randomEventList = ArrayList<Event>()
     }
 
-    private fun initialize() {
-        with(binding) {
+    private fun Int.getDimensInt(): Int {
+        return resources?.getDimensionPixelSize(this) ?: 0
+    }
+
+    private fun initialize(): Unit = with(binding) {
+        activityMainProgressBar.isVisible = true
+        activityMainEventCalendarView.isVisible = false
+
+        val year = Calendar.getInstance().get(Calendar.YEAR)
+        activityMainEventCalendarView.setMonthAndYear(
+            startMonth = 1, startYear = year, endMonth = 12, endYear = year
+        )
+        activityMainCalendarImageView.setOnClickListener {
+            activityMainEventCalendarView.scrollToCurrentMonth(
+                smoothScroll = false,
+                scrollToLastIfOutOfRange = true
+            )
+        }
+
+        activityMainShuffleImageView.setOnClickListener {
             activityMainProgressBar.isVisible = true
             activityMainEventCalendarView.isVisible = false
 
-            val year = Calendar.getInstance().get(Calendar.YEAR)
-            activityMainEventCalendarView.setMonthAndYear(
-                startMonth = 1, startYear = year, endMonth = 12, endYear = year
-            )
-            activityMainCalendarImageView.setOnClickListener {
-                activityMainEventCalendarView.scrollToCurrentMonth(
-                    smoothScroll = false,
-                    scrollToLastIfOutOfRange = true
-                )
-            }
-
-            activityMainShuffleImageView.setOnClickListener {
-                activityMainProgressBar.isVisible = true
-                activityMainEventCalendarView.isVisible = false
-
-                createRandomEventList(256) {
-                    randomEventList = it
-                    activityMainEventCalendarView.events = it
-                    activityMainEventCalendarView.post {
-                        activityMainProgressBar.isVisible = false
-                        activityMainEventCalendarView.isVisible = true
-                    }
-                }
-            }
-
-            activityMainEventCalendarView.addOnDayClickListener(object :
-                EventCalendarDayClickListener {
-                override fun onClick(day: Day) {
-                    val eventList =
-                        activityMainEventCalendarView.events.filter { it.date == day.date }
-                    bottomSheet(day, eventList)
-                }
-            })
-            activityMainEventCalendarView.addOnCalendarScrollListener(object :
-                EventCalendarScrollListener {
-                override fun onScrolled(month: Int, year: Int) {
-                    Log.i("ECV", "Scrolled to: $month $year")
-                }
-            })
-
-            if (randomEventList.isEmpty()) {
-                createRandomEventList(256) {
-                    randomEventList = it
-                    activityMainEventCalendarView.events = it
-                    activityMainEventCalendarView.post {
-                        activityMainProgressBar.isVisible = false
-                        activityMainEventCalendarView.isVisible = true
-                    }
-                }
-            } else {
-                activityMainEventCalendarView.events = randomEventList
+            createRandomEventList(numRandomEvents = 256) {
+                randomEventList = it
+                activityMainEventCalendarView.events = it
                 activityMainEventCalendarView.post {
                     activityMainProgressBar.isVisible = false
                     activityMainEventCalendarView.isVisible = true
                 }
             }
+        }
 
-            activityMainFloatingActionButtonCalendarWeekToggle.setOnClickListener {
-                activityMainEventCalendarView.calendarWeekVisible =
-                    !activityMainEventCalendarView.calendarWeekVisible
+        activityMainEventCalendarView.addOnDayClickListener(object :
+            EventCalendarDayClickListener {
+            override fun onClick(day: Day) {
+                val eventList =
+                    activityMainEventCalendarView.events.filter { it.date == day.date }
+                bottomSheet(day, eventList)
             }
+        })
+        activityMainEventCalendarView.addOnCalendarScrollListener(object :
+            EventCalendarScrollListener {
+            override fun onScrolled(month: Int, year: Int) {
+                Log.i("ECV", "Scrolled to: $month $year")
+            }
+        })
 
-            activityMainFloatingActionButtonSingleWeekView.setOnClickListener {
-                bottomSheet2()
+        if (randomEventList.isEmpty()) {
+            createRandomEventList(numRandomEvents = 256) {
+                randomEventList = it
+                activityMainEventCalendarView.events = it
+                activityMainEventCalendarView.post {
+                    activityMainProgressBar.isVisible = false
+                    activityMainEventCalendarView.isVisible = true
+                }
             }
+        } else {
+            activityMainEventCalendarView.events = randomEventList
+            activityMainEventCalendarView.post {
+                activityMainProgressBar.isVisible = false
+                activityMainEventCalendarView.isVisible = true
+            }
+        }
+
+        activityMainFloatingActionButtonExpressiveToggle.setImageResource(
+            if (activityMainEventCalendarView.expressiveUi) {
+                com.nmd.eventCalendarSample.R.drawable.icon_emoticon_cool_outline
+            } else {
+                com.nmd.eventCalendarSample.R.drawable.icon_emoticon_happy_outline
+            }
+        )
+
+        activityMainFloatingActionButtonExpressiveToggle.setOnClickListener {
+            activityMainFloatingActionButtonExpressiveToggle.setImageResource(
+                if (activityMainEventCalendarView.expressiveUi) {
+                    com.nmd.eventCalendarSample.R.drawable.icon_emoticon_happy_outline
+                } else {
+                    com.nmd.eventCalendarSample.R.drawable.icon_emoticon_cool_outline
+                }
+            )
+
+            activityMainEventCalendarView.expressiveUi = !activityMainEventCalendarView.expressiveUi
+        }
+
+        activityMainFloatingActionButtonCalendarWeekToggle.setOnClickListener {
+            activityMainEventCalendarView.calendarWeekVisible =
+                !activityMainEventCalendarView.calendarWeekVisible
+        }
+
+        activityMainFloatingActionButtonSingleWeekView.setOnClickListener {
+            bottomSheet2()
         }
     }
 
@@ -281,7 +304,11 @@ class MainActivity : AppCompatActivity() {
                 RandomEventList("Farm Visit", "#7cb342")
             )
 
-            fun createRandomEventList(numRandomEvents: Int, callback: (ArrayList<Event>) -> Unit) {
+            fun createRandomEventList(
+                mainDispatcher: CoroutineDispatcher = Dispatchers.Main,
+                numRandomEvents: Int,
+                callback: (ArrayList<Event>) -> Unit
+            ) {
                 CoroutineScope(Dispatchers.IO).launch {
                     val currentDate = Calendar.getInstance()
                     val currentYear = currentDate.get(Calendar.YEAR)
@@ -320,7 +347,7 @@ class MainActivity : AppCompatActivity() {
                         eventList.addAll(eventsForMonth.shuffled())
                     }
 
-                    withContext(Dispatchers.Main) {
+                    withContext(mainDispatcher) {
                         callback.invoke(eventList)
                     }
                 }

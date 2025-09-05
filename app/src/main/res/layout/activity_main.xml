@@ -72,7 +72,7 @@
             app:ecv_event_item_automatic_text_color="true"
             app:ecv_event_item_dark_text_color="@color/ecv_black"
             app:ecv_event_item_text_color="@color/ecv_black"
-            app:ecv_expressive_ui="true"
+            app:ecv_expressive_ui="false"
             app:ecv_header_visible="true" />
 
         <ProgressBar
@@ -81,20 +81,29 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center" />
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/activityMainFloatingActionButtonHolder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end">
+            android:layout_gravity="bottom|end"
+            android:paddingHorizontal="@dimen/dp_8">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/activityMainFloatingActionButtonExpressiveToggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/dp_8"
+                android:layout_marginVertical="16dp"
+                app:backgroundTint="#90CAF9"
+                app:rippleColor="@color/ecv_ripple_color"
+                app:tint="#005AFF" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/activityMainFloatingActionButtonCalendarWeekToggle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/dp_8"
                 android:layout_marginVertical="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="8dp"
-                android:layout_toStartOf="@+id/activityMainFloatingActionButtonSingleWeekView"
                 android:src="@drawable/icon_calendar_week_begin_outline"
                 app:backgroundTint="@color/alert"
                 app:rippleColor="@color/ecv_ripple_color"
@@ -104,16 +113,14 @@
                 android:id="@+id/activityMainFloatingActionButtonSingleWeekView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
+                android:layout_marginHorizontal="@dimen/dp_8"
                 android:layout_marginVertical="16dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="16dp"
                 android:src="@drawable/icon_calendar_today_outline"
                 app:backgroundTint="@color/colorPrimary"
                 app:rippleColor="@color/ecv_ripple_color"
                 app:tint="@color/colorWhite" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
     </FrameLayout>
 

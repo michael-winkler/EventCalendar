@@ -32,7 +32,7 @@
         app:ecv_current_day_text_color="@android:color/white"
         app:ecv_event_item_automatic_text_color="true"
         app:ecv_event_item_text_color="@color/ecv_black"
-        app:ecv_expressive_ui="true"
+        app:ecv_expressive_ui="false"
         app:ecv_header_visible="true" />
 
 </LinearLayout>

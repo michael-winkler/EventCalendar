@@ -33,6 +33,7 @@ import com.nmd.eventCalendar.utils.Utils.Companion.getMonthName
 import com.nmd.eventCalendar.utils.Utils.Companion.getRealContext
 import com.nmd.eventCalendar.utils.Utils.Companion.orEmptyArrayList
 
+@Suppress("unused")
 class EventCalendarSingleWeekView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -45,7 +46,7 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
 
     // For xml layout
     internal var headerVisible = true
-    private var _calendarWeekVisible = false
+    private var isCalendarWeekVisible = false
     internal var currentDayBackgroundTintColor =
         ContextCompat.getColor(getContext(), R.color.ecv_charcoal_color)
     internal var currentDayTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
@@ -57,14 +58,14 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
     internal var eventItemTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
     internal var eventItemDarkTextColor =
         ContextCompat.getColor(getContext(), R.color.ecv_charcoal_color)
-    internal var expressiveUi = false
+    internal var isExpressiveUi = false
 
     init {
         getContext().withStyledAttributes(attrs, R.styleable.EventCalendarView) {
             headerVisible =
                 getBoolean(R.styleable.EventCalendarView_ecv_header_visible, headerVisible)
-            _calendarWeekVisible = getBoolean(
-                R.styleable.EventCalendarView_ecv_calendar_week_visible, _calendarWeekVisible
+            isCalendarWeekVisible = getBoolean(
+                R.styleable.EventCalendarView_ecv_calendar_week_visible, isCalendarWeekVisible
             )
             currentDayBackgroundTintColor = getColor(
                 (R.styleable.EventCalendarView_ecv_current_day_background_tint_color),
@@ -93,7 +94,8 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
                 (R.styleable.EventCalendarView_ecv_event_item_dark_text_color),
                 eventItemDarkTextColor
             )
-            expressiveUi = getBoolean(R.styleable.EventCalendarView_ecv_expressive_ui, expressiveUi)
+            isExpressiveUi =
+                getBoolean(R.styleable.EventCalendarView_ecv_expressive_ui, isExpressiveUi)
         }
 
         addView(binding.root)
@@ -175,9 +177,26 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
      * Default is "false"
      */
     var calendarWeekVisible: Boolean
-        get() = _calendarWeekVisible
+        get() = isCalendarWeekVisible
         set(value) {
-            _calendarWeekVisible = value
+            isCalendarWeekVisible = value
+            updateLayout()
+        }
+
+    /**
+     * Indicates whether to display the expressive UI.
+     *
+     * Set this property to `true` to display the expressive UI. By default, this is `false`.
+     *
+     * You can also set this value in your XML layout as follows:
+     * ```
+     * app:ecv_expressive_ui="true"
+     * ```
+     */
+    var expressiveUi: Boolean
+        get() = isExpressiveUi
+        set(value) {
+            isExpressiveUi = value
             updateLayout()
         }
 
@@ -194,12 +213,12 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
             eventCalendarSingleWeekViewMonthYearHeader.post {
                 eventCalendarSingleWeekViewMonthYearHeader.isVisible = headerVisible
 
-                if (_calendarWeekVisible) {
+                if (isCalendarWeekVisible) {
                     eventCalendarViewCalendarWeek.eventCalendarViewDayTextView.text =
                         "${getCurrentWeekNumber()}"
                 }
 
-                if (expressiveUi) {
+                if (isExpressiveUi) {
                     eventCalendarViewLinearLayoutCompat.showDividers =
                         LinearLayoutCompat.SHOW_DIVIDER_NONE
 
@@ -213,8 +232,8 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
                         LinearLayoutCompat.SHOW_DIVIDER_BEGINNING or LinearLayoutCompat.SHOW_DIVIDER_MIDDLE or LinearLayoutCompat.SHOW_DIVIDER_END
                 }
 
-                eventCalendarViewHeaderKw.isVisible = _calendarWeekVisible
-                eventCalendarViewCalendarWeek.root.isVisible = _calendarWeekVisible
+                eventCalendarViewHeaderKw.isVisible = isCalendarWeekVisible
+                eventCalendarViewCalendarWeek.root.isVisible = isCalendarWeekVisible
             }
 
             initTextViews(
@@ -252,14 +271,14 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
         styleTextViews(days, bindingArrayList, ArrayList(eventArrayList1), materialTextView)
 
         bindingArrayList.forEach {
-            if (expressiveUi) {
+            if (isExpressiveUi) {
                 it.root.showDividers = LinearLayoutCompat.SHOW_DIVIDER_NONE
             } else {
                 it.root.showDividers = LinearLayoutCompat.SHOW_DIVIDER_BEGINNING
             }
         }
 
-        if (expressiveUi) {
+        if (isExpressiveUi) {
             linearLayoutCompat.showDividers = LinearLayoutCompat.SHOW_DIVIDER_NONE
         } else {
             linearLayoutCompat.showDividers = LinearLayoutCompat.SHOW_DIVIDER_BEGINNING
@@ -337,7 +356,7 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
                 }
             }
 
-            if (index == 0 && _calendarWeekVisible) {
+            if (index == 0 && isCalendarWeekVisible) {
                 with(materialTextView) {
                     if (day.isCurrentMonth || day.isCurrentDay) {
                         setTypeface(typeface, Typeface.BOLD)

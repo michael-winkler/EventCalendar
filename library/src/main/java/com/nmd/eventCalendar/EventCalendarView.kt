@@ -101,7 +101,7 @@ class EventCalendarView @JvmOverloads constructor(
 
     // For xml layout
     internal var headerVisible = true
-    internal var _calendarWeekVisible = false
+    internal var isCalendarWeekVisible = false
     internal var currentDayBackgroundTintColor =
         ContextCompat.getColor(getContext(), R.color.ecv_charcoal_color)
     internal var currentDayTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
@@ -115,14 +115,14 @@ class EventCalendarView @JvmOverloads constructor(
         ContextCompat.getColor(getContext(), R.color.ecv_charcoal_color)
     internal var edgeToEdgeEnabled = false
 
-    internal var expressiveUi = false
+    internal var isExpressiveUi = false
 
     init {
         getContext().withStyledAttributes(attrs, R.styleable.EventCalendarView) {
             headerVisible =
                 getBoolean(R.styleable.EventCalendarView_ecv_header_visible, headerVisible)
-            _calendarWeekVisible = getBoolean(
-                R.styleable.EventCalendarView_ecv_calendar_week_visible, _calendarWeekVisible
+            isCalendarWeekVisible = getBoolean(
+                R.styleable.EventCalendarView_ecv_calendar_week_visible, isCalendarWeekVisible
             )
             disallowIntercept =
                 getBoolean(R.styleable.EventCalendarView_ecv_disallow_intercept, disallowIntercept)
@@ -156,7 +156,8 @@ class EventCalendarView @JvmOverloads constructor(
             edgeToEdgeEnabled = getBoolean(
                 R.styleable.EventCalendarView_ecv_edge_to_edge_enabled, edgeToEdgeEnabled
             )
-            expressiveUi = getBoolean(R.styleable.EventCalendarView_ecv_expressive_ui, expressiveUi)
+            isExpressiveUi =
+                getBoolean(R.styleable.EventCalendarView_ecv_expressive_ui, isExpressiveUi)
         }
 
         addView(binding.root)
@@ -364,9 +365,10 @@ class EventCalendarView @JvmOverloads constructor(
         val isStartMonthYearChanged = sMonth != startMonth - 1 || sYear != startYear
         val isEndMonthYearChanged = eMonth != endMonth - 1 || eYear != endYear
 
+        /**
+         * val numberOfNewMonths = ((eYear - startYear) * 12 + (eMonth - startMonth)).plus(1)
+         */
         if (forceRecreate || isStartMonthYearChanged || isEndMonthYearChanged) {
-            //val numberOfNewMonths = ((eYear - startYear) * 12 + (eMonth - startMonth)).plus(1)
-
             sMonth = startMonth - 1
             sYear = startYear
             eMonth = endMonth - 1
@@ -442,9 +444,26 @@ class EventCalendarView @JvmOverloads constructor(
      * ```
      */
     var calendarWeekVisible: Boolean
-        get() = _calendarWeekVisible
+        get() = isCalendarWeekVisible
         set(value) {
-            _calendarWeekVisible = value
+            isCalendarWeekVisible = value
+            updateRecyclerView(dateRangeChanged = false, scrollToLastIfOutOfRange = false)
+        }
+
+    /**
+     * Indicates whether to display the expressive UI.
+     *
+     * Set this property to `true` to display the expressive UI. By default, this is `false`.
+     *
+     * You can also set this value in your XML layout as follows:
+     * ```
+     * app:ecv_expressive_ui="true"
+     * ```
+     */
+    var expressiveUi: Boolean
+        get() = isExpressiveUi
+        set(value) {
+            isExpressiveUi = value
             updateRecyclerView(dateRangeChanged = false, scrollToLastIfOutOfRange = false)
         }
 
@@ -467,7 +486,7 @@ class EventCalendarView @JvmOverloads constructor(
         InstanceState().saveInstanceState(
             id = id, stateModel = InstanceState.StateModel(
                 disallowIntercept = disallowIntercept,
-                calendarWeekVisible = _calendarWeekVisible,
+                calendarWeekVisible = isCalendarWeekVisible,
                 currentRecyclerViewPosition = currentRecyclerViewPosition,
                 startMonth = sMonth,
                 startYear = sYear,
@@ -485,7 +504,7 @@ class EventCalendarView @JvmOverloads constructor(
         // Restore to the last state
         InstanceState().restoreInstanceState(id)?.let { sharedPreferencesModel ->
             disallowIntercept = sharedPreferencesModel.disallowIntercept
-            _calendarWeekVisible = sharedPreferencesModel.calendarWeekVisible
+            isCalendarWeekVisible = sharedPreferencesModel.calendarWeekVisible
             currentRecyclerViewPosition = sharedPreferencesModel.currentRecyclerViewPosition
             sMonth = sharedPreferencesModel.startMonth
             sYear = sharedPreferencesModel.startYear
@@ -507,7 +526,8 @@ class EventCalendarView @JvmOverloads constructor(
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     private fun updateRecyclerView(dateRangeChanged: Boolean, scrollToLastIfOutOfRange: Boolean) {
         with(binding) {
-            eventCalendarRecyclerView.adapter = eventCalendarRecyclerView.adapter
+            val adapter = eventCalendarRecyclerView.adapter
+            eventCalendarRecyclerView.adapter = adapter
             if (dateRangeChanged) {
                 val validPosition = getValidRecyclerViewPosition()
                 val itemCount = eventCalendarRecyclerView.adapter?.itemCount ?: 0

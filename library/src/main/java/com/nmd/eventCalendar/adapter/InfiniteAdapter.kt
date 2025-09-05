@@ -84,7 +84,7 @@ internal class InfiniteAdapter(
             with(binding) {
                 eventCalendarViewMonthYearHeader.isVisible = eventCalendarView.headerVisible
 
-                if (eventCalendarView.expressiveUi) {
+                if (eventCalendarView.isExpressiveUi) {
                     eventCalendarViewLinearLayoutCompat.showDividers =
                         LinearLayoutCompat.SHOW_DIVIDER_NONE
                 } else {
@@ -100,7 +100,7 @@ internal class InfiniteAdapter(
                     eventCalendarViewRow5.eventCalendarViewRowsLinearLayoutCompat,
                     eventCalendarViewRow6.eventCalendarViewRowsLinearLayoutCompat
                 ).forEach {
-                    if (eventCalendarView.expressiveUi) {
+                    if (eventCalendarView.isExpressiveUi) {
                         it.showDividers = LinearLayoutCompat.SHOW_DIVIDER_NONE
                     } else {
                         it.showDividers = LinearLayoutCompat.SHOW_DIVIDER_MIDDLE
@@ -287,10 +287,10 @@ internal class InfiniteAdapter(
                 eventCalendarView.clickListener?.onClick(day)
             }
 
-            if (eventCalendarView.expressiveUi) {
+            if (eventCalendarView.isExpressiveUi) {
                 dayItemLayout.root.showDividers = LinearLayoutCompat.SHOW_DIVIDER_NONE
             } else {
-                dayItemLayout.root.showDividers = LinearLayoutCompat.SHOW_DIVIDER_MIDDLE
+                dayItemLayout.root.showDividers = LinearLayoutCompat.SHOW_DIVIDER_BEGINNING
             }
 
             val textView: MaterialTextView = dayItemLayout.eventCalendarViewDayTextView
@@ -350,7 +350,7 @@ internal class InfiniteAdapter(
                 }
             }
 
-            if (eventCalendarView._calendarWeekVisible) {
+            if (eventCalendarView.isCalendarWeekVisible) {
                 initCalendarWeek(day = day, index = index, ecvTextviewCwBinding = cwBindingList)
             }
         }
@@ -398,7 +398,7 @@ internal class InfiniteAdapter(
         }
 
         val root = getOrNull(index)?.root ?: return
-        if (eventCalendarView.expressiveUi) {
+        if (eventCalendarView.isExpressiveUi) {
             root.showDividers = LinearLayoutCompat.SHOW_DIVIDER_NONE
         } else {
             root.showDividers = LinearLayoutCompat.SHOW_DIVIDER_BEGINNING
