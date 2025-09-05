@@ -87,7 +87,7 @@ class MainActivity : AppCompatActivity() {
             activityMainProgressBar.isVisible = true
             activityMainEventCalendarView.isVisible = false
 
-            createRandomEventList(numRandomEvents = 256) {
+            createRandomEventList(numRandomEvents = 512) {
                 randomEventList = it
                 activityMainEventCalendarView.events = it
                 activityMainEventCalendarView.post {
@@ -113,7 +113,7 @@ class MainActivity : AppCompatActivity() {
         })
 
         if (randomEventList.isEmpty()) {
-            createRandomEventList(numRandomEvents = 256) {
+            createRandomEventList(numRandomEvents = 512) {
                 randomEventList = it
                 activityMainEventCalendarView.events = it
                 activityMainEventCalendarView.post {
@@ -317,41 +317,32 @@ class MainActivity : AppCompatActivity() {
                     val eventsPerMonth = numRandomEvents / 12
 
                     for (month in 1..12) {
-                        val calendar = Calendar.getInstance().apply {
-                            set(currentYear, month - 1, 1)
-                        }
+                        val calendar =
+                            Calendar.getInstance().apply { set(currentYear, month - 1, 1) }
                         val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
 
-                        val randomEvents = arrayListOf<RandomEventList>()
-                        repeat(list.size) {
+                        repeat(eventsPerMonth) {
                             val randomEvent = list.random()
-                            randomEvents.add(randomEvent)
-                        }
-
-                        val eventsForMonth = arrayListOf<Event>()
-                        for (i in 1..eventsPerMonth) {
-                            val randomEvent = randomEvents.random()
                             val randomDay = (1..daysInMonth).random()
-                            val dateStr =
-                                String.format(
-                                    Locale.GERMAN,
-                                    "%02d.%02d.%04d",
-                                    randomDay,
-                                    month,
-                                    currentYear
-                                )
-                            val newEvent = Event(dateStr, randomEvent.name, randomEvent.color)
-                            eventsForMonth.add(newEvent)
+                            val dateStr = String.format(
+                                Locale.GERMAN,
+                                "%02d.%02d.%04d",
+                                randomDay,
+                                month,
+                                currentYear
+                            )
+                            eventList.add(Event(dateStr, randomEvent.name, randomEvent.color))
                         }
-
-                        eventList.addAll(eventsForMonth.shuffled())
                     }
+
+                    eventList.shuffle()
 
                     withContext(mainDispatcher) {
                         callback.invoke(eventList)
                     }
                 }
             }
+
         }
     }
 
