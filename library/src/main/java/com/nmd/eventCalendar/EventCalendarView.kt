@@ -102,20 +102,31 @@ class EventCalendarView @JvmOverloads constructor(
     // For xml layout
     internal var headerVisible = true
     internal var isCalendarWeekVisible = false
+
+    // Current day
     internal var currentDayBackgroundTintColor =
         ContextCompat.getColor(getContext(), R.color.ecv_charcoal_color)
     internal var currentDayTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
+
+    // Count background
     internal var countBackgroundTintColor =
         ContextCompat.getColor(getContext(), R.color.ecv_charcoal_color)
     internal var countBackgroundTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
     internal var countVisible = true
+
+    // Event item
     internal var eventItemAutomaticTextColor = true
     internal var eventItemTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
     internal var eventItemDarkTextColor =
         ContextCompat.getColor(getContext(), R.color.ecv_charcoal_color)
+
+    // Edge to edge
     internal var edgeToEdgeEnabled = false
 
+    // Expressive UI
     internal var isExpressiveUi = false
+    internal var expressiveCwBackgroundTintColor =
+        ContextCompat.getColor(getContext(), R.color.ecv_expressive_cw_background_color)
 
     init {
         getContext().withStyledAttributes(attrs, R.styleable.EventCalendarView) {
@@ -158,6 +169,10 @@ class EventCalendarView @JvmOverloads constructor(
             )
             isExpressiveUi =
                 getBoolean(R.styleable.EventCalendarView_ecv_expressive_ui, isExpressiveUi)
+            expressiveCwBackgroundTintColor = getColor(
+                (R.styleable.EventCalendarView_ecv_expressive_cw_background_tint_color),
+                expressiveCwBackgroundTintColor
+            )
         }
 
         addView(binding.root)

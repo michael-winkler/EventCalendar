@@ -25,6 +25,7 @@ import com.nmd.eventCalendar.`interface`.EventCalendarDayClickListener
 import com.nmd.eventCalendar.model.Day
 import com.nmd.eventCalendar.model.Event
 import com.nmd.eventCalendar.utils.Utils.Companion.dayEvents
+import com.nmd.eventCalendar.utils.Utils.Companion.expressiveCwHelper
 import com.nmd.eventCalendar.utils.Utils.Companion.getCurrentMonth
 import com.nmd.eventCalendar.utils.Utils.Companion.getCurrentWeekNumber
 import com.nmd.eventCalendar.utils.Utils.Companion.getCurrentYear
@@ -47,18 +48,28 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
     // For xml layout
     internal var headerVisible = true
     private var isCalendarWeekVisible = false
+
+    // Current day
     internal var currentDayBackgroundTintColor =
         ContextCompat.getColor(getContext(), R.color.ecv_charcoal_color)
     internal var currentDayTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
+
+    // Count background
     internal var countBackgroundTintColor =
         ContextCompat.getColor(getContext(), R.color.ecv_charcoal_color)
     internal var countBackgroundTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
     internal var countVisible = true
+
+    // Event item
     internal var eventItemAutomaticTextColor = true
     internal var eventItemTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
     internal var eventItemDarkTextColor =
         ContextCompat.getColor(getContext(), R.color.ecv_charcoal_color)
+
+    // Expressive UI
     internal var isExpressiveUi = false
+    internal var expressiveCwBackgroundTintColor =
+        ContextCompat.getColor(getContext(), R.color.ecv_expressive_cw_background_color)
 
     init {
         getContext().withStyledAttributes(attrs, R.styleable.EventCalendarView) {
@@ -96,6 +107,10 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
             )
             isExpressiveUi =
                 getBoolean(R.styleable.EventCalendarView_ecv_expressive_ui, isExpressiveUi)
+            expressiveCwBackgroundTintColor = getColor(
+                (R.styleable.EventCalendarView_ecv_expressive_cw_background_tint_color),
+                expressiveCwBackgroundTintColor
+            )
         }
 
         addView(binding.root)
@@ -239,6 +254,7 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
             initTextViews(
                 days = getDaysForCurrentWeek(),
                 materialTextView = eventCalendarViewCalendarWeek.eventCalendarViewDayTextView,
+                frameLayout = eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewExpressiveFrameLayout,
                 linearLayoutCompat = eventCalendarViewCalendarWeek.root
             )
         }
@@ -247,6 +263,7 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
     private fun initTextViews(
         days: List<Day>,
         materialTextView: MaterialTextView,
+        frameLayout: FrameLayout,
         linearLayoutCompat: LinearLayoutCompat
     ) {
         val bindingArrayList = arrayListOf(
@@ -268,7 +285,13 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
             eventArrayList1.addAll(eventArrayList.filter { it.date == day.date })
         }
 
-        styleTextViews(days, bindingArrayList, ArrayList(eventArrayList1), materialTextView)
+        styleTextViews(
+            days = days,
+            list = bindingArrayList,
+            eventsList = ArrayList(eventArrayList1),
+            materialTextView = materialTextView,
+            frameLayout = frameLayout
+        )
 
         bindingArrayList.forEach {
             if (isExpressiveUi) {
@@ -290,7 +313,8 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
         days: List<Day>,
         list: List<EcvTextviewCircleBinding>,
         eventsList: ArrayList<Event>,
-        materialTextView: MaterialTextView
+        materialTextView: MaterialTextView,
+        frameLayout: FrameLayout
     ) {
         for (index in days.indices) {
             val day = days[index]
@@ -300,10 +324,10 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
                 clickListener?.onClick(day)
             }
 
-            val textView: MaterialTextView = dayItemLayout.eventCalendarViewDayTextView
+            val textView = dayItemLayout.eventCalendarViewDayTextView
 
             val eventList = day.dayEvents(eventsList.orEmptyArrayList())
-            val recyclerView: RecyclerView = dayItemLayout.eventCalendarViewDayRecyclerView
+            val recyclerView = dayItemLayout.eventCalendarViewDayRecyclerView
             with(recyclerView) {
                 suppressLayout(true)
                 addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
@@ -364,6 +388,12 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
                         setTypeface(typeface, Typeface.ITALIC)
                     }
                 }
+
+                expressiveUi.expressiveCwHelper(
+                    frameLayout = frameLayout,
+                    index = -1,
+                    cwBackgroundTintColor = expressiveCwBackgroundTintColor
+                )
             }
         }
     }

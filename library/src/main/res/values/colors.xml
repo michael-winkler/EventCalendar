@@ -6,4 +6,5 @@
     <color name="ecv_white">#FFFFFFFF</color>
     <color name="ecv_charcoal_color">#6C6868</color>
     <color name="ecv_ripple_color">#1F000000</color>
+    <color name="ecv_expressive_cw_background_color">#F4F4F4</color>
 </resources>

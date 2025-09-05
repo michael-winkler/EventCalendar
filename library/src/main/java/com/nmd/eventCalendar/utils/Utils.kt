@@ -3,10 +3,14 @@ package com.nmd.eventCalendar.utils
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.res.ColorStateList
 import android.os.Build
+import android.widget.FrameLayout
 import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.nmd.eventCalendar.R
 import com.nmd.eventCalendar.model.Day
@@ -265,6 +269,45 @@ internal class Utils {
             } catch (e: Exception) {
                 ""
             }
+        }
+
+        internal fun Boolean.expressiveCwHelper(
+            frameLayout: FrameLayout,
+            index: Int,
+            cwBackgroundTintColor: Int
+        ): Unit = with(frameLayout) {
+            if (!this@expressiveCwHelper) {
+                background = null
+                return
+            }
+            val realContext = context.getRealContext() ?: return
+
+            val expressiveBackgroundRes = when (index) {
+                -1 -> {
+                    // Full - Used for ECV Single week view
+                    R.drawable.ecv_expressive_full_background
+                }
+
+                0 -> {
+                    // Top
+                    R.drawable.ecv_expressive_top_background
+                }
+
+                5 -> {
+                    // Bottom
+                    R.drawable.ecv_expressive_bottom_background
+
+                }
+
+                else -> {
+                    // Inside
+                    R.drawable.ecv_expressive_inside_background
+                }
+            }
+
+            background = ContextCompat.getDrawable(realContext, expressiveBackgroundRes)
+
+            ViewCompat.setBackgroundTintList(this, ColorStateList.valueOf(cwBackgroundTintColor))
         }
 
     }

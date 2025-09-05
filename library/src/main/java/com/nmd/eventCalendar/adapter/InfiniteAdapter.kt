@@ -31,6 +31,7 @@ import com.nmd.eventCalendar.model.Day
 import com.nmd.eventCalendar.model.Event
 import com.nmd.eventCalendar.utils.Utils.Companion.convertStringToCalendarWeek
 import com.nmd.eventCalendar.utils.Utils.Companion.dayEvents
+import com.nmd.eventCalendar.utils.Utils.Companion.expressiveCwHelper
 import com.nmd.eventCalendar.utils.Utils.Companion.getDaysOfMonthAndGivenYear
 import com.nmd.eventCalendar.utils.Utils.Companion.getMonthName
 import com.nmd.eventCalendar.utils.Utils.Companion.getRealContext
@@ -126,77 +127,14 @@ internal class InfiniteAdapter(
 
                     val isPortrait = (binding.root.tag?.toString()?.toIntOrNull() ?: 0) == 0
 
-                    val left = insets?.left ?: 0
-                    val right = insets?.right ?: 0
-                    val bottom = insets?.bottom ?: 0
-
                     if (isPortrait) {
-                        listOf(
-                            eventCalendarViewRow6.eventCalendarViewCalendarWeek.root,
-                            eventCalendarViewRow6.eventCalendarViewDay1.root,
-                            eventCalendarViewRow6.eventCalendarViewDay2.root,
-                            eventCalendarViewRow6.eventCalendarViewDay3.root,
-                            eventCalendarViewRow6.eventCalendarViewDay4.root,
-                            eventCalendarViewRow6.eventCalendarViewDay5.root,
-                            eventCalendarViewRow6.eventCalendarViewDay6.root,
-                            eventCalendarViewRow6.eventCalendarViewDay7.root
-                        ).forEach {
-                            it.updatePadding(
-                                bottom = bottom
-                            )
-                        }
+                        portaitHelper(binding = binding, bottom = insets?.bottom ?: 0)
                     } else {
-                        eventCalendarViewLandscapeEdgeHelper?.updatePadding(
-                            right = right
+                        landscapeHelper(
+                            binding = binding,
+                            left = insets?.left ?: 0,
+                            right = insets?.right ?: 0
                         )
-
-                        if (eventCalendarView.headerVisible) {
-                            eventCalendarViewMonthYearHeader.updatePadding(
-                                left = left
-                            )
-                        } else {
-                            if (eventCalendarView.calendarWeekVisible) {
-                                listOf(
-                                    eventCalendarViewHeaderKw,
-                                    eventCalendarViewRow1.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewFrameLayout,
-                                    eventCalendarViewRow2.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewFrameLayout,
-                                    eventCalendarViewRow3.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewFrameLayout,
-                                    eventCalendarViewRow4.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewFrameLayout,
-                                    eventCalendarViewRow5.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewFrameLayout,
-                                    eventCalendarViewRow6.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewFrameLayout
-                                ).forEach {
-                                    it.updatePadding(
-                                        left = left
-                                    )
-                                }
-                            } else {
-                                listOf(
-                                    eventCalendarViewHeaderMonday,
-                                    eventCalendarViewRow1.eventCalendarViewDay1.eventCalendarViewDayRecyclerView,
-                                    eventCalendarViewRow2.eventCalendarViewDay1.eventCalendarViewDayRecyclerView,
-                                    eventCalendarViewRow3.eventCalendarViewDay1.eventCalendarViewDayRecyclerView,
-                                    eventCalendarViewRow4.eventCalendarViewDay1.eventCalendarViewDayRecyclerView,
-                                    eventCalendarViewRow5.eventCalendarViewDay1.eventCalendarViewDayRecyclerView,
-                                    eventCalendarViewRow6.eventCalendarViewDay1.eventCalendarViewDayRecyclerView
-                                ).forEach {
-                                    it.updatePadding(
-                                        left = left
-                                    )
-                                }
-
-                                listOf(
-                                    eventCalendarViewRow1.eventCalendarViewDay1.eventCalendarViewDayTextView,
-                                    eventCalendarViewRow2.eventCalendarViewDay1.eventCalendarViewDayTextView,
-                                    eventCalendarViewRow3.eventCalendarViewDay1.eventCalendarViewDayTextView,
-                                    eventCalendarViewRow4.eventCalendarViewDay1.eventCalendarViewDayTextView,
-                                    eventCalendarViewRow5.eventCalendarViewDay1.eventCalendarViewDayTextView
-                                ).forEach {
-                                    it.updateLayoutParams<MarginLayoutParams> {
-                                        marginStart = left
-                                    }
-                                }
-                            }
-                        }
                     }
                 }
 
@@ -214,6 +152,85 @@ internal class InfiniteAdapter(
             }
         }
     }
+
+    private fun portaitHelper(binding: EcvEventCalendarViewBinding, bottom: Int): Unit =
+        with(binding) {
+            listOf(
+                eventCalendarViewRow6.eventCalendarViewCalendarWeek.root,
+                eventCalendarViewRow6.eventCalendarViewDay1.root,
+                eventCalendarViewRow6.eventCalendarViewDay2.root,
+                eventCalendarViewRow6.eventCalendarViewDay3.root,
+                eventCalendarViewRow6.eventCalendarViewDay4.root,
+                eventCalendarViewRow6.eventCalendarViewDay5.root,
+                eventCalendarViewRow6.eventCalendarViewDay6.root,
+                eventCalendarViewRow6.eventCalendarViewDay7.root
+            ).forEach {
+                it.updatePadding(
+                    bottom = bottom
+                )
+            }
+        }
+
+    private fun landscapeHelper(binding: EcvEventCalendarViewBinding, left: Int, right: Int): Unit =
+        with(binding) {
+            eventCalendarViewLandscapeEdgeHelper?.updatePadding(
+                right = right
+            )
+
+            // The header is visible
+            if (eventCalendarView.headerVisible) {
+                eventCalendarViewMonthYearHeader.updatePadding(
+                    left = left
+                )
+                return
+            }
+
+            // The header is not visible but the calendar week is visible
+            if (eventCalendarView.calendarWeekVisible) {
+                listOf(
+                    eventCalendarViewHeaderKw,
+                    eventCalendarViewRow1.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewInsetsFrameLayout,
+                    eventCalendarViewRow2.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewInsetsFrameLayout,
+                    eventCalendarViewRow3.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewInsetsFrameLayout,
+                    eventCalendarViewRow4.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewInsetsFrameLayout,
+                    eventCalendarViewRow5.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewInsetsFrameLayout,
+                    eventCalendarViewRow6.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewInsetsFrameLayout
+                ).forEach {
+                    it.updatePadding(
+                        left = left
+                    )
+                }
+                return
+            }
+
+            // The header is not visible and the calendar week is not visible
+            listOf(
+                eventCalendarViewHeaderMonday,
+                eventCalendarViewRow1.eventCalendarViewDay1.eventCalendarViewDayRecyclerView,
+                eventCalendarViewRow2.eventCalendarViewDay1.eventCalendarViewDayRecyclerView,
+                eventCalendarViewRow3.eventCalendarViewDay1.eventCalendarViewDayRecyclerView,
+                eventCalendarViewRow4.eventCalendarViewDay1.eventCalendarViewDayRecyclerView,
+                eventCalendarViewRow5.eventCalendarViewDay1.eventCalendarViewDayRecyclerView,
+                eventCalendarViewRow6.eventCalendarViewDay1.eventCalendarViewDayRecyclerView
+            ).forEach {
+                it.updatePadding(
+                    left = left
+                )
+            }
+
+            listOf(
+                eventCalendarViewRow1.eventCalendarViewDay1.eventCalendarViewDayTextView,
+                eventCalendarViewRow2.eventCalendarViewDay1.eventCalendarViewDayTextView,
+                eventCalendarViewRow3.eventCalendarViewDay1.eventCalendarViewDayTextView,
+                eventCalendarViewRow4.eventCalendarViewDay1.eventCalendarViewDayTextView,
+                eventCalendarViewRow5.eventCalendarViewDay1.eventCalendarViewDayTextView,
+                eventCalendarViewRow6.eventCalendarViewDay1.eventCalendarViewDayTextView
+            ).forEach {
+                it.updateLayoutParams<MarginLayoutParams> {
+                    marginStart = left.div(2)
+                }
+            }
+        }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterViewHolder {
         return AdapterViewHolder(
@@ -293,10 +310,10 @@ internal class InfiniteAdapter(
                 dayItemLayout.root.showDividers = LinearLayoutCompat.SHOW_DIVIDER_BEGINNING
             }
 
-            val textView: MaterialTextView = dayItemLayout.eventCalendarViewDayTextView
+            val textView = dayItemLayout.eventCalendarViewDayTextView
 
             val eventList = day.dayEvents(eventCalendarView.eventArrayList.orEmptyArrayList())
-            val recyclerView: RecyclerView = dayItemLayout.eventCalendarViewDayRecyclerView
+            val recyclerView = dayItemLayout.eventCalendarViewDayRecyclerView
             with(recyclerView) {
                 suppressLayout(true)
                 addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
@@ -387,6 +404,8 @@ internal class InfiniteAdapter(
     }
 
     private fun List<EcvTextviewCwBinding>.setCalendarWeekUi(index: Int, day: Day) {
+        val frameLayout =
+            getOrNull(index)?.eventCalendarViewDayTextViewExpressiveFrameLayout ?: return
         val textView = getOrNull(index)?.eventCalendarViewDayTextView ?: return
         with(textView) {
             if (day.isCurrentMonth || day.isCurrentDay) {
@@ -403,6 +422,12 @@ internal class InfiniteAdapter(
         } else {
             root.showDividers = LinearLayoutCompat.SHOW_DIVIDER_BEGINNING
         }
+
+        eventCalendarView.expressiveUi.expressiveCwHelper(
+            frameLayout,
+            index,
+            eventCalendarView.expressiveCwBackgroundTintColor
+        )
     }
 
     inner class LastPossibleVisibleItemForUserDecoration(private val eventList: ArrayList<Event>) :
