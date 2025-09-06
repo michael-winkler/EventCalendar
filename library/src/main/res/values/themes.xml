@@ -31,12 +31,13 @@
     </style>
 
     <style name="ECV_Day" parent="ECV_TEXT_ICON_COLOR">
-        <item name="android:layout_width">24dp</item>
-        <item name="android:layout_height">24dp</item>
+        <item name="android:layout_width">@dimen/dp_current_day_height</item>
+        <item name="android:layout_height">@dimen/dp_current_day_width</item>
         <item name="android:layout_gravity">center|top</item>
         <item name="android:layout_margin">2dp</item>
         <item name="android:gravity">center</item>
         <item name="android:textSize">12sp</item>
+        <item name="android:paddingBottom">1dp</item>
     </style>
 
     <style name="ECV_Arrow_Icon" parent="ECV_TEXT_ICON_COLOR">

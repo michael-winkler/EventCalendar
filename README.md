@@ -6,7 +6,13 @@
 [![API](https://img.shields.io/badge/API-21%2B-orange.svg?style=flat)](https://android-arsenal.com/api?level=21)
 [![License Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=true)](http://www.apache.org/licenses/LICENSE-2.0)
 
-This library uses Android X depencies and is written in Kotlin.
+
+## Screenshots
+<img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot.png" height=400px> <img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot2.png" height=400px>
+
+
+## Sample app
+https://github.com/michael-winkler/EventCalendar/releases/download/1.7.4/app-release.apk
 
 
 ## Usage
@@ -185,13 +191,6 @@ strings eg. in "values-en/strings".
 <string name="ecv_day_name_saturday">S</string>
 <string name="ecv_day_name_sunday">S</string>
 ```
-
-## Screenshots
-<img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot.png" height=400px> <img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot2.png" height=400px>
-
-
-## Sample app
-https://github.com/michael-winkler/EventCalendar/releases/download/1.7.4/app-release.apk
 
 
 ## License

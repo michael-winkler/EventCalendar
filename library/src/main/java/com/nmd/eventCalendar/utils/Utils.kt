@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.res.ColorStateList
+import android.content.res.Resources
 import android.os.Build
 import android.widget.FrameLayout
 import androidx.annotation.RequiresApi
@@ -308,6 +309,10 @@ internal class Utils {
             background = ContextCompat.getDrawable(realContext, expressiveBackgroundRes)
 
             ViewCompat.setBackgroundTintList(this, ColorStateList.valueOf(cwBackgroundTintColor))
+        }
+
+        internal fun Int.getDimensInt(resources: Resources?): Int {
+            return resources?.getDimensionPixelSize(this) ?: 0
         }
 
     }

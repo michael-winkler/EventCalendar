@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#000" />
+    <corners
+        android:bottomLeftRadius="@dimen/dp_current_day_radius_expressive"
+        android:bottomRightRadius="@dimen/dp_current_day_radius_expressive"
+        android:topLeftRadius="@dimen/dp_current_day_radius_expressive"
+        android:topRightRadius="@dimen/dp_current_day_radius_expressive" />
+</shape>

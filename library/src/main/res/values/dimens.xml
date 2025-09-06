@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="dp_current_day_height">24dp</dimen>
+    <dimen name="dp_current_day_width">24dp</dimen>
+    <dimen name="dp_current_day_radius_expressive">12dp</dimen>
+</resources>

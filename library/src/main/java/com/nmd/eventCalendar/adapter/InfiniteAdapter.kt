@@ -33,6 +33,7 @@ import com.nmd.eventCalendar.utils.Utils.Companion.convertStringToCalendarWeek
 import com.nmd.eventCalendar.utils.Utils.Companion.dayEvents
 import com.nmd.eventCalendar.utils.Utils.Companion.expressiveCwHelper
 import com.nmd.eventCalendar.utils.Utils.Companion.getDaysOfMonthAndGivenYear
+import com.nmd.eventCalendar.utils.Utils.Companion.getDimensInt
 import com.nmd.eventCalendar.utils.Utils.Companion.getMonthName
 import com.nmd.eventCalendar.utils.Utils.Companion.getRealContext
 import com.nmd.eventCalendar.utils.Utils.Companion.orEmptyArrayList
@@ -310,11 +311,9 @@ internal class InfiniteAdapter(
                 dayItemLayout.root.showDividers = LinearLayoutCompat.SHOW_DIVIDER_BEGINNING
             }
 
-            val textView = dayItemLayout.eventCalendarViewDayTextView
+            with(dayItemLayout.eventCalendarViewDayRecyclerView) {
+                val eventList = day.dayEvents(eventCalendarView.eventArrayList.orEmptyArrayList())
 
-            val eventList = day.dayEvents(eventCalendarView.eventArrayList.orEmptyArrayList())
-            val recyclerView = dayItemLayout.eventCalendarViewDayRecyclerView
-            with(recyclerView) {
                 suppressLayout(true)
                 addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
                     override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
@@ -344,20 +343,31 @@ internal class InfiniteAdapter(
                 }
             }
 
-            with(textView) {
+            with(dayItemLayout.eventCalendarViewDayTextView) {
                 text = day.value
 
                 if (day.isCurrentDay) {
                     setTextColor(eventCalendarView.currentDayTextColor)
 
                     context.getRealContext()?.let {
-                        background = ContextCompat.getDrawable(it, R.drawable.ecv_circle)
+                        background = ContextCompat.getDrawable(
+                            it,
+                            if (eventCalendarView.expressiveUi) R.drawable.ecv_expressive_circle else R.drawable.ecv_circle
+                        )
                     }
 
                     ViewCompat.setBackgroundTintList(
                         this,
                         ColorStateList.valueOf(eventCalendarView.currentDayBackgroundTintColor)
                     )
+                }
+
+                updateLayoutParams {
+                    height = if (eventCalendarView.expressiveUi) {
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                    } else {
+                        R.dimen.dp_current_day_height.getDimensInt(context.resources)
+                    }
                 }
 
                 if (day.isCurrentMonth || day.isCurrentDay) {

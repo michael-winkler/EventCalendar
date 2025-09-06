@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.withStyledAttributes
 import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textview.MaterialTextView
@@ -30,6 +31,7 @@ import com.nmd.eventCalendar.utils.Utils.Companion.getCurrentMonth
 import com.nmd.eventCalendar.utils.Utils.Companion.getCurrentWeekNumber
 import com.nmd.eventCalendar.utils.Utils.Companion.getCurrentYear
 import com.nmd.eventCalendar.utils.Utils.Companion.getDaysForCurrentWeek
+import com.nmd.eventCalendar.utils.Utils.Companion.getDimensInt
 import com.nmd.eventCalendar.utils.Utils.Companion.getMonthName
 import com.nmd.eventCalendar.utils.Utils.Companion.getRealContext
 import com.nmd.eventCalendar.utils.Utils.Companion.orEmptyArrayList
@@ -365,12 +367,23 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
                     setTextColor(currentDayTextColor)
 
                     context.getRealContext()?.let {
-                        background = ContextCompat.getDrawable(it, R.drawable.ecv_circle)
+                        background = ContextCompat.getDrawable(
+                            it,
+                            if (expressiveUi) R.drawable.ecv_expressive_circle else R.drawable.ecv_circle
+                        )
                     }
 
                     ViewCompat.setBackgroundTintList(
                         this, ColorStateList.valueOf(currentDayBackgroundTintColor)
                     )
+                }
+
+                updateLayoutParams {
+                    height = if (expressiveUi) {
+                        LayoutParams.WRAP_CONTENT
+                    } else {
+                        R.dimen.dp_current_day_height.getDimensInt(context.resources)
+                    }
                 }
 
                 if (day.isCurrentMonth || day.isCurrentDay) {
