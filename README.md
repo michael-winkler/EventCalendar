@@ -8,8 +8,24 @@
 
 
 ## Screenshots
-<img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot.png" height=400px> <img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot2.png" height=400px>
+Default style:    
+<img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot-Default1.png" height=400px> <img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot-Default0.png" height=400px> <img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot-Default2.png" height=400px>
 
+Expressive style:    
+<img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot-Expressive1.png" height=400px> <img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot-Expressive2.png" height=400px>
+
+## Style
+Since version 1.8.0, a new style called **“expressive”** is available.  
+It is inspired by Google’s **Material 3 expressive design** and reinterpreted in a unique way.  
+
+You can enable the style in XML:  
+```kotlin
+app:ecv_expressive_ui="true"
+```
+Or programmatically in code:
+```kotlin
+eventCalendarView.expressiveUi = true
+```
 
 ## Sample app
 https://github.com/michael-winkler/EventCalendar/releases/download/1.7.4/app-release.apk
