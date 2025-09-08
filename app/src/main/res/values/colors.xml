@@ -3,7 +3,7 @@
     <!-- https://www.color-hex.com/color/3b5ca3 -->
     <color name="colorBackground">@color/colorWhite</color>
     <color name="colorCharcoalGray">#6C6868</color>
-    <color name="colorIconTint">@color/colorCharcoalGray</color>
+    <color name="colorIconTint">#000</color>
 
     <color name="colorBlack">#000000</color>
     <color name="colorWhite">#FFFFFF</color>

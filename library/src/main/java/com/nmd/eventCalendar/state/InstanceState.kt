@@ -37,6 +37,7 @@ internal class InstanceState {
     class StateModel(
         var disallowIntercept: Boolean = true,
         var calendarWeekVisible: Boolean = false,
+        var isExpressiveUi: Boolean = false,
         var currentRecyclerViewPosition: Int = 0,
         var startMonth: Int = Calendar.JANUARY,
         var startYear: Int = 2020,

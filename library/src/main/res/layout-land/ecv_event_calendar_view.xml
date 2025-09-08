@@ -51,7 +51,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 tools:ignore="ContentDescription" />
 
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </RelativeLayout>
@@ -143,7 +142,8 @@
         <androidx.core.widget.NestedScrollView
             android:id="@+id/eventCalendarViewNestedScrollView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:clipToPadding="false">
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"

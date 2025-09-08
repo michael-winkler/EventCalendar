@@ -13,7 +13,7 @@
     android:gravity="center"
     android:padding="2dp"
     android:singleLine="true"
-    android:textColor="@color/ecv_charcoal_color"
+    android:textColor="@color/ecv_black"
     android:textSize="10sp"
     tools:ignore="SmallSp"
     tools:text="Vacation" />

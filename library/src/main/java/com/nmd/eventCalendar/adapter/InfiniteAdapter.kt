@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.graphics.Canvas
 import android.graphics.Typeface
+import android.graphics.drawable.RippleDrawable
 import android.util.SparseIntArray
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -38,6 +39,7 @@ import com.nmd.eventCalendar.utils.Utils.Companion.getMonthName
 import com.nmd.eventCalendar.utils.Utils.Companion.getRealContext
 import com.nmd.eventCalendar.utils.Utils.Companion.orEmptyArrayList
 import com.nmd.eventCalendar.utils.Utils.Companion.orTrue
+import com.nmd.eventCalendar.utils.Utils.Companion.setItemTint
 import com.nmd.eventCalendar.utils.Utils.Companion.smoothScrollTo
 import java.util.Calendar
 
@@ -86,13 +88,12 @@ internal class InfiniteAdapter(
             with(binding) {
                 eventCalendarViewMonthYearHeader.isVisible = eventCalendarView.headerVisible
 
-                if (eventCalendarView.isExpressiveUi) {
-                    eventCalendarViewLinearLayoutCompat.showDividers =
+                eventCalendarViewLinearLayoutCompat.showDividers =
+                    if (eventCalendarView.isExpressiveUi) {
                         LinearLayoutCompat.SHOW_DIVIDER_NONE
-                } else {
-                    eventCalendarViewLinearLayoutCompat.showDividers =
+                    } else {
                         LinearLayoutCompat.SHOW_DIVIDER_MIDDLE
-                }
+                    }
 
                 listOf(
                     eventCalendarViewRow1.eventCalendarViewRowsLinearLayoutCompat,
@@ -134,7 +135,8 @@ internal class InfiniteAdapter(
                         landscapeHelper(
                             binding = binding,
                             left = insets?.left ?: 0,
-                            right = insets?.right ?: 0
+                            right = insets?.right ?: 0,
+                            bottom = insets?.bottom ?: 0
                         )
                     }
                 }
@@ -156,8 +158,11 @@ internal class InfiniteAdapter(
 
     private fun portaitHelper(binding: EcvEventCalendarViewBinding, bottom: Int): Unit =
         with(binding) {
+            eventCalendarViewRow6.eventCalendarViewCalendarWeek.root.updatePadding(
+                bottom = bottom
+            )
+
             listOf(
-                eventCalendarViewRow6.eventCalendarViewCalendarWeek.root,
                 eventCalendarViewRow6.eventCalendarViewDay1.root,
                 eventCalendarViewRow6.eventCalendarViewDay2.root,
                 eventCalendarViewRow6.eventCalendarViewDay3.root,
@@ -166,23 +171,44 @@ internal class InfiniteAdapter(
                 eventCalendarViewRow6.eventCalendarViewDay6.root,
                 eventCalendarViewRow6.eventCalendarViewDay7.root
             ).forEach {
-                it.updatePadding(
-                    bottom = bottom
-                )
+                if (eventCalendarView.expressiveUi) {
+                    it.updateLayoutParams<MarginLayoutParams> {
+                        bottomMargin = bottom
+                    }
+                } else {
+                    it.updatePadding(
+                        bottom = bottom
+                    )
+                }
             }
         }
 
-    private fun landscapeHelper(binding: EcvEventCalendarViewBinding, left: Int, right: Int): Unit =
+    private fun landscapeHelper(
+        binding: EcvEventCalendarViewBinding,
+        left: Int,
+        right: Int,
+        bottom: Int
+    ): Unit =
         with(binding) {
             eventCalendarViewLandscapeEdgeHelper?.updatePadding(
                 right = right
             )
+
+            if (eventCalendarView.expressiveUi) {
+                eventCalendarViewNestedScrollView?.updatePadding(
+                    bottom = bottom
+                )
+            }
 
             // The header is visible
             if (eventCalendarView.headerVisible) {
                 eventCalendarViewMonthYearHeader.updatePadding(
                     left = left
                 )
+                eventCalendarViewMonthYearImageViewRight.updateLayoutParams<MarginLayoutParams> {
+                    bottomMargin = bottom
+                }
+
                 return
             }
 
@@ -292,7 +318,6 @@ internal class InfiniteAdapter(
         }
     }
 
-    // TODO Expressive ui
     private fun styleTextViews(
         days: List<Day>,
         circleBindingList: List<EcvTextviewCircleBinding>,
@@ -301,14 +326,58 @@ internal class InfiniteAdapter(
         for ((index, day) in days.withIndex()) {
             val dayItemLayout = circleBindingList[index]
 
-            dayItemLayout.eventCalendarViewDayLinearLayoutCompat.setOnClickListener {
-                eventCalendarView.clickListener?.onClick(day)
+            with(dayItemLayout.eventCalendarViewDayLinearLayoutCompat) {
+                setOnClickListener {
+                    eventCalendarView.clickListener?.onClick(day)
+                }
+
+                context.getRealContext()?.let {
+                    if (eventCalendarView.expressiveUi) {
+                        val ripple = ContextCompat.getDrawable(
+                            context, when (index) {
+                                0 -> {
+                                    // Top left rounded
+                                    R.drawable.ecv_ripple_expressive_top_left
+                                }
+
+                                6 -> {
+                                    // Top right rounded
+                                    R.drawable.ecv_ripple_expressive_top_right
+                                }
+
+                                35 -> {
+                                    // Bottom left rounded
+                                    R.drawable.ecv_ripple_expressive_bottom_left
+                                }
+
+                                41 -> {
+                                    // Bottom right rounded
+                                    R.drawable.ecv_ripple_expressive_bottom_right
+                                }
+
+                                else -> {
+                                    // Default rounded
+                                    R.drawable.ecv_ripple_expressive_default
+                                }
+                            }
+                        ) as RippleDrawable
+                        ripple.setItemTint(
+                            eventCalendarView.expressiveDayBackgroundTintColor
+                        )
+                        background = ripple
+                    } else {
+                        background = ContextCompat.getDrawable(
+                            it,
+                            R.drawable.ecv_ripple_default
+                        )
+                    }
+                }
             }
 
-            if (eventCalendarView.isExpressiveUi) {
-                dayItemLayout.root.showDividers = LinearLayoutCompat.SHOW_DIVIDER_NONE
+            dayItemLayout.root.showDividers = if (eventCalendarView.isExpressiveUi) {
+                LinearLayoutCompat.SHOW_DIVIDER_NONE
             } else {
-                dayItemLayout.root.showDividers = LinearLayoutCompat.SHOW_DIVIDER_BEGINNING
+                LinearLayoutCompat.SHOW_DIVIDER_BEGINNING
             }
 
             with(dayItemLayout.eventCalendarViewDayRecyclerView) {
@@ -427,10 +496,10 @@ internal class InfiniteAdapter(
         }
 
         val root = getOrNull(index)?.root ?: return
-        if (eventCalendarView.isExpressiveUi) {
-            root.showDividers = LinearLayoutCompat.SHOW_DIVIDER_NONE
+        root.showDividers = if (eventCalendarView.isExpressiveUi) {
+            LinearLayoutCompat.SHOW_DIVIDER_NONE
         } else {
-            root.showDividers = LinearLayoutCompat.SHOW_DIVIDER_BEGINNING
+            LinearLayoutCompat.SHOW_DIVIDER_BEGINNING
         }
 
         eventCalendarView.expressiveUi.expressiveCwHelper(

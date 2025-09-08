@@ -105,12 +105,12 @@ class EventCalendarView @JvmOverloads constructor(
 
     // Current day
     internal var currentDayBackgroundTintColor =
-        ContextCompat.getColor(getContext(), R.color.ecv_charcoal_color)
+        ContextCompat.getColor(getContext(), R.color.ecv_black)
     internal var currentDayTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
 
     // Count background
     internal var countBackgroundTintColor =
-        ContextCompat.getColor(getContext(), R.color.ecv_charcoal_color)
+        ContextCompat.getColor(getContext(), R.color.ecv_black)
     internal var countBackgroundTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
     internal var countVisible = true
 
@@ -118,7 +118,7 @@ class EventCalendarView @JvmOverloads constructor(
     internal var eventItemAutomaticTextColor = true
     internal var eventItemTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
     internal var eventItemDarkTextColor =
-        ContextCompat.getColor(getContext(), R.color.ecv_charcoal_color)
+        ContextCompat.getColor(getContext(), R.color.ecv_black)
 
     // Edge to edge
     internal var edgeToEdgeEnabled = false
@@ -127,6 +127,8 @@ class EventCalendarView @JvmOverloads constructor(
     internal var isExpressiveUi = false
     internal var expressiveCwBackgroundTintColor =
         ContextCompat.getColor(getContext(), R.color.ecv_expressive_cw_background_color)
+    internal var expressiveDayBackgroundTintColor =
+        ContextCompat.getColor(getContext(), R.color.ecv_expressive_day_background_color)
 
     init {
         getContext().withStyledAttributes(attrs, R.styleable.EventCalendarView) {
@@ -172,6 +174,10 @@ class EventCalendarView @JvmOverloads constructor(
             expressiveCwBackgroundTintColor = getColor(
                 (R.styleable.EventCalendarView_ecv_expressive_cw_background_tint_color),
                 expressiveCwBackgroundTintColor
+            )
+            expressiveDayBackgroundTintColor = getColor(
+                (R.styleable.EventCalendarView_ecv_expressive_day_background_tint_color),
+                expressiveDayBackgroundTintColor
             )
         }
 
@@ -502,6 +508,7 @@ class EventCalendarView @JvmOverloads constructor(
             id = id, stateModel = InstanceState.StateModel(
                 disallowIntercept = disallowIntercept,
                 calendarWeekVisible = isCalendarWeekVisible,
+                isExpressiveUi = isExpressiveUi,
                 currentRecyclerViewPosition = currentRecyclerViewPosition,
                 startMonth = sMonth,
                 startYear = sYear,
@@ -517,16 +524,17 @@ class EventCalendarView @JvmOverloads constructor(
 
     override fun onRestoreInstanceState(state: Parcelable) {
         // Restore to the last state
-        InstanceState().restoreInstanceState(id)?.let { sharedPreferencesModel ->
-            disallowIntercept = sharedPreferencesModel.disallowIntercept
-            isCalendarWeekVisible = sharedPreferencesModel.calendarWeekVisible
-            currentRecyclerViewPosition = sharedPreferencesModel.currentRecyclerViewPosition
-            sMonth = sharedPreferencesModel.startMonth
-            sYear = sharedPreferencesModel.startYear
-            eMonth = sharedPreferencesModel.endMonth
-            eYear = sharedPreferencesModel.endYear
-            currentYearAndMonthPair = sharedPreferencesModel.currentYearAndMonthPair
-            events = sharedPreferencesModel.events
+        InstanceState().restoreInstanceState(id)?.let { instanceStateStateModel ->
+            disallowIntercept = instanceStateStateModel.disallowIntercept
+            isCalendarWeekVisible = instanceStateStateModel.calendarWeekVisible
+            isExpressiveUi = instanceStateStateModel.isExpressiveUi
+            currentRecyclerViewPosition = instanceStateStateModel.currentRecyclerViewPosition
+            sMonth = instanceStateStateModel.startMonth
+            sYear = instanceStateStateModel.startYear
+            eMonth = instanceStateStateModel.endMonth
+            eYear = instanceStateStateModel.endYear
+            currentYearAndMonthPair = instanceStateStateModel.currentYearAndMonthPair
+            events = instanceStateStateModel.events
         }
         InstanceState().removeArrayListEventById(id)
 

@@ -34,7 +34,7 @@ class SheetEventsAdapter(private var list: ArrayList<Event>) :
             binding.itemEventMaterialTextView.setTextColor(
                 ContextCompat.getColor(
                     binding.itemEventMaterialTextView.context,
-                    if (color.isDarkColor()) R.color.ecv_white else R.color.ecv_charcoal_color
+                    if (color.isDarkColor()) R.color.ecv_white else R.color.ecv_black
                 )
             )
             binding.root.setCardBackgroundColor(color)

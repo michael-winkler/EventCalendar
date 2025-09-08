@@ -5,9 +5,8 @@
     android:id="@+id/eventCalendarViewDayLinearLayoutCompat"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?android:attr/selectableItemBackground"
+    android:background="@drawable/ecv_ripple_default"
     android:orientation="vertical"
-    android:theme="@style/ECV_RippleColor"
     app:divider="@drawable/ecv_divider_horizontal"
     app:showDividers="beginning">
 

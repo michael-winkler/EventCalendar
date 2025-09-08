@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.res.ColorStateList
 import android.content.res.Resources
+import android.graphics.drawable.RippleDrawable
 import android.os.Build
 import android.widget.FrameLayout
 import androidx.annotation.RequiresApi
@@ -313,6 +314,11 @@ internal class Utils {
 
         internal fun Int.getDimensInt(resources: Resources?): Int {
             return resources?.getDimensionPixelSize(this) ?: 0
+        }
+
+        internal fun RippleDrawable.setItemTint(color: Int) {
+            val background = findDrawableByLayerId(android.R.id.background)
+            background?.setTint(color)
         }
 
     }

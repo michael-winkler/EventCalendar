@@ -3,5 +3,6 @@
     <color name="ecv_item_day_name_color">@color/ecv_white</color>
     <color name="ecv_item_divider_decoration_color">#3D4043</color>
     <color name="ecv_ripple_color">#33FFFFFF</color>
-    <color name="ecv_expressive_cw_background_color">#282A2C</color>
+    <color name="ecv_expressive_cw_background_color">#3D4043</color>
+    <color name="ecv_expressive_day_background_color">#282A2C</color>
 </resources>

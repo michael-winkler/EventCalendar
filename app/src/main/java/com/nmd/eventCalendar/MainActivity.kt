@@ -129,13 +129,15 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        activityMainFloatingActionButtonExpressiveToggle.setImageResource(
-            if (activityMainEventCalendarView.expressiveUi) {
-                com.nmd.eventCalendarSample.R.drawable.icon_emoticon_cool_outline
-            } else {
-                com.nmd.eventCalendarSample.R.drawable.icon_emoticon_happy_outline
-            }
-        )
+        activityMainEventCalendarView.post {
+            activityMainFloatingActionButtonExpressiveToggle.setImageResource(
+                if (activityMainEventCalendarView.expressiveUi) {
+                    com.nmd.eventCalendarSample.R.drawable.icon_emoticon_cool_outline
+                } else {
+                    com.nmd.eventCalendarSample.R.drawable.icon_emoticon_happy_outline
+                }
+            )
+        }
 
         activityMainFloatingActionButtonExpressiveToggle.setOnClickListener {
             activityMainFloatingActionButtonExpressiveToggle.setImageResource(
@@ -263,12 +265,9 @@ class MainActivity : AppCompatActivity() {
                 RandomEventList("Stand-up Paddleboarding", "#0277bd"),
                 RandomEventList("Charity Run", "#f57f17"),
                 RandomEventList("Poetry Slam", "#f44336"),
-                RandomEventList("Salsa Dancing", "#4caf50"),
                 RandomEventList("Board Game Cafe", "#8bc34a"),
                 RandomEventList("Movie Marathon", "#b71c1c"),
                 RandomEventList("Bike Tour", "#4db6ac"),
-                RandomEventList("Outdoor Yoga", "#7cb342"),
-                RandomEventList("Art Walk", "#00bcd4"),
                 RandomEventList("Wine and Paint Night", "#9c27b0"),
                 RandomEventList("Plant Swap", "#388e3c"),
                 RandomEventList("Beach Clean-up", "#009688"),
@@ -290,9 +289,7 @@ class MainActivity : AppCompatActivity() {
                 RandomEventList("Meditation Retreat", "#0097a7"),
                 RandomEventList("Group Bike Ride", "#d32f2f"),
                 RandomEventList("Cooking Competition", "#ff5252"),
-                RandomEventList("Ice Cream Social", "#00bcd4"),
                 RandomEventList("Haunted House Visit", "#ba68c8"),
-                RandomEventList("Photography Walk", "#4caf50"),
                 RandomEventList("Beach Volleyball", "#ffa000"),
                 RandomEventList("Gardening Workshop", "#4db6ac"),
                 RandomEventList("Laser Tag", "#673ab7"),
@@ -300,8 +297,7 @@ class MainActivity : AppCompatActivity() {
                 RandomEventList("Movie in the Park", "#43a047"),
                 RandomEventList("Cider Tasting", "#ef5350"),
                 RandomEventList("Escape Game", "#29b6f6"),
-                RandomEventList("Cheese Making Class", "#ffc107"),
-                RandomEventList("Farm Visit", "#7cb342")
+                RandomEventList("Cheese Making Class", "#ffc107")
             )
 
             fun createRandomEventList(

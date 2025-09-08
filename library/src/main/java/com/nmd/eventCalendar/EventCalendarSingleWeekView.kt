@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Canvas
 import android.graphics.Typeface
+import android.graphics.drawable.RippleDrawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -35,6 +36,7 @@ import com.nmd.eventCalendar.utils.Utils.Companion.getDimensInt
 import com.nmd.eventCalendar.utils.Utils.Companion.getMonthName
 import com.nmd.eventCalendar.utils.Utils.Companion.getRealContext
 import com.nmd.eventCalendar.utils.Utils.Companion.orEmptyArrayList
+import com.nmd.eventCalendar.utils.Utils.Companion.setItemTint
 
 @Suppress("unused")
 class EventCalendarSingleWeekView @JvmOverloads constructor(
@@ -53,12 +55,12 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
 
     // Current day
     internal var currentDayBackgroundTintColor =
-        ContextCompat.getColor(getContext(), R.color.ecv_charcoal_color)
+        ContextCompat.getColor(getContext(), R.color.ecv_black)
     internal var currentDayTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
 
     // Count background
     internal var countBackgroundTintColor =
-        ContextCompat.getColor(getContext(), R.color.ecv_charcoal_color)
+        ContextCompat.getColor(getContext(), R.color.ecv_black)
     internal var countBackgroundTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
     internal var countVisible = true
 
@@ -66,12 +68,14 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
     internal var eventItemAutomaticTextColor = true
     internal var eventItemTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
     internal var eventItemDarkTextColor =
-        ContextCompat.getColor(getContext(), R.color.ecv_charcoal_color)
+        ContextCompat.getColor(getContext(), R.color.ecv_black)
 
     // Expressive UI
     internal var isExpressiveUi = false
     internal var expressiveCwBackgroundTintColor =
         ContextCompat.getColor(getContext(), R.color.ecv_expressive_cw_background_color)
+    internal var expressiveDayBackgroundTintColor =
+        ContextCompat.getColor(getContext(), R.color.ecv_expressive_day_background_color)
 
     init {
         getContext().withStyledAttributes(attrs, R.styleable.EventCalendarView) {
@@ -112,6 +116,10 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
             expressiveCwBackgroundTintColor = getColor(
                 (R.styleable.EventCalendarView_ecv_expressive_cw_background_tint_color),
                 expressiveCwBackgroundTintColor
+            )
+            expressiveDayBackgroundTintColor = getColor(
+                (R.styleable.EventCalendarView_ecv_expressive_day_background_tint_color),
+                expressiveDayBackgroundTintColor
             )
         }
 
@@ -303,14 +311,13 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
             }
         }
 
-        if (isExpressiveUi) {
-            linearLayoutCompat.showDividers = LinearLayoutCompat.SHOW_DIVIDER_NONE
+        linearLayoutCompat.showDividers = if (isExpressiveUi) {
+            LinearLayoutCompat.SHOW_DIVIDER_NONE
         } else {
-            linearLayoutCompat.showDividers = LinearLayoutCompat.SHOW_DIVIDER_BEGINNING
+            LinearLayoutCompat.SHOW_DIVIDER_BEGINNING
         }
     }
 
-    // TODO Expressive ui
     private fun styleTextViews(
         days: List<Day>,
         list: List<EcvTextviewCircleBinding>,
@@ -322,8 +329,43 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
             val day = days[index]
             val dayItemLayout = list[index]
 
-            dayItemLayout.eventCalendarViewDayLinearLayoutCompat.setOnClickListener {
-                clickListener?.onClick(day)
+            with(dayItemLayout.eventCalendarViewDayLinearLayoutCompat) {
+                setOnClickListener {
+                    clickListener?.onClick(day)
+                }
+
+                context.getRealContext()?.let {
+                    if (expressiveUi) {
+                        val ripple = ContextCompat.getDrawable(
+                            context, when (index) {
+                                0 -> {
+                                    // First day
+                                    R.drawable.ecv_ripple_expressive_single_left
+                                }
+
+                                6 -> {
+                                    // Last day
+                                    R.drawable.ecv_ripple_expressive_single_right
+                                }
+
+                                else -> {
+                                    // Default rounded
+                                    R.drawable.ecv_ripple_expressive_default
+                                }
+                            }
+                        ) as RippleDrawable
+                        ripple.setItemTint(
+                            expressiveDayBackgroundTintColor
+                        )
+
+                        background = ripple
+                    } else {
+                        background = ContextCompat.getDrawable(
+                            it,
+                            R.drawable.ecv_ripple_default
+                        )
+                    }
+                }
             }
 
             val textView = dayItemLayout.eventCalendarViewDayTextView

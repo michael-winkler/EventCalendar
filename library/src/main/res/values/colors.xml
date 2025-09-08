@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="ecv_item_day_name_color">#6C6868</color>
+    <color name="ecv_item_day_name_color">#FF000000</color>
     <color name="ecv_item_divider_decoration_color">#DBDCE0</color>
     <color name="ecv_black">#FF000000</color>
     <color name="ecv_white">#FFFFFFFF</color>
-    <color name="ecv_charcoal_color">#6C6868</color>
     <color name="ecv_ripple_color">#1F000000</color>
-    <color name="ecv_expressive_cw_background_color">#F4F4F4</color>
+    <color name="ecv_expressive_cw_background_color">#DBDCE0</color>
+    <color name="ecv_expressive_day_background_color">#F4F4F4</color>
 </resources>
