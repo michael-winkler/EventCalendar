@@ -32,6 +32,8 @@
         app:ecv_current_day_text_color="@android:color/white"
         app:ecv_event_item_automatic_text_color="true"
         app:ecv_event_item_text_color="@color/ecv_black"
+        app:ecv_expressive_cw_background_tint_color="@color/ecv_expressive_cw_background_color"
+        app:ecv_expressive_day_background_tint_color="@color/ecv_expressive_day_background_color"
         app:ecv_expressive_ui="true"
         app:ecv_header_visible="true" />
 

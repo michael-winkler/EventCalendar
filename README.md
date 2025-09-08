@@ -41,6 +41,7 @@ You can create a new `EventCalendarView` inside your XML-Layout like this:
     android:id="@+id/eventCalendarView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    app:ecv_calendar_week_visible="true"
     app:ecv_count_background_text_color="@android:color/white"
     app:ecv_count_background_tint_color="@android:color/holo_blue_light"
     app:ecv_count_visible="true"
@@ -49,10 +50,12 @@ You can create a new `EventCalendarView` inside your XML-Layout like this:
     app:ecv_disallow_intercept="false"
     app:ecv_edge_to_edge_enabled="true"
     app:ecv_event_item_automatic_text_color="true"
-    app:ecv_event_item_text_color="@android:color/black"
-    app:ecv_event_item_dark_text_color="@android:color/black"
-    app:ecv_header_visible="true"
-    app:ecv_calendar_week_visible="true"/>
+    app:ecv_event_item_dark_text_color="@color/ecv_black"
+    app:ecv_event_item_text_color="@color/ecv_black"
+    app:ecv_expressive_cw_background_tint_color="@color/ecv_expressive_cw_background_color"
+    app:ecv_expressive_day_background_tint_color="@color/ecv_expressive_day_background_color"
+    app:ecv_expressive_ui="true"
+    app:ecv_header_visible="true" />
 ```
 
 Or if you just want the current calendar week you can use this one:
@@ -60,17 +63,19 @@ Or if you just want the current calendar week you can use this one:
 <com.nmd.eventCalendar.EventCalendarSingleWeekView
     android:id="@+id/eventCalendarView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    app:ecv_calendar_week_visible="true"
     app:ecv_count_background_text_color="@android:color/white"
     app:ecv_count_background_tint_color="@android:color/holo_blue_light"
     app:ecv_count_visible="true"
     app:ecv_current_day_background_tint_color="@android:color/holo_red_dark"
     app:ecv_current_day_text_color="@android:color/white"
     app:ecv_event_item_automatic_text_color="true"
-    app:ecv_event_item_text_color="@android:color/black"
-    app:ecv_event_item_dark_text_color="@android:color/black"
-    app:ecv_header_visible="true"
-    app:ecv_calendar_week_visible="true"/>
+    app:ecv_event_item_text_color="@color/ecv_black"
+    app:ecv_expressive_cw_background_tint_color="@color/ecv_expressive_cw_background_color"
+    app:ecv_expressive_day_background_tint_color="@color/ecv_expressive_day_background_color"
+    app:ecv_expressive_ui="true"
+    app:ecv_header_visible="true" />
 ```
 
 Here you can see all custom `app` parameters which you can use:    
