@@ -12,7 +12,7 @@ Default style:
 <img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot-Default1.png" height=400px> <img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot-Default0.png" height=400px> <img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot-Default2.png" height=400px>
 
 Expressive style:    
-<img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot-Expressive1.png" height=400px> <img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot-Expressive2.png" height=400px>
+<img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot-Expressive1.png" height=400px> <img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot-Expressive2.png" height=400px> <img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot-Expressive3.png" height=400px>
 
 ## Style
 Since version 1.8.0, a new style called **“expressive”** is available.  
