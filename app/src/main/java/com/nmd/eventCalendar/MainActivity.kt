@@ -188,7 +188,8 @@ class MainActivity : AppCompatActivity() {
 
             bottomSheetEventCalendarSingleWeekView.events =
                 binding.activityMainEventCalendarView.events
-            bottomSheetEventCalendarSingleWeekView.expressiveUi = binding.activityMainEventCalendarView.expressiveUi
+            bottomSheetEventCalendarSingleWeekView.expressiveUi =
+                binding.activityMainEventCalendarView.expressiveUi
             bottomSheetEventCalendarSingleWeekView.addOnDayClickListener(object :
                 EventCalendarDayClickListener {
                 override fun onClick(day: Day) {
