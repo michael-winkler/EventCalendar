@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.res.ColorStateList
 import android.content.res.Resources
+import android.graphics.Typeface
 import android.graphics.drawable.RippleDrawable
 import android.os.Build
 import android.widget.FrameLayout
@@ -248,7 +249,8 @@ internal class Utils {
                     layoutManager?.smoothScrollToPosition(
                         this, RecyclerView.State(), position
                     )
-                } catch (ignored: Exception) {
+                } catch (_: Exception) {
+                    // Nothing to do
                 }
             }
         }
@@ -319,6 +321,10 @@ internal class Utils {
         internal fun RippleDrawable.setItemTint(color: Int) {
             val background = findDrawableByLayerId(android.R.id.background)
             background?.setTint(color)
+        }
+
+        internal fun Day.getTextTypeface(): Int {
+            return if (isCurrentMonth || isCurrentDay) Typeface.BOLD else Typeface.ITALIC
         }
 
     }

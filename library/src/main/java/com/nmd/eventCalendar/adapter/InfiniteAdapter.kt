@@ -37,6 +37,7 @@ import com.nmd.eventCalendar.utils.Utils.Companion.getDaysOfMonthAndGivenYear
 import com.nmd.eventCalendar.utils.Utils.Companion.getDimensInt
 import com.nmd.eventCalendar.utils.Utils.Companion.getMonthName
 import com.nmd.eventCalendar.utils.Utils.Companion.getRealContext
+import com.nmd.eventCalendar.utils.Utils.Companion.getTextTypeface
 import com.nmd.eventCalendar.utils.Utils.Companion.orEmptyArrayList
 import com.nmd.eventCalendar.utils.Utils.Companion.orTrue
 import com.nmd.eventCalendar.utils.Utils.Companion.setItemTint
@@ -439,11 +440,7 @@ internal class InfiniteAdapter(
                     }
                 }
 
-                if (day.isCurrentMonth || day.isCurrentDay) {
-                    setTypeface(typeface, Typeface.BOLD)
-                } else {
-                    setTypeface(typeface, Typeface.ITALIC)
-                }
+                setTypeface(typeface, day.getTextTypeface())
             }
 
             if (eventCalendarView.isCalendarWeekVisible) {
@@ -457,41 +454,37 @@ internal class InfiniteAdapter(
     ) {
         when (index) {
             0 -> {
-                ecvTextviewCwBinding.setCalendarWeekUi(0, day)
+                ecvTextviewCwBinding.setCalendarWeekUi(0, day, day.getTextTypeface())
             }
 
             7 -> {
-                ecvTextviewCwBinding.setCalendarWeekUi(1, day)
+                ecvTextviewCwBinding.setCalendarWeekUi(1, day, day.getTextTypeface())
             }
 
             14 -> {
-                ecvTextviewCwBinding.setCalendarWeekUi(2, day)
+                ecvTextviewCwBinding.setCalendarWeekUi(2, day, day.getTextTypeface())
             }
 
             21 -> {
-                ecvTextviewCwBinding.setCalendarWeekUi(3, day)
+                ecvTextviewCwBinding.setCalendarWeekUi(3, day, day.getTextTypeface())
             }
 
             28 -> {
-                ecvTextviewCwBinding.setCalendarWeekUi(4, day)
+                ecvTextviewCwBinding.setCalendarWeekUi(4, day, day.getTextTypeface())
             }
 
             35 -> {
-                ecvTextviewCwBinding.setCalendarWeekUi(5, day)
+                ecvTextviewCwBinding.setCalendarWeekUi(5, day, day.getTextTypeface())
             }
         }
     }
 
-    private fun List<EcvTextviewCwBinding>.setCalendarWeekUi(index: Int, day: Day) {
+    private fun List<EcvTextviewCwBinding>.setCalendarWeekUi(index: Int, day: Day, int: Int) {
         val frameLayout =
             getOrNull(index)?.eventCalendarViewDayTextViewExpressiveFrameLayout ?: return
         val textView = getOrNull(index)?.eventCalendarViewDayTextView ?: return
         with(textView) {
-            if (day.isCurrentMonth || day.isCurrentDay) {
-                setTypeface(typeface, Typeface.BOLD)
-            } else {
-                setTypeface(typeface, Typeface.ITALIC)
-            }
+            setTypeface(typeface, int)
             text = day.convertStringToCalendarWeek()
         }
 
