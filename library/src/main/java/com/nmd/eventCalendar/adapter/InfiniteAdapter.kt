@@ -454,37 +454,36 @@ internal class InfiniteAdapter(
     ) {
         when (index) {
             0 -> {
-                ecvTextviewCwBinding.setCalendarWeekUi(0, day, day.getTextTypeface())
+                ecvTextviewCwBinding.setCalendarWeekUi(0, day)
             }
 
             7 -> {
-                ecvTextviewCwBinding.setCalendarWeekUi(1, day, day.getTextTypeface())
+                ecvTextviewCwBinding.setCalendarWeekUi(1, day)
             }
 
             14 -> {
-                ecvTextviewCwBinding.setCalendarWeekUi(2, day, day.getTextTypeface())
+                ecvTextviewCwBinding.setCalendarWeekUi(2, day)
             }
 
             21 -> {
-                ecvTextviewCwBinding.setCalendarWeekUi(3, day, day.getTextTypeface())
+                ecvTextviewCwBinding.setCalendarWeekUi(3, day)
             }
 
             28 -> {
-                ecvTextviewCwBinding.setCalendarWeekUi(4, day, day.getTextTypeface())
+                ecvTextviewCwBinding.setCalendarWeekUi(4, day)
             }
 
             35 -> {
-                ecvTextviewCwBinding.setCalendarWeekUi(5, day, day.getTextTypeface())
+                ecvTextviewCwBinding.setCalendarWeekUi(5, day)
             }
         }
     }
 
-    private fun List<EcvTextviewCwBinding>.setCalendarWeekUi(index: Int, day: Day, int: Int) {
+    private fun List<EcvTextviewCwBinding>.setCalendarWeekUi(index: Int, day: Day) {
         val frameLayout =
             getOrNull(index)?.eventCalendarViewDayTextViewExpressiveFrameLayout ?: return
         val textView = getOrNull(index)?.eventCalendarViewDayTextView ?: return
         with(textView) {
-            setTypeface(typeface, int)
             text = day.convertStringToCalendarWeek()
         }
 

@@ -35,6 +35,7 @@ import com.nmd.eventCalendar.utils.Utils.Companion.getDaysForCurrentWeek
 import com.nmd.eventCalendar.utils.Utils.Companion.getDimensInt
 import com.nmd.eventCalendar.utils.Utils.Companion.getMonthName
 import com.nmd.eventCalendar.utils.Utils.Companion.getRealContext
+import com.nmd.eventCalendar.utils.Utils.Companion.getTextTypeface
 import com.nmd.eventCalendar.utils.Utils.Companion.orEmptyArrayList
 import com.nmd.eventCalendar.utils.Utils.Companion.setItemTint
 
@@ -428,22 +429,10 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
                     }
                 }
 
-                if (day.isCurrentMonth || day.isCurrentDay) {
-                    setTypeface(typeface, Typeface.BOLD)
-                } else {
-                    setTypeface(typeface, Typeface.ITALIC)
-                }
+                setTypeface(typeface, day.getTextTypeface())
             }
 
             if (index == 0 && isCalendarWeekVisible) {
-                with(materialTextView) {
-                    if (day.isCurrentMonth || day.isCurrentDay) {
-                        setTypeface(typeface, Typeface.BOLD)
-                    } else {
-                        setTypeface(typeface, Typeface.ITALIC)
-                    }
-                }
-
                 expressiveUi.expressiveCwHelper(
                     frameLayout = frameLayout,
                     index = -1,
