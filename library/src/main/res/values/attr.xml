@@ -15,6 +15,10 @@
         Default: false -->
         <attr name="ecv_disallow_intercept" format="boolean" />
 
+        <!-- Sets the text color for the current weekday.
+        Default: @color/ecv_item_day_name_color-->
+        <attr name="ecv_current_weekday_text_color" format="color" />
+
         <!-- Sets the tint color for the background of the current day circle.
         Default: @color/ecv_black-->
         <attr name="ecv_current_day_background_tint_color" format="color" />

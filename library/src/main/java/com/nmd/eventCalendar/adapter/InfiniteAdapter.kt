@@ -291,6 +291,25 @@ internal class InfiniteAdapter(
                 circleBindingList = holder.ecvTextviewCircleBindings(),
                 cwBindingList = holder.ecvTextviewCwBinding()
             )
+
+            val calendar = Calendar.getInstance()
+            // Only update the current day if it's the current year and month
+            if (holder.yearAdapterViewHolder == year && calendar.get(Calendar.MONTH) == month) {
+                val currentDayView = when (calendar.get(Calendar.DAY_OF_WEEK)) {
+                    Calendar.MONDAY -> eventCalendarViewHeaderMonday
+                    Calendar.TUESDAY -> eventCalendarViewHeaderTuesday
+                    Calendar.WEDNESDAY -> eventCalendarViewHeaderWednesday
+                    Calendar.THURSDAY -> eventCalendarViewHeaderThursday
+                    Calendar.FRIDAY -> eventCalendarViewHeaderFriday
+                    Calendar.SATURDAY -> eventCalendarViewHeaderSaturday
+                    else -> {
+                        eventCalendarViewHeaderSunday
+                    }
+                }
+
+                currentDayView.setTypeface(currentDayView.typeface, Typeface.BOLD)
+                currentDayView.setTextColor(eventCalendarView.currentWeekdayTextColor)
+            }
         }
     }
 

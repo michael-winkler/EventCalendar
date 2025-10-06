@@ -67,6 +67,7 @@
             app:ecv_count_visible="true"
             app:ecv_current_day_background_tint_color="@android:color/holo_red_dark"
             app:ecv_current_day_text_color="@android:color/white"
+            app:ecv_current_weekday_text_color="@android:color/holo_red_dark"
             app:ecv_disallow_intercept="false"
             app:ecv_edge_to_edge_enabled="true"
             app:ecv_event_item_automatic_text_color="true"

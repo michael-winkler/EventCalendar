@@ -28,7 +28,7 @@ eventCalendarView.expressiveUi = true
 ```
 
 ## Sample app
-https://github.com/michael-winkler/EventCalendar/releases/download/1.8.1/app-release.apk
+https://github.com/michael-winkler/EventCalendar/releases/download/1.9.0/app-release.apk
 
 
 ## Usage
@@ -42,7 +42,7 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.github.michael-winkler:EventCalendar:1.8.1'
+    implementation 'com.github.michael-winkler:EventCalendar:1.9.0'
 }
 ```
 
@@ -63,6 +63,7 @@ You can create a new `EventCalendarView` inside your XML-Layout like this:
     app:ecv_count_visible="true"
     app:ecv_current_day_background_tint_color="@android:color/holo_red_dark"
     app:ecv_current_day_text_color="@android:color/white"
+    app:ecv_current_weekday_text_color="@android:color/holo_red_dark"
     app:ecv_disallow_intercept="false"
     app:ecv_edge_to_edge_enabled="true"
     app:ecv_event_item_automatic_text_color="true"
@@ -86,6 +87,7 @@ Or if you just want the current calendar week you can use this one:
     app:ecv_count_visible="true"
     app:ecv_current_day_background_tint_color="@android:color/holo_red_dark"
     app:ecv_current_day_text_color="@android:color/white"
+    app:ecv_current_weekday_text_color="@android:color/holo_red_dark"
     app:ecv_event_item_automatic_text_color="true"
     app:ecv_event_item_text_color="@color/ecv_black"
     app:ecv_expressive_cw_background_tint_color="@color/ecv_expressive_cw_background_color"

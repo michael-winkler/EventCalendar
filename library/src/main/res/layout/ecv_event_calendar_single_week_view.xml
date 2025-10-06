@@ -38,6 +38,7 @@
             android:visibility="gone" />
 
         <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/eventCalendarViewHeaderMonday"
             style="@style/ECV_DayName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -46,6 +47,7 @@
             android:text="@string/ecv_day_name_monday" />
 
         <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/eventCalendarViewHeaderTuesday"
             style="@style/ECV_DayName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -54,6 +56,7 @@
             android:text="@string/ecv_day_name_tuesday" />
 
         <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/eventCalendarViewHeaderWednesday"
             style="@style/ECV_DayName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -62,6 +65,7 @@
             android:text="@string/ecv_day_name_wednesday" />
 
         <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/eventCalendarViewHeaderThursday"
             style="@style/ECV_DayName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -70,6 +74,7 @@
             android:text="@string/ecv_day_name_thursday" />
 
         <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/eventCalendarViewHeaderFriday"
             style="@style/ECV_DayName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -78,6 +83,7 @@
             android:text="@string/ecv_day_name_friday" />
 
         <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/eventCalendarViewHeaderSaturday"
             style="@style/ECV_DayName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -86,6 +92,7 @@
             android:text="@string/ecv_day_name_saturday" />
 
         <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/eventCalendarViewHeaderSunday"
             style="@style/ECV_DayName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

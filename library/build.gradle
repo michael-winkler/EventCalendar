@@ -100,5 +100,5 @@ dependencies {
     implementation('com.google.code.gson:gson:2.13.2')
 
     // Google Material Design
-    implementation 'com.google.android.material:material:1.14.0-alpha04'
+    implementation 'com.google.android.material:material:1.14.0-alpha05'
 }

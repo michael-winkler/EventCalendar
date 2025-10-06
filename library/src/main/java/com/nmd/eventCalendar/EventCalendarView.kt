@@ -104,6 +104,8 @@ class EventCalendarView @JvmOverloads constructor(
     internal var isCalendarWeekVisible = false
 
     // Current day
+    internal var currentWeekdayTextColor =
+        ContextCompat.getColor(getContext(), R.color.ecv_item_day_name_color)
     internal var currentDayBackgroundTintColor =
         ContextCompat.getColor(getContext(), R.color.ecv_black)
     internal var currentDayTextColor = ContextCompat.getColor(getContext(), R.color.ecv_white)
@@ -139,6 +141,11 @@ class EventCalendarView @JvmOverloads constructor(
             )
             disallowIntercept =
                 getBoolean(R.styleable.EventCalendarView_ecv_disallow_intercept, disallowIntercept)
+
+            currentWeekdayTextColor = getColor(
+                (R.styleable.EventCalendarView_ecv_current_weekday_text_color),
+                currentWeekdayTextColor
+            )
             currentDayBackgroundTintColor = getColor(
                 (R.styleable.EventCalendarView_ecv_current_day_background_tint_color),
                 currentDayBackgroundTintColor
