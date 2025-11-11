@@ -135,7 +135,7 @@ data class Day(
     /**
      * eg: 31.12.2024
      */
-    var date: String,
+    var date: String
 )
 ```
 
@@ -166,7 +166,7 @@ binding.eventCalendarView.events = arrayListOf(
 ```
 The date format have to be in format "dd.MM.yyyy".
 
-The `Event` object structure is following:
+The `Event` object structure is as follows:
 ```kotlin
 @Parcelize
 data class Event(
@@ -174,10 +174,24 @@ data class Event(
     val name: String,
     val backgroundHexColor: String,
     val data: @RawValue Any? = null,
+    val timeRange: EventTimeRange? = null
 ) : Parcelable
 ```
 The event text color is automatically determined. If the background color is dark, the text color is white. Otherwise, the text color is gray.
 You can change this behaviour with `app:ecv_event_item_automatic_text_color="false"`. And then with `app:ecv_event_item_text_color="@android:color/black"` you can set the event item text color.
+
+The `EventTimeRange` object structure is as follows:
+```kotlin
+@Parcelize
+data class Event(
+    val startHour: Int,
+    val startMinute: Int,
+    val endHour: Int,
+    val endMinute: Int
+) : Parcelable
+```
+It allows you to store and manage the start and end times of an event for your own use cases.
+This class also includes several built-in utility functions, such as time formatting, duration calculation, validation, and overlap detection.
 
 ## Javadoc
 Each function has also a javadoc documentation.

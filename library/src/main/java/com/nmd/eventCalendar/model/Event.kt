@@ -12,4 +12,5 @@ data class Event(
     val name: String,
     val backgroundHexColor: String,
     val data: @RawValue Any? = null,
+    val timeRange: EventTimeRange? = null
 ) : Parcelable
