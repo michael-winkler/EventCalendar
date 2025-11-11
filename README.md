@@ -183,7 +183,7 @@ You can change this behaviour with `app:ecv_event_item_automatic_text_color="fal
 The `EventTimeRange` object structure is as follows:
 ```kotlin
 @Parcelize
-data class Event(
+data class EventTimeRange(
     val startHour: Int,
     val startMinute: Int,
     val endHour: Int,
