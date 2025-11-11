@@ -152,7 +152,7 @@ internal class Utils {
             val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
             val currentDate = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date())
 
-            for (i in 0 until 7) {
+            repeat(7) {
                 val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
                 val date = dateFormat.format(calendar.time)
 
@@ -270,7 +270,7 @@ internal class Utils {
                     calendar.time = it
                     calendar.get(Calendar.WEEK_OF_YEAR).toString()
                 } ?: ""
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 ""
             }
         }
