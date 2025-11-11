@@ -280,11 +280,12 @@ internal class Utils {
             index: Int,
             cwBackgroundTintColor: Int
         ): Unit = with(frameLayout) {
+            val realContext = context.getRealContext() ?: return
+
             if (!this@expressiveCwHelper) {
                 background = null
                 return
             }
-            val realContext = context.getRealContext() ?: return
 
             val expressiveBackgroundRes = when (index) {
                 -1 -> {

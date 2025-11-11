@@ -71,7 +71,7 @@
             app:showDividers="middle">
 
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/eventCalendarViewHeaderKw"
+                android:id="@+id/eventCalendarViewHeaderCw"
                 style="@style/ECV_DayName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

@@ -113,7 +113,7 @@
 
         <include
             android:id="@+id/eventCalendarSingleWeekViewCalendarWeek"
-            layout="@layout/ecv_textview_cw"
+            layout="@layout/ecv_textview_cw_single_week_view"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"

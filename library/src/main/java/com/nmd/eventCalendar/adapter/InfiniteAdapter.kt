@@ -112,7 +112,7 @@ internal class InfiniteAdapter(
                 }
 
                 listOf(
-                    eventCalendarViewHeaderKw,
+                    eventCalendarViewHeaderCw,
                     eventCalendarViewRow1.eventCalendarViewCalendarWeek.root,
                     eventCalendarViewRow2.eventCalendarViewCalendarWeek.root,
                     eventCalendarViewRow3.eventCalendarViewCalendarWeek.root,
@@ -216,7 +216,7 @@ internal class InfiniteAdapter(
             // The header is not visible but the calendar week is visible
             if (eventCalendarView.calendarWeekVisible) {
                 listOf(
-                    eventCalendarViewHeaderKw,
+                    eventCalendarViewHeaderCw,
                     eventCalendarViewRow1.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewInsetsFrameLayout,
                     eventCalendarViewRow2.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewInsetsFrameLayout,
                     eventCalendarViewRow3.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewInsetsFrameLayout,
@@ -514,9 +514,9 @@ internal class InfiniteAdapter(
         }
 
         eventCalendarView.expressiveUi.expressiveCwHelper(
-            frameLayout,
-            index,
-            eventCalendarView.expressiveCwBackgroundTintColor
+            frameLayout = frameLayout,
+            index = index,
+            cwBackgroundTintColor = eventCalendarView.expressiveCwBackgroundTintColor
         )
     }
 
