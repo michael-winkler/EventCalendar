@@ -256,7 +256,7 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
             eventCalendarSingleWeekViewMonthYearHeader.isVisible = headerVisible
 
             if (isCalendarWeekVisible) {
-                eventCalendarViewCalendarWeek.eventCalendarViewDayTextView.text =
+                eventCalendarSingleWeekViewCalendarWeek.eventCalendarViewDayTextView.text =
                     "${getCurrentWeekNumber()}"
             }
 
@@ -274,26 +274,26 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
                     LinearLayoutCompat.SHOW_DIVIDER_BEGINNING or LinearLayoutCompat.SHOW_DIVIDER_MIDDLE or LinearLayoutCompat.SHOW_DIVIDER_END
             }
 
-            eventCalendarViewHeaderKw.isVisible = isCalendarWeekVisible
-            eventCalendarViewCalendarWeek.root.isVisible = isCalendarWeekVisible
+            eventCalendarSingleWeekViewHeaderCw.isVisible = isCalendarWeekVisible
+            eventCalendarSingleWeekViewCalendarWeek.root.isVisible = isCalendarWeekVisible
         }
 
         initTextViews(
             days = getDaysForCurrentWeek(),
-            materialTextView = eventCalendarViewCalendarWeek.eventCalendarViewDayTextView,
-            frameLayout = eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewExpressiveFrameLayout,
-            linearLayoutCompat = eventCalendarViewCalendarWeek.root
+            materialTextView = eventCalendarSingleWeekViewCalendarWeek.eventCalendarViewDayTextView,
+            frameLayout = eventCalendarSingleWeekViewCalendarWeek.eventCalendarViewDayTextViewExpressiveFrameLayout,
+            calendarWeek = eventCalendarSingleWeekViewCalendarWeek.root
         )
 
         val currentDayView = when (Calendar.getInstance().get(Calendar.DAY_OF_WEEK)) {
-            Calendar.MONDAY -> eventCalendarViewHeaderMonday
-            Calendar.TUESDAY -> eventCalendarViewHeaderTuesday
-            Calendar.WEDNESDAY -> eventCalendarViewHeaderWednesday
-            Calendar.THURSDAY -> eventCalendarViewHeaderThursday
-            Calendar.FRIDAY -> eventCalendarViewHeaderFriday
-            Calendar.SATURDAY -> eventCalendarViewHeaderSaturday
+            Calendar.MONDAY -> eventCalendarSingleWeekViewHeaderMonday
+            Calendar.TUESDAY -> eventCalendarSingleWeekViewHeaderTuesday
+            Calendar.WEDNESDAY -> eventCalendarSingleWeekViewHeaderWednesday
+            Calendar.THURSDAY -> eventCalendarSingleWeekViewHeaderThursday
+            Calendar.FRIDAY -> eventCalendarSingleWeekViewHeaderFriday
+            Calendar.SATURDAY -> eventCalendarSingleWeekViewHeaderSaturday
             else -> {
-                eventCalendarViewHeaderSunday
+                eventCalendarSingleWeekViewHeaderSunday
             }
         }
 
@@ -305,7 +305,7 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
         days: List<Day>,
         materialTextView: MaterialTextView,
         frameLayout: FrameLayout,
-        linearLayoutCompat: LinearLayoutCompat
+        calendarWeek: LinearLayoutCompat
     ): Unit = with(binding) {
         val bindingArrayList = arrayListOf(
             eventCalendarSingleWeekViewDay1,
@@ -338,11 +338,11 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
             if (isExpressiveUi) {
                 it.root.showDividers = LinearLayoutCompat.SHOW_DIVIDER_NONE
             } else {
-                it.root.showDividers = LinearLayoutCompat.SHOW_DIVIDER_BEGINNING
+                //it.root.showDividers = LinearLayoutCompat.SHOW_DIVIDER_BEGINNING
             }
         }
 
-        linearLayoutCompat.showDividers = if (isExpressiveUi) {
+        calendarWeek.showDividers = if (isExpressiveUi) {
             LinearLayoutCompat.SHOW_DIVIDER_NONE
         } else {
             LinearLayoutCompat.SHOW_DIVIDER_BEGINNING
