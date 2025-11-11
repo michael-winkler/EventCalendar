@@ -219,7 +219,7 @@ class EventCalendarView @JvmOverloads constructor(
                 currentYearAndMonthPair = getMonthNameAndYear(currentMonthPosition)
             }
 
-            binding.root.post {
+            root.post {
                 // We need to make sure that we inform the user about the first scroll after
                 // the initialization is done.
                 scrollHelper(currentRecyclerViewPosition)

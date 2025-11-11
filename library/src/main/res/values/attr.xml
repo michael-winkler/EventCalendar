@@ -1,78 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- Indicates whether the header layout, which displays the left and right icons
+         as well as the month name and year, is visible.
+         Default value: true -->
+    <attr name="ecv_header_visible" format="boolean" />
+
+    <!-- Indicates whether the calendar week column is visible.
+         Default value: false -->
+    <attr name="ecv_calendar_week_visible" format="boolean" />
+
+    <!-- Indicates whether the child view should prevent the parent view from intercepting
+         touch events.
+         Default value: false -->
+    <attr name="ecv_disallow_intercept" format="boolean" />
+
+    <!-- Sets the text color for the current weekday label.
+         Default value: @color/ecv_item_day_name_color -->
+    <attr name="ecv_current_weekday_text_color" format="color" />
+
+    <!-- Sets the tint color for the background of the current day indicator.
+         Default value: @color/ecv_black -->
+    <attr name="ecv_current_day_background_tint_color" format="color" />
+
+    <!-- Sets the text color for the current day indicator.
+         Default value: @color/ecv_white -->
+    <attr name="ecv_current_day_text_color" format="color" />
+
+    <!-- Sets the tint color for the background of the count indicator that appears
+         when more events exist than can be displayed on a given day.
+         Default value: @color/ecv_black -->
+    <attr name="ecv_count_background_tint_color" format="color" />
+
+    <!-- Sets the text color for the count indicator that appears
+         when more events exist than can be displayed on a given day.
+         Default value: @color/ecv_white -->
+    <attr name="ecv_count_background_text_color" format="color" />
+
+    <!-- Indicates whether the count indicator should be visible
+         when more events exist than can be displayed on a given day.
+         Default value: true -->
+    <attr name="ecv_count_visible" format="boolean" />
+
+    <!-- Indicates whether the event item text color should be applied automatically
+         based on the background color.
+         Default value: true -->
+    <attr name="ecv_event_item_automatic_text_color" format="boolean" />
+
+    <!-- Sets the text color for event items.
+         Used only if ecv_event_item_automatic_text_color is set to false.
+         Default value: @color/ecv_white -->
+    <attr name="ecv_event_item_text_color" format="color" />
+
+    <!-- Sets the text color for event items in dark mode.
+         Used only if ecv_event_item_automatic_text_color is set to false.
+         Default value: @color/ecv_black -->
+    <attr name="ecv_event_item_dark_text_color" format="color" />
+
+    <!-- Indicates whether the event calendar view should handle edge-to-edge layouts.
+         Default value: false -->
+    <attr name="ecv_edge_to_edge_enabled" format="boolean" />
+
+    <!-- Indicates whether the event calendar view should use the expressive UI mode.
+         Default value: false -->
+    <attr name="ecv_expressive_ui" format="boolean" />
+
+    <!-- Sets the tint color for the background of the calendar week indicator
+         when expressive UI mode is enabled.
+         Default value: @color/ecv_expressive_cw_background_color -->
+    <attr name="ecv_expressive_cw_background_tint_color" format="color" />
+
+    <!-- Sets the tint color for the background of the day indicator
+         when expressive UI mode is enabled.
+         Default value: @color/ecv_expressive_day_background_color -->
+    <attr name="ecv_expressive_day_background_tint_color" format="color" />
+
+    <!-- ######################################################### -->
+    <!-- EventCalendarView -->
+    <!-- ######################################################### -->
     <declare-styleable name="EventCalendarView">
-        <!-- Determines whether the header layout, which displays the left and right icons,
-        as well as the month name and year, is visible or not.
-        Default: true -->
-        <attr name="ecv_header_visible" format="boolean" />
-
-        <!-- Determines whether the calendar week, is visible or not.
-        Default: false -->
-        <attr name="ecv_calendar_week_visible" format="boolean" />
-
-        <!-- Indicates whether the child view wants to prevent the parent view from intercepting
-        touch events.
-        Default: false -->
-        <attr name="ecv_disallow_intercept" format="boolean" />
-
-        <!-- Sets the text color for the current weekday.
-        Default: @color/ecv_item_day_name_color-->
-        <attr name="ecv_current_weekday_text_color" format="color" />
-
-        <!-- Sets the tint color for the background of the current day circle.
-        Default: @color/ecv_black-->
-        <attr name="ecv_current_day_background_tint_color" format="color" />
-
-        <!-- Sets the text color for the current day circle.
-        Default: @color/ecv_white-->
-        <attr name="ecv_current_day_text_color" format="color" />
-
-        <!-- Sets the tint color for the background of the "count" indicator that appears when
-        there are more events on a day than can be displayed.
-        Default: @color/ecv_black-->
-        <attr name="ecv_count_background_tint_color" format="color" />
-
-        <!-- Sets the text color for the "count" indicator that appears when there are more
-        events on a day than can be displayed.
-        Default: @color/ecv_white-->
-        <attr name="ecv_count_background_text_color" format="color" />
-
-        <!-- Determines whether the "count" indicator that appears when there are more events on
-        a day than can be displayed is visible or not.
-        Default: true -->
-        <attr name="ecv_count_visible" format="boolean" />
-
-        <!-- Determines whether the automatic event item text color should be set automatic or not.
-        Default: true-->
-        <attr name="ecv_event_item_automatic_text_color" format="boolean" />
-
-        <!-- Sets the text color for event items. Will only be used if
-        "ecv_event_item_automatic_text_color" is set to false.
-        Default: @color/ecv_white-->
-        <attr name="ecv_event_item_text_color" format="color" />
-
-        <!-- Sets the text color for event items for dark. Will only be used if
-        "ecv_event_item_automatic_text_color" is set to false.
-        Default: @color/ecv_black-->
-        <attr name="ecv_event_item_dark_text_color" format="color" />
-
-        <!-- Indicates whether the event calendar view should handle edge to edge or not.
-        Default: false -->
-        <attr name="ecv_edge_to_edge_enabled" format="boolean" />
-
-        <!-- Indicates whether the event calendar view should use an expressive UI.
-        Default: false -->
-        <attr name="ecv_expressive_ui" format="boolean" />
-
-        <!-- Sets the tint color for the background of the "cw" indicator that appears when
-        "ecv_expressive_ui" is set to true.
-        Default: @color/ecv_expressive_cw_background_color-->
-        <attr name="ecv_expressive_cw_background_tint_color" format="color" />
-
-        <!-- Sets the tint color for the background of the "day" indicator that appears when
-        "ecv_expressive_ui" is set to true.
-        Default: @color/ecv_expressive_day_background_color-->
-        <attr name="ecv_expressive_day_background_tint_color" format="color" />
-
+        <attr name="ecv_header_visible" />
+        <attr name="ecv_calendar_week_visible" />
+        <attr name="ecv_disallow_intercept" />
+        <attr name="ecv_current_weekday_text_color" />
+        <attr name="ecv_current_day_background_tint_color" />
+        <attr name="ecv_current_day_text_color" />
+        <attr name="ecv_count_background_tint_color" />
+        <attr name="ecv_count_background_text_color" />
+        <attr name="ecv_count_visible" />
+        <attr name="ecv_event_item_automatic_text_color" />
+        <attr name="ecv_event_item_text_color" />
+        <attr name="ecv_event_item_dark_text_color" />
+        <attr name="ecv_edge_to_edge_enabled" />
+        <attr name="ecv_expressive_ui" />
+        <attr name="ecv_expressive_cw_background_tint_color" />
+        <attr name="ecv_expressive_day_background_tint_color" />
     </declare-styleable>
+
+    <!-- ######################################################### -->
+    <!-- EventCalendarSingleWeekView -->
+    <!-- Note:
+         The EventCalendarSingleWeekView supports all "ecv" attributes
+         except ecv_disallow_intercept and ecv_edge_to_edge_enabled. -->
+    <!-- ######################################################### -->
+    <declare-styleable name="EventCalendarSingleWeekView">
+        <attr name="ecv_header_visible" />
+        <attr name="ecv_calendar_week_visible" />
+        <attr name="ecv_current_weekday_text_color" />
+        <attr name="ecv_current_day_background_tint_color" />
+        <attr name="ecv_current_day_text_color" />
+        <attr name="ecv_count_background_tint_color" />
+        <attr name="ecv_count_background_text_color" />
+        <attr name="ecv_count_visible" />
+        <attr name="ecv_event_item_automatic_text_color" />
+        <attr name="ecv_event_item_text_color" />
+        <attr name="ecv_event_item_dark_text_color" />
+        <attr name="ecv_expressive_ui" />
+        <attr name="ecv_expressive_cw_background_tint_color" />
+        <attr name="ecv_expressive_day_background_tint_color" />
+    </declare-styleable>
+
 </resources>

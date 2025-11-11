@@ -190,6 +190,9 @@ class MainActivity : AppCompatActivity() {
                 binding.activityMainEventCalendarView.events
             bottomSheetEventCalendarSingleWeekView.expressiveUi =
                 binding.activityMainEventCalendarView.expressiveUi
+            bottomSheetEventCalendarSingleWeekView.calendarWeekVisible =
+                binding.activityMainEventCalendarView.calendarWeekVisible
+
             bottomSheetEventCalendarSingleWeekView.addOnDayClickListener(object :
                 EventCalendarDayClickListener {
                 override fun onClick(day: Day) {

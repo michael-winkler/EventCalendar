@@ -82,51 +82,61 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
         ContextCompat.getColor(getContext(), R.color.ecv_expressive_day_background_color)
 
     init {
-        getContext().withStyledAttributes(attrs, R.styleable.EventCalendarView) {
+        getContext().withStyledAttributes(attrs, R.styleable.EventCalendarSingleWeekView) {
             headerVisible =
-                getBoolean(R.styleable.EventCalendarView_ecv_header_visible, headerVisible)
+                getBoolean(
+                    R.styleable.EventCalendarSingleWeekView_ecv_header_visible,
+                    headerVisible
+                )
             isCalendarWeekVisible = getBoolean(
-                R.styleable.EventCalendarView_ecv_calendar_week_visible, isCalendarWeekVisible
+                R.styleable.EventCalendarSingleWeekView_ecv_calendar_week_visible,
+                isCalendarWeekVisible
             )
             currentWeekdayTextColor = getColor(
-                (R.styleable.EventCalendarView_ecv_current_weekday_text_color),
+                (R.styleable.EventCalendarSingleWeekView_ecv_current_weekday_text_color),
                 currentWeekdayTextColor
             )
             currentDayBackgroundTintColor = getColor(
-                (R.styleable.EventCalendarView_ecv_current_day_background_tint_color),
+                (R.styleable.EventCalendarSingleWeekView_ecv_current_day_background_tint_color),
                 currentDayBackgroundTintColor
             )
             currentDayTextColor = getColor(
-                (R.styleable.EventCalendarView_ecv_current_day_text_color), currentDayTextColor
+                (R.styleable.EventCalendarSingleWeekView_ecv_current_day_text_color),
+                currentDayTextColor
             )
             countBackgroundTintColor = getColor(
-                (R.styleable.EventCalendarView_ecv_count_background_tint_color),
+                (R.styleable.EventCalendarSingleWeekView_ecv_count_background_tint_color),
                 countBackgroundTintColor
             )
             countBackgroundTextColor = getColor(
                 (R.styleable.EventCalendarView_ecv_count_background_text_color),
                 countBackgroundTextColor
             )
-            countVisible = getBoolean(R.styleable.EventCalendarView_ecv_count_visible, countVisible)
+            countVisible =
+                getBoolean(R.styleable.EventCalendarSingleWeekView_ecv_count_visible, countVisible)
             eventItemAutomaticTextColor = getBoolean(
-                R.styleable.EventCalendarView_ecv_event_item_automatic_text_color,
+                R.styleable.EventCalendarSingleWeekView_ecv_event_item_automatic_text_color,
                 eventItemAutomaticTextColor
             )
             eventItemTextColor = getColor(
-                (R.styleable.EventCalendarView_ecv_event_item_text_color), eventItemTextColor
+                (R.styleable.EventCalendarSingleWeekView_ecv_event_item_text_color),
+                eventItemTextColor
             )
             eventItemDarkTextColor = getColor(
-                (R.styleable.EventCalendarView_ecv_event_item_dark_text_color),
+                (R.styleable.EventCalendarSingleWeekView_ecv_event_item_dark_text_color),
                 eventItemDarkTextColor
             )
             isExpressiveUi =
-                getBoolean(R.styleable.EventCalendarView_ecv_expressive_ui, isExpressiveUi)
+                getBoolean(
+                    R.styleable.EventCalendarSingleWeekView_ecv_expressive_ui,
+                    isExpressiveUi
+                )
             expressiveCwBackgroundTintColor = getColor(
-                (R.styleable.EventCalendarView_ecv_expressive_cw_background_tint_color),
+                (R.styleable.EventCalendarSingleWeekView_ecv_expressive_cw_background_tint_color),
                 expressiveCwBackgroundTintColor
             )
             expressiveDayBackgroundTintColor = getColor(
-                (R.styleable.EventCalendarView_ecv_expressive_day_background_tint_color),
+                (R.styleable.EventCalendarSingleWeekView_ecv_expressive_day_background_tint_color),
                 expressiveDayBackgroundTintColor
             )
         }
@@ -238,59 +248,57 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
      */
     @SuppressLint("NotifyDataSetChanged")
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    private fun updateLayout() {
-        with(binding) {
-            val monthYearText = "${getCurrentMonth().getMonthName(context)} ${getCurrentYear()}"
-            eventCalendarSingleWeekViewMonthYearTextView1.text = monthYearText
+    private fun updateLayout(): Unit = with(binding) {
+        val monthYearText = "${getCurrentMonth().getMonthName(context)} ${getCurrentYear()}"
+        eventCalendarSingleWeekViewMonthYearTextView1.text = monthYearText
 
-            eventCalendarSingleWeekViewMonthYearHeader.post {
-                eventCalendarSingleWeekViewMonthYearHeader.isVisible = headerVisible
+        eventCalendarSingleWeekViewMonthYearHeader.post {
+            eventCalendarSingleWeekViewMonthYearHeader.isVisible = headerVisible
 
-                if (isCalendarWeekVisible) {
-                    eventCalendarViewCalendarWeek.eventCalendarViewDayTextView.text =
-                        "${getCurrentWeekNumber()}"
-                }
-
-                if (isExpressiveUi) {
-                    eventCalendarViewLinearLayoutCompat.showDividers =
-                        LinearLayoutCompat.SHOW_DIVIDER_NONE
-
-                    eventCalendarSingleWeekViewRowsLinearLayoutCompat.showDividers =
-                        LinearLayoutCompat.SHOW_DIVIDER_NONE
-                } else {
-                    eventCalendarViewLinearLayoutCompat.showDividers =
-                        LinearLayoutCompat.SHOW_DIVIDER_BEGINNING or LinearLayoutCompat.SHOW_DIVIDER_MIDDLE or LinearLayoutCompat.SHOW_DIVIDER_END
-
-                    eventCalendarSingleWeekViewRowsLinearLayoutCompat.showDividers =
-                        LinearLayoutCompat.SHOW_DIVIDER_BEGINNING or LinearLayoutCompat.SHOW_DIVIDER_MIDDLE or LinearLayoutCompat.SHOW_DIVIDER_END
-                }
-
-                eventCalendarViewHeaderKw.isVisible = isCalendarWeekVisible
-                eventCalendarViewCalendarWeek.root.isVisible = isCalendarWeekVisible
+            if (isCalendarWeekVisible) {
+                eventCalendarViewCalendarWeek.eventCalendarViewDayTextView.text =
+                    "${getCurrentWeekNumber()}"
             }
 
-            initTextViews(
-                days = getDaysForCurrentWeek(),
-                materialTextView = eventCalendarViewCalendarWeek.eventCalendarViewDayTextView,
-                frameLayout = eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewExpressiveFrameLayout,
-                linearLayoutCompat = eventCalendarViewCalendarWeek.root
-            )
+            if (isExpressiveUi) {
+                eventCalendarViewLinearLayoutCompat.showDividers =
+                    LinearLayoutCompat.SHOW_DIVIDER_NONE
 
-            val currentDayView = when (Calendar.getInstance().get(Calendar.DAY_OF_WEEK)) {
-                Calendar.MONDAY -> eventCalendarViewHeaderMonday
-                Calendar.TUESDAY -> eventCalendarViewHeaderTuesday
-                Calendar.WEDNESDAY -> eventCalendarViewHeaderWednesday
-                Calendar.THURSDAY -> eventCalendarViewHeaderThursday
-                Calendar.FRIDAY -> eventCalendarViewHeaderFriday
-                Calendar.SATURDAY -> eventCalendarViewHeaderSaturday
-                else -> {
-                    eventCalendarViewHeaderSunday
-                }
+                eventCalendarSingleWeekViewRowsLinearLayoutCompat.showDividers =
+                    LinearLayoutCompat.SHOW_DIVIDER_NONE
+            } else {
+                eventCalendarViewLinearLayoutCompat.showDividers =
+                    LinearLayoutCompat.SHOW_DIVIDER_BEGINNING or LinearLayoutCompat.SHOW_DIVIDER_MIDDLE or LinearLayoutCompat.SHOW_DIVIDER_END
+
+                eventCalendarSingleWeekViewRowsLinearLayoutCompat.showDividers =
+                    LinearLayoutCompat.SHOW_DIVIDER_BEGINNING or LinearLayoutCompat.SHOW_DIVIDER_MIDDLE or LinearLayoutCompat.SHOW_DIVIDER_END
             }
 
-            currentDayView.setTypeface(currentDayView.typeface, Typeface.BOLD)
-            currentDayView.setTextColor(currentWeekdayTextColor)
+            eventCalendarViewHeaderKw.isVisible = isCalendarWeekVisible
+            eventCalendarViewCalendarWeek.root.isVisible = isCalendarWeekVisible
         }
+
+        initTextViews(
+            days = getDaysForCurrentWeek(),
+            materialTextView = eventCalendarViewCalendarWeek.eventCalendarViewDayTextView,
+            frameLayout = eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewExpressiveFrameLayout,
+            linearLayoutCompat = eventCalendarViewCalendarWeek.root
+        )
+
+        val currentDayView = when (Calendar.getInstance().get(Calendar.DAY_OF_WEEK)) {
+            Calendar.MONDAY -> eventCalendarViewHeaderMonday
+            Calendar.TUESDAY -> eventCalendarViewHeaderTuesday
+            Calendar.WEDNESDAY -> eventCalendarViewHeaderWednesday
+            Calendar.THURSDAY -> eventCalendarViewHeaderThursday
+            Calendar.FRIDAY -> eventCalendarViewHeaderFriday
+            Calendar.SATURDAY -> eventCalendarViewHeaderSaturday
+            else -> {
+                eventCalendarViewHeaderSunday
+            }
+        }
+
+        currentDayView.setTypeface(currentDayView.typeface, Typeface.BOLD)
+        currentDayView.setTextColor(currentWeekdayTextColor)
     }
 
     private fun initTextViews(
@@ -298,15 +306,15 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
         materialTextView: MaterialTextView,
         frameLayout: FrameLayout,
         linearLayoutCompat: LinearLayoutCompat
-    ) {
+    ): Unit = with(binding) {
         val bindingArrayList = arrayListOf(
-            binding.eventCalendarSingleWeekViewDay1,
-            binding.eventCalendarSingleWeekViewDay2,
-            binding.eventCalendarSingleWeekViewDay3,
-            binding.eventCalendarSingleWeekViewDay4,
-            binding.eventCalendarSingleWeekViewDay5,
-            binding.eventCalendarSingleWeekViewDay6,
-            binding.eventCalendarSingleWeekViewDay7
+            eventCalendarSingleWeekViewDay1,
+            eventCalendarSingleWeekViewDay2,
+            eventCalendarSingleWeekViewDay3,
+            eventCalendarSingleWeekViewDay4,
+            eventCalendarSingleWeekViewDay5,
+            eventCalendarSingleWeekViewDay6,
+            eventCalendarSingleWeekViewDay7
         )
 
         if (days.size != bindingArrayList.size) {
