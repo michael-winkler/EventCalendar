@@ -1,8 +1,6 @@
 package com.nmd.eventCalendar.utils
 
-import android.app.Activity
 import android.content.Context
-import android.content.ContextWrapper
 import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.Typeface
@@ -30,22 +28,6 @@ import java.util.Locale
 internal class Utils {
 
     companion object {
-
-        internal fun Context?.getRealContext(): Context? {
-            return when (this) {
-                is ContextWrapper -> this.baseContext
-                is Context -> this
-                else -> null
-            }
-        }
-
-        internal fun Context?.getActivity(): Activity? {
-            return when (this) {
-                is Activity -> this
-                is ContextWrapper -> this.baseContext.getActivity()
-                else -> null
-            }
-        }
 
         internal fun Int.getDaysOfMonthAndGivenYear(year: Int): List<Day> {
             val currentDate = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date())
@@ -280,8 +262,6 @@ internal class Utils {
             index: Int,
             cwBackgroundTintColor: Int
         ): Unit = with(frameLayout) {
-            val realContext = context.getRealContext() ?: return
-
             if (!this@expressiveCwHelper) {
                 background = null
                 return
@@ -310,7 +290,7 @@ internal class Utils {
                 }
             }
 
-            background = ContextCompat.getDrawable(realContext, expressiveBackgroundRes)
+            background = ContextCompat.getDrawable(context, expressiveBackgroundRes)
             ViewCompat.setBackgroundTintList(this, ColorStateList.valueOf(cwBackgroundTintColor))
         }
 

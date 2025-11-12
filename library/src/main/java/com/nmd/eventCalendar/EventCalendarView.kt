@@ -11,7 +11,6 @@ import android.view.MotionEvent
 import android.widget.FrameLayout
 import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.withStyledAttributes
 import androidx.recyclerview.widget.PagerSnapHelper
@@ -24,7 +23,6 @@ import com.nmd.eventCalendar.`interface`.EventCalendarDayClickListener
 import com.nmd.eventCalendar.`interface`.EventCalendarScrollListener
 import com.nmd.eventCalendar.model.Event
 import com.nmd.eventCalendar.state.InstanceState
-import com.nmd.eventCalendar.utils.Utils.Companion.getActivity
 import com.nmd.eventCalendar.utils.Utils.Companion.smoothScrollTo
 import java.time.YearMonth
 import java.util.Calendar
@@ -86,7 +84,7 @@ class EventCalendarView @JvmOverloads constructor(
     private val currentYear = currentCalendar.get(Calendar.YEAR)
     private val currentMonth = currentCalendar.get(Calendar.MONTH)
 
-    private lateinit var currentYearAndMonthPair: Pair<Int, Int>
+    private var currentYearAndMonthPair: Pair<Int, Int>
 
     internal var sMonth = Calendar.JANUARY
     internal var sYear = 2020
@@ -191,33 +189,30 @@ class EventCalendarView @JvmOverloads constructor(
         addView(binding.root)
 
         with(binding) {
-            val appCompatActivity = getContext().getActivity() as? AppCompatActivity
-            if (appCompatActivity != null) {
-                with(eventCalendarRecyclerView) {
-                    setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING)
-                    setHasFixedSize(true)
-                    setItemViewCacheSize(1000)
-                    adapter = InfiniteAdapter(this@EventCalendarView)
-                    attachSnapHelperWithListener(
-                        snapHelper = PagerSnapHelper(),
-                        onSnapPositionChangeListener = object :
-                            SnapOnScrollListener.OnSnapPositionChangeListener {
-                            override fun onSnapPositionChange(position: Int) {
-                                if (position != currentRecyclerViewPosition) {
-                                    // We only invoke the scroll change event if the position is a new one
-                                    scrollHelper(position)
-                                }
+            with(eventCalendarRecyclerView) {
+                setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING)
+                setHasFixedSize(true)
+                setItemViewCacheSize(1000)
+                adapter = InfiniteAdapter(this@EventCalendarView)
+                attachSnapHelperWithListener(
+                    snapHelper = PagerSnapHelper(),
+                    onSnapPositionChangeListener = object :
+                        SnapOnScrollListener.OnSnapPositionChangeListener {
+                        override fun onSnapPositionChange(position: Int) {
+                            if (position != currentRecyclerViewPosition) {
+                                // We only invoke the scroll change event if the position is a new one
+                                scrollHelper(position)
                             }
-                        })
-                }
-
-                val currentMonthPosition =
-                    ((currentYear - sYear) * 12) + (currentMonth - sMonth) - (if (currentMonth >= eMonth && currentYear >= eYear) (currentYear - eYear) * 12 + (currentMonth - eMonth) else 0)
-                eventCalendarRecyclerView.scrollToPosition(currentMonthPosition)
-
-                currentRecyclerViewPosition = currentMonthPosition
-                currentYearAndMonthPair = getMonthNameAndYear(currentMonthPosition)
+                        }
+                    })
             }
+
+            val currentMonthPosition =
+                ((currentYear - sYear) * 12) + (currentMonth - sMonth) - (if (currentMonth >= eMonth && currentYear >= eYear) (currentYear - eYear) * 12 + (currentMonth - eMonth) else 0)
+            eventCalendarRecyclerView.scrollToPosition(currentMonthPosition)
+
+            currentRecyclerViewPosition = currentMonthPosition
+            currentYearAndMonthPair = getMonthNameAndYear(currentMonthPosition)
 
             root.post {
                 // We need to make sure that we inform the user about the first scroll after

@@ -36,7 +36,6 @@ import com.nmd.eventCalendar.utils.Utils.Companion.expressiveCwHelper
 import com.nmd.eventCalendar.utils.Utils.Companion.getDaysOfMonthAndGivenYear
 import com.nmd.eventCalendar.utils.Utils.Companion.getDimensInt
 import com.nmd.eventCalendar.utils.Utils.Companion.getMonthName
-import com.nmd.eventCalendar.utils.Utils.Companion.getRealContext
 import com.nmd.eventCalendar.utils.Utils.Companion.getTextTypeface
 import com.nmd.eventCalendar.utils.Utils.Companion.orEmptyArrayList
 import com.nmd.eventCalendar.utils.Utils.Companion.orTrue
@@ -351,46 +350,44 @@ internal class InfiniteAdapter(
                     eventCalendarView.clickListener?.onClick(day)
                 }
 
-                context.getRealContext()?.let { context ->
-                    background = if (eventCalendarView.expressiveUi) {
-                        val ripple = ContextCompat.getDrawable(
-                            context, when (index) {
-                                0 -> {
-                                    // Top left rounded
-                                    R.drawable.ecv_ripple_expressive_top_left
-                                }
-
-                                6 -> {
-                                    // Top right rounded
-                                    R.drawable.ecv_ripple_expressive_top_right
-                                }
-
-                                35 -> {
-                                    // Bottom left rounded
-                                    R.drawable.ecv_ripple_expressive_bottom_left
-                                }
-
-                                41 -> {
-                                    // Bottom right rounded
-                                    R.drawable.ecv_ripple_expressive_bottom_right
-                                }
-
-                                else -> {
-                                    // Default rounded
-                                    R.drawable.ecv_ripple_expressive_default
-                                }
+                background = if (eventCalendarView.expressiveUi) {
+                    val ripple = ContextCompat.getDrawable(
+                        context, when (index) {
+                            0 -> {
+                                // Top left rounded
+                                R.drawable.ecv_ripple_expressive_top_left
                             }
-                        ) as RippleDrawable
-                        ripple.setItemTint(
-                            eventCalendarView.expressiveDayBackgroundTintColor
-                        )
-                        ripple
-                    } else {
-                        ContextCompat.getDrawable(
-                            context,
-                            R.drawable.ecv_ripple_default
-                        )
-                    }
+
+                            6 -> {
+                                // Top right rounded
+                                R.drawable.ecv_ripple_expressive_top_right
+                            }
+
+                            35 -> {
+                                // Bottom left rounded
+                                R.drawable.ecv_ripple_expressive_bottom_left
+                            }
+
+                            41 -> {
+                                // Bottom right rounded
+                                R.drawable.ecv_ripple_expressive_bottom_right
+                            }
+
+                            else -> {
+                                // Default rounded
+                                R.drawable.ecv_ripple_expressive_default
+                            }
+                        }
+                    ) as RippleDrawable
+                    ripple.setItemTint(
+                        eventCalendarView.expressiveDayBackgroundTintColor
+                    )
+                    ripple
+                } else {
+                    ContextCompat.getDrawable(
+                        context,
+                        R.drawable.ecv_ripple_default
+                    )
                 }
             }
 
@@ -414,22 +411,20 @@ internal class InfiniteAdapter(
                 isSaveEnabled = false
                 itemAnimator = null
 
-                if (eventList.isNotEmpty()) {
-                    if (eventCalendarView.countVisible) {
-                        addItemDecoration(
-                            LastPossibleVisibleItemForUserDecoration(
-                                eventList
-                            )
+                if (eventList.isNotEmpty() && eventCalendarView.countVisible) {
+                    addItemDecoration(
+                        LastPossibleVisibleItemForUserDecoration(
+                            eventList
                         )
-                    }
-
-                    adapter = EventsAdapter(
-                        list = eventList,
-                        eventItemAutomaticTextColor = eventCalendarView.eventItemAutomaticTextColor.orTrue(),
-                        eventItemTextColor = eventCalendarView.eventItemTextColor,
-                        eventItemDarkTextColor = eventCalendarView.eventItemDarkTextColor
                     )
                 }
+
+                adapter = EventsAdapter(
+                    list = eventList,
+                    eventItemAutomaticTextColor = eventCalendarView.eventItemAutomaticTextColor.orTrue(),
+                    eventItemTextColor = eventCalendarView.eventItemTextColor,
+                    eventItemDarkTextColor = eventCalendarView.eventItemDarkTextColor
+                )
             }
 
             with(dayItemLayout.eventCalendarViewDayTextView) {
@@ -438,12 +433,10 @@ internal class InfiniteAdapter(
                 if (day.isCurrentDay) {
                     setTextColor(eventCalendarView.currentDayTextColor)
 
-                    context.getRealContext()?.let { context ->
-                        background = ContextCompat.getDrawable(
-                            context,
-                            if (eventCalendarView.expressiveUi) R.drawable.ecv_expressive_circle else R.drawable.ecv_circle
-                        )
-                    }
+                    background = ContextCompat.getDrawable(
+                        context,
+                        if (eventCalendarView.expressiveUi) R.drawable.ecv_expressive_circle else R.drawable.ecv_circle
+                    )
 
                     ViewCompat.setBackgroundTintList(
                         this,

@@ -186,12 +186,13 @@ class MainActivity : AppCompatActivity() {
         with(dialogBinding) {
             val bottomSheetDialog = BottomSheetDialog(this@MainActivity)
 
-            bottomSheetEventCalendarSingleWeekView.events =
-                binding.activityMainEventCalendarView.events
             bottomSheetEventCalendarSingleWeekView.expressiveUi =
                 binding.activityMainEventCalendarView.expressiveUi
             bottomSheetEventCalendarSingleWeekView.calendarWeekVisible =
                 binding.activityMainEventCalendarView.calendarWeekVisible
+
+            bottomSheetEventCalendarSingleWeekView.events =
+                binding.activityMainEventCalendarView.events
 
             bottomSheetEventCalendarSingleWeekView.addOnDayClickListener(object :
                 EventCalendarDayClickListener {
