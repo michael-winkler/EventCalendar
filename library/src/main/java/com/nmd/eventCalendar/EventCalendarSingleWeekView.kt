@@ -153,7 +153,10 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
             monthYearText()
             expressiveUi()
             headerVisible()
-            isCalendarWeekVisible()
+
+            updateWeekNumberView()
+            updateCalendarWeekUiForExpressive()
+            updateCalendarWeekVisibility()
 
             updateLayout(shouldStyleCurrentDayHeader = true)
         }
@@ -235,7 +238,8 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
         get() = isCalendarWeekVisible
         set(value) {
             isCalendarWeekVisible = value
-            isCalendarWeekVisible()
+            updateWeekNumberView()
+            updateCalendarWeekVisibility()
             updateLayout(shouldStyleCurrentDayHeader = false)
         }
 
@@ -253,6 +257,7 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
         get() = isExpressiveUi
         set(value) {
             isExpressiveUi = value
+            updateCalendarWeekUiForExpressive()
             expressiveUi()
             updateLayout(shouldStyleCurrentDayHeader = false)
         }
@@ -286,7 +291,7 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
      * Internal method.
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    private fun isCalendarWeekVisible() = with(binding) {
+    private fun updateCalendarWeekVisibility() = with(binding) {
         eventCalendarSingleWeekViewHeaderCw.isVisible = isCalendarWeekVisible
         eventCalendarSingleWeekViewCalendarWeek.root.isVisible = isCalendarWeekVisible
     }
@@ -454,22 +459,34 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     private fun styleCalendarWeekUi(): Unit = with(binding) {
         if (isCalendarWeekVisible) {
-            eventCalendarSingleWeekViewCalendarWeek.eventCalendarSingleWeekViewTextView.text =
-                "${getCurrentWeekNumber()}"
-        }
-
-        eventCalendarSingleWeekViewCalendarWeek.root.showDividers = if (expressiveUi) {
-            noDividers
-        } else {
-            beginDivider
-        }
-
-        if (isCalendarWeekVisible) {
             expressiveUi.expressiveCwHelper(
                 frameLayout = eventCalendarSingleWeekViewCalendarWeek.eventCalendarSingleWeekViewExpressiveFrameLayout,
                 index = -1,
                 cwBackgroundTintColor = expressiveCwBackgroundTintColor
             )
+        }
+    }
+
+    /**
+     * Internal method.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    private fun updateWeekNumberView(): Unit = with(binding) {
+        if (isCalendarWeekVisible) {
+            eventCalendarSingleWeekViewCalendarWeek.eventCalendarSingleWeekViewTextView.text =
+                "${getCurrentWeekNumber()}"
+        }
+    }
+
+    /**
+     * Internal method.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    private fun updateCalendarWeekUiForExpressive(): Unit = with(binding) {
+        eventCalendarSingleWeekViewCalendarWeek.root.showDividers = if (expressiveUi) {
+            noDividers
+        } else {
+            beginDivider
         }
     }
 
