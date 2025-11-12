@@ -14,6 +14,7 @@ import android.view.ViewGroup.MarginLayoutParams
 import androidx.annotation.RestrictTo
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
@@ -123,21 +124,20 @@ internal class InfiniteAdapter(
                 }
 
                 if (eventCalendarView.edgeToEdgeEnabled) {
+                    ViewCompat.setOnApplyWindowInsetsListener(eventCalendarView) { view, windowInsets ->
+                        val insets =
+                            windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
+
+                        applyWindowInsets(insets = insets, binding = binding)
+
+                        ViewCompat.onApplyWindowInsets(view, windowInsets)
+                    }
+
                     val insets = ViewCompat.getRootWindowInsets(eventCalendarView)?.getInsets(
                         WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
                     )
-
-                    val isPortrait = (binding.root.tag?.toString()?.toIntOrNull() ?: 0) == 0
-
-                    if (isPortrait) {
-                        portaitHelper(binding = binding, bottom = insets?.bottom ?: 0)
-                    } else {
-                        landscapeHelper(
-                            binding = binding,
-                            left = insets?.left ?: 0,
-                            right = insets?.right ?: 0,
-                            bottom = insets?.bottom ?: 0
-                        )
+                    if (insets != null) {
+                        eventCalendarView.requestApplyInsets()
                     }
                 }
 
@@ -155,6 +155,22 @@ internal class InfiniteAdapter(
             }
         }
     }
+
+    private fun applyWindowInsets(insets: Insets, binding: EcvEventCalendarViewBinding) =
+        with(binding) {
+            val isPortrait = (root.tag?.toString()?.toIntOrNull() ?: 0) == 0
+
+            if (isPortrait) {
+                portaitHelper(binding = binding, bottom = insets.bottom)
+            } else {
+                landscapeHelper(
+                    binding = binding,
+                    left = insets.left,
+                    right = insets.right,
+                    bottom = insets.bottom
+                )
+            }
+        }
 
     private fun portaitHelper(binding: EcvEventCalendarViewBinding, bottom: Int): Unit =
         with(binding) {

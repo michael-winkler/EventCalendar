@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
@@ -43,21 +44,32 @@ class MainActivity : AppCompatActivity() {
             val insets =
                 windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
 
-            binding.activityMainAppBarLayout.updatePadding(
-                left = insets.left,
-                top = insets.top,
-                right = insets.right
-            )
-
-            binding.activityMainFloatingActionButtonHolder.updatePadding(
-                bottom = insets.bottom + com.nmd.eventCalendarSample.R.dimen.dp_8.getDimensInt(),
-                right = insets.right + com.nmd.eventCalendarSample.R.dimen.dp_8.getDimensInt()
-            )
+            applyWindowInsets(insets)
 
             ViewCompat.onApplyWindowInsets(view, windowInsets)
         }
 
+        val insets = ViewCompat.getRootWindowInsets(binding.root)?.getInsets(
+            WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+        )
+        if (insets != null) {
+            binding.root.requestApplyInsets()
+        }
+
         initialize()
+    }
+
+    private fun applyWindowInsets(insets: Insets): Unit = with(binding) {
+        activityMainAppBarLayout.updatePadding(
+            left = insets.left,
+            top = insets.top,
+            right = insets.right
+        )
+
+        activityMainFloatingActionButtonHolder.updatePadding(
+            bottom = insets.bottom + com.nmd.eventCalendarSample.R.dimen.dp_8.getDimensInt(),
+            right = insets.right + com.nmd.eventCalendarSample.R.dimen.dp_8.getDimensInt()
+        )
     }
 
     companion object {
