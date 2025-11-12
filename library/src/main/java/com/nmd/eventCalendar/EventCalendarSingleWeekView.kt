@@ -150,6 +150,11 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
         // We want a initial calendar week ui. That is the reason why we update the layout.
         // Without the call we see a empty view.
         post {
+            monthYearText()
+            expressiveUi()
+            headerVisible()
+            isCalendarWeekVisible()
+
             updateLayout(shouldStyleCurrentDayHeader = true)
         }
 
@@ -230,6 +235,7 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
         get() = isCalendarWeekVisible
         set(value) {
             isCalendarWeekVisible = value
+            isCalendarWeekVisible()
             updateLayout(shouldStyleCurrentDayHeader = false)
         }
 
@@ -247,20 +253,49 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
         get() = isExpressiveUi
         set(value) {
             isExpressiveUi = value
+            expressiveUi()
             updateLayout(shouldStyleCurrentDayHeader = false)
         }
 
     /**
      * Internal method.
      */
-    @SuppressLint("NotifyDataSetChanged")
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    private fun updateLayout(shouldStyleCurrentDayHeader: Boolean): Unit = with(binding) {
+    private fun updateLayout(shouldStyleCurrentDayHeader: Boolean) {
+        renderWeekView(shouldStyleCurrentDayHeader = shouldStyleCurrentDayHeader)
+    }
+
+    /**
+     * Internal method.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    private fun monthYearText() = with(binding) {
         val monthYearText = "${getCurrentMonth().getMonthName(context)} ${getCurrentYear()}"
         eventCalendarSingleWeekViewMonthYearTextView1.text = monthYearText
+    }
 
+    /**
+     * Internal method.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    private fun headerVisible() = with(binding) {
         eventCalendarSingleWeekViewMonthYearHeader.isVisible = headerVisible
+    }
 
+    /**
+     * Internal method.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    private fun isCalendarWeekVisible() = with(binding) {
+        eventCalendarSingleWeekViewHeaderCw.isVisible = isCalendarWeekVisible
+        eventCalendarSingleWeekViewCalendarWeek.root.isVisible = isCalendarWeekVisible
+    }
+
+    /**
+     * Internal method.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    private fun expressiveUi() = with(binding) {
         if (expressiveUi) {
             eventCalendarViewLinearLayoutCompat.showDividers = noDividers
             eventCalendarSingleWeekViewRowsLinearLayoutCompat.showDividers = noDividers
@@ -268,13 +303,12 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
             eventCalendarViewLinearLayoutCompat.showDividers = allDividers
             eventCalendarSingleWeekViewRowsLinearLayoutCompat.showDividers = allDividers
         }
-
-        eventCalendarSingleWeekViewHeaderCw.isVisible = isCalendarWeekVisible
-        eventCalendarSingleWeekViewCalendarWeek.root.isVisible = isCalendarWeekVisible
-
-        renderWeekView(shouldStyleCurrentDayHeader = shouldStyleCurrentDayHeader)
     }
 
+    /**
+     * Internal method.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     private fun renderWeekView(shouldStyleCurrentDayHeader: Boolean) {
         styleTextViews()
         if (shouldStyleCurrentDayHeader) {
@@ -283,6 +317,10 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
         styleCalendarWeekUi()
     }
 
+    /**
+     * Internal method.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     private fun getWeeklyDayBindings(): ArrayList<EcvTextviewCircleBinding> = with(binding) {
         return arrayListOf(
             eventCalendarSingleWeekViewDay1,
@@ -295,6 +333,10 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
         )
     }
 
+    /**
+     * Internal method.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     private fun styleTextViews() {
         val eventsList = ArrayList(eventArrayList.filter { event ->
             currentWeekDays.any { it.date == event.date }
@@ -406,6 +448,10 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Internal method.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     private fun styleCalendarWeekUi(): Unit = with(binding) {
         if (isCalendarWeekVisible) {
             eventCalendarSingleWeekViewCalendarWeek.eventCalendarSingleWeekViewTextView.text =
@@ -427,6 +473,10 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
         }
     }
 
+    /**
+     * Internal method.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     private fun styleHeaderCurrentWeekDay(): Unit = with(binding) {
         val currentDayView = when (Calendar.getInstance().get(Calendar.DAY_OF_WEEK)) {
             Calendar.MONDAY -> eventCalendarSingleWeekViewHeaderMonday

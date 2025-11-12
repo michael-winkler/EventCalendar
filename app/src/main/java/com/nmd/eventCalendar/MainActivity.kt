@@ -188,6 +188,7 @@ class MainActivity : AppCompatActivity() {
 
             bottomSheetEventCalendarSingleWeekView.expressiveUi =
                 binding.activityMainEventCalendarView.expressiveUi
+
             bottomSheetEventCalendarSingleWeekView.calendarWeekVisible =
                 binding.activityMainEventCalendarView.calendarWeekVisible
 
