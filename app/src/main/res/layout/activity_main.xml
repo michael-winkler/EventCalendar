@@ -110,7 +110,7 @@
                 android:src="@drawable/icon_calendar_week_begin_outline"
                 app:backgroundTint="@color/alert"
                 app:rippleColor="@color/ecv_ripple_color"
-                app:tint="@color/alertStroke" />
+                app:tint="@color/alert_icon_text_tint" />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/activityMainFloatingActionButtonSingleWeekView"
