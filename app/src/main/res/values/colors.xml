@@ -2,14 +2,13 @@
 <resources>
     <!-- https://www.color-hex.com/color/3b5ca3 -->
     <color name="colorBackground">@color/colorWhite</color>
-    <color name="colorCharcoalGray">#6C6868</color>
     <color name="colorIconTint">#000</color>
 
     <color name="colorBlack">#000000</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorStroke">#AFB1B3</color>
-    <color name="alert">#EEE3AF</color>
-    <color name="alertStroke">#825B1C</color>
+    <color name="alert">#F0E3A8</color>
+    <color name="alert_icon_text_tint">#895900</color>
 
     <color name="colorPrimary">#3B5CA3</color>
     <color name="colorPrimaryDark">@color/colorPrimary</color>

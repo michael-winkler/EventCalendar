@@ -44,8 +44,8 @@
         android:gravity="center|start"
         android:padding="16dp"
         android:text="@string/event_calendar_no_events"
-        android:textColor="@color/colorCharcoalGray"
+        android:textColor="@color/colorBlack"
         app:drawableStartCompat="@drawable/icon_calendar_alert"
-        app:drawableTint="@color/alertStroke" />
+        app:drawableTint="@color/alert_icon_text_tint" />
 
 </LinearLayout>
