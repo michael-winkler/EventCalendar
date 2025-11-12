@@ -28,7 +28,7 @@ eventCalendarView.expressiveUi = true
 ```
 
 ## Sample app
-https://github.com/michael-winkler/EventCalendar/releases/download/1.9.0/app-release.apk
+https://github.com/michael-winkler/EventCalendar/releases/download/1.10.0/app-release.apk
 
 
 ## Usage
@@ -42,7 +42,7 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.github.michael-winkler:EventCalendar:1.9.0'
+    implementation 'com.github.michael-winkler:EventCalendar:1.10.0'
 }
 ```
 
