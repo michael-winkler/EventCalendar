@@ -90,7 +90,7 @@ internal class InfiniteAdapter(
                 eventCalendarViewMonthYearHeader.isVisible = eventCalendarView.headerVisible
 
                 eventCalendarViewLinearLayoutCompat.showDividers =
-                    if (eventCalendarView.isExpressiveUi) {
+                    if (eventCalendarView.expressiveUi) {
                         LinearLayoutCompat.SHOW_DIVIDER_NONE
                     } else {
                         LinearLayoutCompat.SHOW_DIVIDER_MIDDLE
@@ -104,7 +104,7 @@ internal class InfiniteAdapter(
                     eventCalendarViewRow5.eventCalendarViewRowsLinearLayoutCompat,
                     eventCalendarViewRow6.eventCalendarViewRowsLinearLayoutCompat
                 ).forEach {
-                    if (eventCalendarView.isExpressiveUi) {
+                    if (eventCalendarView.expressiveUi) {
                         it.showDividers = LinearLayoutCompat.SHOW_DIVIDER_NONE
                     } else {
                         it.showDividers = LinearLayoutCompat.SHOW_DIVIDER_MIDDLE
@@ -351,8 +351,8 @@ internal class InfiniteAdapter(
                     eventCalendarView.clickListener?.onClick(day)
                 }
 
-                context.getRealContext()?.let {
-                    if (eventCalendarView.expressiveUi) {
+                context.getRealContext()?.let { context ->
+                    background = if (eventCalendarView.expressiveUi) {
                         val ripple = ContextCompat.getDrawable(
                             context, when (index) {
                                 0 -> {
@@ -384,17 +384,17 @@ internal class InfiniteAdapter(
                         ripple.setItemTint(
                             eventCalendarView.expressiveDayBackgroundTintColor
                         )
-                        background = ripple
+                        ripple
                     } else {
-                        background = ContextCompat.getDrawable(
-                            it,
+                        ContextCompat.getDrawable(
+                            context,
                             R.drawable.ecv_ripple_default
                         )
                     }
                 }
             }
 
-            dayItemLayout.root.showDividers = if (eventCalendarView.isExpressiveUi) {
+            dayItemLayout.root.showDividers = if (eventCalendarView.expressiveUi) {
                 LinearLayoutCompat.SHOW_DIVIDER_NONE
             } else {
                 LinearLayoutCompat.SHOW_DIVIDER_BEGINNING
@@ -438,9 +438,9 @@ internal class InfiniteAdapter(
                 if (day.isCurrentDay) {
                     setTextColor(eventCalendarView.currentDayTextColor)
 
-                    context.getRealContext()?.let {
+                    context.getRealContext()?.let { context ->
                         background = ContextCompat.getDrawable(
-                            it,
+                            context,
                             if (eventCalendarView.expressiveUi) R.drawable.ecv_expressive_circle else R.drawable.ecv_circle
                         )
                     }

@@ -82,6 +82,7 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
 
     private val currentWeekDays = getDaysForCurrentWeek()
     private val noDividers = LinearLayoutCompat.SHOW_DIVIDER_NONE
+    private val beginDivider = LinearLayoutCompat.SHOW_DIVIDER_BEGINNING
     private val allDividers =
         LinearLayoutCompat.SHOW_DIVIDER_BEGINNING or LinearLayoutCompat.SHOW_DIVIDER_MIDDLE or LinearLayoutCompat.SHOW_DIVIDER_END
 
@@ -259,7 +260,7 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
         eventCalendarSingleWeekViewMonthYearHeader.post {
             eventCalendarSingleWeekViewMonthYearHeader.isVisible = headerVisible
 
-            if (isExpressiveUi) {
+            if (expressiveUi) {
                 eventCalendarViewLinearLayoutCompat.showDividers = noDividers
                 eventCalendarSingleWeekViewRowsLinearLayoutCompat.showDividers = noDividers
             } else {
@@ -275,8 +276,6 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
     }
 
     private fun renderWeekView(shouldStyleCurrentDayHeader: Boolean) {
-        // TODO Here is on any line a styling bug for the divider. It's visible when expressive is off and cw is visible
-
         styleTextViews()
         if (shouldStyleCurrentDayHeader) {
             styleHeaderCurrentWeekDay()
@@ -296,6 +295,7 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
         )
     }
 
+    // TODO Here is on any line a styling bug for the divider. It's visible when expressive is off and cw is visible
     private fun styleTextViews() {
         val eventsList = ArrayList(eventArrayList.filter { event ->
             currentWeekDays.any { it.date == event.date }
@@ -307,18 +307,12 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
             val dayItemLayout = ecvTextviewCircleBindings[index]
 
             with(dayItemLayout.eventCalendarViewDayLinearLayoutCompat) {
-                showDividers = if (isExpressiveUi) {
-                    LinearLayoutCompat.SHOW_DIVIDER_NONE
-                } else {
-                    LinearLayoutCompat.SHOW_DIVIDER_BEGINNING
-                }
-
                 setOnClickListener {
                     clickListener?.onClick(day)
                 }
 
-                context.getRealContext()?.let {
-                    background = if (isExpressiveUi) {
+                context.getRealContext()?.let { context ->
+                    background = if (expressiveUi) {
                         val ripple = ContextCompat.getDrawable(
                             context, when (index) {
                                 0 -> {
@@ -340,20 +334,25 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
                         ripple.setItemTint(
                             expressiveDayBackgroundTintColor
                         )
-
                         ripple
                     } else {
                         ContextCompat.getDrawable(
-                            it,
+                            context,
                             R.drawable.ecv_ripple_default
                         )
                     }
                 }
+
+                showDividers = if (expressiveUi) {
+                    noDividers
+                } else {
+                    beginDivider
+                }
             }
 
-            val eventList = day.dayEvents(eventsList.orEmptyArrayList())
-            val recyclerView = dayItemLayout.eventCalendarViewDayRecyclerView
-            with(recyclerView) {
+            with(dayItemLayout.eventCalendarViewDayRecyclerView) {
+                val eventList = day.dayEvents(eventsList.orEmptyArrayList())
+
                 suppressLayout(true)
                 addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
                     override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
@@ -364,23 +363,23 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
                 setHasFixedSize(true)
                 isSaveEnabled = false
                 itemAnimator = null
-            }
 
-            if (countVisible && eventList.isNotEmpty()) {
-                recyclerView.addItemDecoration(
-                    LastPossibleVisibleItemForUserDecoration(
-                        eventList
+                if (eventList.isNotEmpty()) {
+                    if (countVisible) {
+                        addItemDecoration(
+                            LastPossibleVisibleItemForUserDecoration(
+                                eventList
+                            )
+                        )
+                    }
+
+                    adapter = EventsAdapter(
+                        list = eventList,
+                        eventItemAutomaticTextColor = eventItemAutomaticTextColor,
+                        eventItemTextColor = eventItemTextColor,
+                        eventItemDarkTextColor = eventItemDarkTextColor
                     )
-                )
-            }
-
-            if (eventList.isNotEmpty()) {
-                recyclerView.adapter = EventsAdapter(
-                    list = eventList,
-                    eventItemAutomaticTextColor = eventItemAutomaticTextColor,
-                    eventItemTextColor = eventItemTextColor,
-                    eventItemDarkTextColor = eventItemDarkTextColor
-                )
+                }
             }
 
             with(dayItemLayout.eventCalendarViewDayTextView) {
@@ -389,9 +388,9 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
                 if (day.isCurrentDay) {
                     setTextColor(currentDayTextColor)
 
-                    context.getRealContext()?.let {
+                    context.getRealContext()?.let { context ->
                         background = ContextCompat.getDrawable(
-                            it,
+                            context,
                             if (expressiveUi) R.drawable.ecv_expressive_circle else R.drawable.ecv_circle
                         )
                     }
@@ -420,14 +419,14 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
                 "${getCurrentWeekNumber()}"
         }
 
-        eventCalendarSingleWeekViewCalendarWeek.root.showDividers = if (isExpressiveUi) {
-            LinearLayoutCompat.SHOW_DIVIDER_NONE
+        eventCalendarSingleWeekViewCalendarWeek.root.showDividers = if (expressiveUi) {
+            noDividers
         } else {
-            LinearLayoutCompat.SHOW_DIVIDER_BEGINNING
+            beginDivider
         }
 
         if (isCalendarWeekVisible) {
-            isExpressiveUi.expressiveCwHelper(
+            expressiveUi.expressiveCwHelper(
                 frameLayout = eventCalendarSingleWeekViewCalendarWeek.eventCalendarSingleWeekViewExpressiveFrameLayout,
                 index = -1,
                 cwBackgroundTintColor = expressiveCwBackgroundTintColor

@@ -311,7 +311,6 @@ internal class Utils {
             }
 
             background = ContextCompat.getDrawable(realContext, expressiveBackgroundRes)
-
             ViewCompat.setBackgroundTintList(this, ColorStateList.valueOf(cwBackgroundTintColor))
         }
 
