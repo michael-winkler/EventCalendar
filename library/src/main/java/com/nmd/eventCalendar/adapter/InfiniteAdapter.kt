@@ -137,7 +137,7 @@ internal class InfiniteAdapter(
                         WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
                     )
                     if (insets != null) {
-                        eventCalendarView.requestApplyInsets()
+                        applyWindowInsets(insets = insets, binding = binding)
                     }
                 }
 

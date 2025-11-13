@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
             WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
         )
         if (insets != null) {
-            binding.root.requestApplyInsets()
+            applyWindowInsets(insets)
         }
 
         initialize()
