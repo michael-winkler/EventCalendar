@@ -42,13 +42,13 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
     // Android X
-    implementation 'androidx.activity:activity-ktx:1.11.0'
+    implementation 'androidx.activity:activity-ktx:1.12.1'
     implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     implementation('androidx.fragment:fragment-ktx:1.8.9')
 
     // Google Material Design
-    implementation 'com.google.android.material:material:1.14.0-alpha06'
+    implementation 'com.google.android.material:material:1.14.0-alpha07'
 
     // This library
     implementation project(path: ':library')
