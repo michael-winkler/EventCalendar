@@ -28,7 +28,7 @@ eventCalendarView.expressiveUi = true
 ```
 
 ## Sample app
-https://github.com/michael-winkler/EventCalendar/releases/download/1.11.0/app-release.apk
+https://github.com/michael-winkler/EventCalendar/releases/download/1.11.0/app-release-unsigned.apk
 
 
 ## Usage
