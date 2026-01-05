@@ -10,7 +10,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        minSdk = 21
+        minSdk = 23
         targetSdk = 36
     }
 
@@ -89,7 +89,7 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
     // Android X
-    implementation 'androidx.activity:activity-ktx:1.12.1'
+    implementation 'androidx.activity:activity-ktx:1.12.2'
     implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'androidx.core:core-ktx:1.17.0'
     implementation('androidx.fragment:fragment-ktx:1.8.9')
@@ -100,5 +100,5 @@ dependencies {
     implementation('com.google.code.gson:gson:2.13.2')
 
     // Google Material Design
-    implementation 'com.google.android.material:material:1.14.0-alpha07'
+    implementation 'com.google.android.material:material:1.14.0-alpha08'
 }
