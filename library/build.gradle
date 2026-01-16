@@ -1,6 +1,5 @@
 plugins {
     id 'com.android.library'
-    id 'org.jetbrains.kotlin.android'
     id 'org.jetbrains.kotlin.plugin.parcelize'
     id 'maven-publish'
 }
@@ -11,7 +10,6 @@ android {
 
     defaultConfig {
         minSdk = 23
-        targetSdk = 36
     }
 
     buildTypes {
