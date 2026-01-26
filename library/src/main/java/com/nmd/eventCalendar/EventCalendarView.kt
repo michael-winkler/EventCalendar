@@ -19,8 +19,8 @@ import com.nmd.eventCalendar.adapter.InfiniteAdapter
 import com.nmd.eventCalendar.custom.SnapOnScrollListener
 import com.nmd.eventCalendar.custom.SnapOnScrollListener.Companion.attachSnapHelperWithListener
 import com.nmd.eventCalendar.databinding.EcvEventCalendarBinding
-import com.nmd.eventCalendar.`interface`.EventCalendarDayClickListener
-import com.nmd.eventCalendar.`interface`.EventCalendarScrollListener
+import com.nmd.eventCalendar.interfaces.EventCalendarDayClickListener
+import com.nmd.eventCalendar.interfaces.EventCalendarScrollListener
 import com.nmd.eventCalendar.model.Event
 import com.nmd.eventCalendar.state.InstanceState
 import com.nmd.eventCalendar.utils.Utils.Companion.smoothScrollTo

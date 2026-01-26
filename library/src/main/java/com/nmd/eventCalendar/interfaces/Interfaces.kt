@@ -1,4 +1,4 @@
-package com.nmd.eventCalendar.`interface`
+package com.nmd.eventCalendar.interfaces
 
 import com.nmd.eventCalendar.model.Day
 

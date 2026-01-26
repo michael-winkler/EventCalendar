@@ -23,7 +23,7 @@ import com.google.android.material.textview.MaterialTextView
 import com.nmd.eventCalendar.adapter.EventsAdapter
 import com.nmd.eventCalendar.databinding.EcvEventCalendarSingleWeekViewBinding
 import com.nmd.eventCalendar.databinding.EcvTextviewCircleBinding
-import com.nmd.eventCalendar.`interface`.EventCalendarDayClickListener
+import com.nmd.eventCalendar.interfaces.EventCalendarDayClickListener
 import com.nmd.eventCalendar.model.Event
 import com.nmd.eventCalendar.utils.Utils.Companion.dayEvents
 import com.nmd.eventCalendar.utils.Utils.Companion.expressiveCwHelper

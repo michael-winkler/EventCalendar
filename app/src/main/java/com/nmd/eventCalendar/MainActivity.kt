@@ -14,8 +14,8 @@ import androidx.core.view.updatePadding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.nmd.eventCalendar.MainActivity.RandomEventList.Companion.createRandomEventList
-import com.nmd.eventCalendar.`interface`.EventCalendarDayClickListener
-import com.nmd.eventCalendar.`interface`.EventCalendarScrollListener
+import com.nmd.eventCalendar.interfaces.EventCalendarDayClickListener
+import com.nmd.eventCalendar.interfaces.EventCalendarScrollListener
 import com.nmd.eventCalendar.model.Day
 import com.nmd.eventCalendar.model.Event
 import com.nmd.eventCalendarSample.databinding.ActivityMainBinding
