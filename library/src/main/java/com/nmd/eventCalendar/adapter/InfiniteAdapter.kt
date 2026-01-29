@@ -302,7 +302,7 @@ internal class InfiniteAdapter(
                 if (holder.bindingAdapterPosition == itemCount.minus(1)) View.INVISIBLE else View.VISIBLE
 
             styleTextViews(
-                days = month.getDaysOfMonthAndGivenYear(year),
+                days = month.getDaysOfMonthAndGivenYear(year = year, startWithMonday = true),
                 circleBindingList = holder.ecvTextviewCircleBindings(),
                 cwBindingList = holder.ecvTextviewCwBinding()
             )

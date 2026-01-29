@@ -79,7 +79,6 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
     internal var expressiveDayBackgroundTintColor =
         ContextCompat.getColor(getContext(), R.color.ecv_expressive_day_background_color)
 
-    private val currentWeekDays = getDaysForCurrentWeek()
     private val noDividers = LinearLayoutCompat.SHOW_DIVIDER_NONE
     private val beginDivider = LinearLayoutCompat.SHOW_DIVIDER_BEGINNING
     private val allDividers =
@@ -343,6 +342,7 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     private fun styleTextViews() {
+        val currentWeekDays = getDaysForCurrentWeek(startWithMonday = true)
         val eventsList = ArrayList(eventArrayList.filter { event ->
             currentWeekDays.any { it.date == event.date }
         })

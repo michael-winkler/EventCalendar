@@ -29,7 +29,11 @@ internal class Utils {
 
     companion object {
 
-        internal fun Int.getDaysOfMonthAndGivenYear(year: Int): List<Day> {
+        internal fun Int.getDaysOfMonthAndGivenYear(
+            year: Int,
+            startWithMonday: Boolean
+        ): List<Day> {
+
             val currentDate = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date())
 
             val calendar = Calendar.getInstance().apply {
@@ -37,18 +41,25 @@ internal class Utils {
                 set(Calendar.YEAR, year)
                 set(Calendar.DAY_OF_MONTH, 1)
             }
+
             val numDaysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
-            val firstDayOfWeek = (calendar.get(Calendar.DAY_OF_WEEK) + 5) % 7
-            val numEmptyCells = (firstDayOfWeek + 7) % 7
+
+            val firstDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+            val offset = if (startWithMonday) {
+                (firstDayOfWeek + 5) % 7
+            } else {
+                firstDayOfWeek - 1
+            }
 
             val days = mutableListOf<Day>()
 
             // Previous month
             val prevMonth = (this@getDaysOfMonthAndGivenYear + 11) % 12
             val prevYear = if (prevMonth == 11) year - 1 else year
-            val prevMonthDays = (1..numEmptyCells).map {
-                val dayOfMonth =
-                    prevMonth.getDaysInMonthAndGivenYear(prevYear).last() - numEmptyCells + it
+            val prevMonthDays = prevMonth.getDaysInMonthAndGivenYear(prevYear) // List<Int>
+
+            repeat(offset) { index ->
+                val dayOfMonth = prevMonthDays.last() - offset + index + 1
                 val date = String.format(
                     Locale.GERMAN,
                     "%02d.%02d.%04d",
@@ -56,41 +67,46 @@ internal class Utils {
                     prevMonth + 1,
                     prevYear
                 )
-                val isCurrentDay = currentDate == date
-                Day(
-                    value = dayOfMonth.toString(),
-                    isCurrentMonth = false,
-                    isCurrentDay = isCurrentDay,
-                    date = date
-                )
-            }
-            days.addAll(prevMonthDays)
-
-            // Current month
-            val today = Calendar.getInstance()
-            val currentMonthDays = (1..numDaysInMonth).map { dayOfMonth ->
-                val isCurrentDay =
-                    (today.get(Calendar.YEAR) == year && today.get(Calendar.MONTH) == this@getDaysOfMonthAndGivenYear && today.get(
-                        Calendar.DAY_OF_MONTH
-                    ) == dayOfMonth)
-                Day(
-                    value = dayOfMonth.toString(),
-                    isCurrentMonth = true,
-                    isCurrentDay = isCurrentDay,
-                    date = String.format(
-                        Locale.GERMAN,
-                        "%02d.%02d.%04d", dayOfMonth, this@getDaysOfMonthAndGivenYear + 1, year
+                days.add(
+                    Day(
+                        value = dayOfMonth.toString(),
+                        isCurrentMonth = false,
+                        isCurrentDay = currentDate == date,
+                        date = date
                     )
                 )
             }
-            days.addAll(currentMonthDays)
+
+            // Current month
+            val today = Calendar.getInstance()
+            (1..numDaysInMonth).forEach { dayOfMonth ->
+                val isCurrentDay =
+                    today.get(Calendar.YEAR) == year &&
+                            today.get(Calendar.MONTH) == this@getDaysOfMonthAndGivenYear &&
+                            today.get(Calendar.DAY_OF_MONTH) == dayOfMonth
+
+                days.add(
+                    Day(
+                        value = dayOfMonth.toString(),
+                        isCurrentMonth = true,
+                        isCurrentDay = isCurrentDay,
+                        date = String.format(
+                            Locale.GERMAN,
+                            "%02d.%02d.%04d",
+                            dayOfMonth,
+                            this@getDaysOfMonthAndGivenYear + 1,
+                            year
+                        )
+                    )
+                )
+            }
 
             // Next month
             val nextMonth = (this@getDaysOfMonthAndGivenYear + 1) % 12
             val nextYear = if (nextMonth == 0) year + 1 else year
-            val numRemainingCells = 42 - days.size
-            val nextMonthDays = (1..numRemainingCells).map {
-                val dayOfMonth = it
+
+            while (days.size < 42) {
+                val dayOfMonth = days.size - (offset + numDaysInMonth) + 1
                 val date = String.format(
                     Locale.GERMAN,
                     "%02d.%02d.%04d",
@@ -98,86 +114,71 @@ internal class Utils {
                     nextMonth + 1,
                     nextYear
                 )
-                val isCurrentDay = currentDate == date
-                Day(
-                    value = dayOfMonth.toString(),
-                    isCurrentMonth = false,
-                    isCurrentDay = isCurrentDay,
-                    date = String.format(
-                        Locale.GERMAN,
-                        "%02d.%02d.%04d",
-                        dayOfMonth,
-                        nextMonth + 1,
-                        nextYear
+                days.add(
+                    Day(
+                        value = dayOfMonth.toString(),
+                        isCurrentMonth = false,
+                        isCurrentDay = currentDate == date,
+                        date = date
                     )
                 )
             }
-            days.addAll(nextMonthDays)
+
             return days
         }
 
-        internal fun getDaysForCurrentWeek(): List<Day> {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                return getDaysForCurrentWeekApi26Impl()
-            }
+        internal fun getDaysForCurrentWeek(startWithMonday: Boolean): List<Day> {
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                getDaysForCurrentWeekApi26Impl(startWithMonday)
+            } else {
+                val calendar = Calendar.getInstance().apply {
+                    firstDayOfWeek = if (startWithMonday) Calendar.MONDAY else Calendar.SUNDAY
+                    set(Calendar.DAY_OF_WEEK, firstDayOfWeek)
+                }
 
-            val calendar = Calendar.getInstance()
-            val currentWeek = calendar.get(Calendar.WEEK_OF_YEAR)
-            val currentYear = calendar.get(Calendar.YEAR)
+                val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+                val currentDate = dateFormat.format(Date())
 
-            val days = mutableListOf<Day>()
-
-            calendar.set(Calendar.WEEK_OF_YEAR, currentWeek)
-            calendar.set(Calendar.YEAR, currentYear)
-            calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY)
-
-            val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-            val currentDate = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date())
-
-            repeat(7) {
-                val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
-                val date = dateFormat.format(calendar.time)
-
-                days.add(
+                List(7) {
+                    val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+                    val date = dateFormat.format(calendar.time)
+                    calendar.add(Calendar.DAY_OF_MONTH, 1)
                     Day(
                         value = dayOfMonth.toString(),
                         isCurrentMonth = true,
                         isCurrentDay = currentDate == date,
                         date = date
                     )
-                )
-
-                calendar.add(Calendar.DAY_OF_MONTH, 1)
+                }
             }
-
-            return days
         }
 
         @RequiresApi(Build.VERSION_CODES.O)
-        internal fun getDaysForCurrentWeekApi26Impl(): List<Day> {
+        internal fun getDaysForCurrentWeekApi26Impl(startWithMonday: Boolean): List<Day> {
             val today = LocalDate.now()
-            val startOfWeek = today.with(DayOfWeek.MONDAY)
-
-            val days = mutableListOf<Day>()
-
+            val startOfWeek =
+                today.with(if (startWithMonday) DayOfWeek.MONDAY else DayOfWeek.SUNDAY)
             val dateFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.getDefault())
 
-            for (i in 0 until 7) {
-                val currentDate = startOfWeek.plusDays(i.toLong())
-                val dayOfMonth = currentDate.dayOfMonth
-                val date = dateFormat.format(currentDate)
-
-                days.add(
-                    Day(
-                        value = dayOfMonth.toString(),
-                        isCurrentMonth = true,
-                        isCurrentDay = today == currentDate,
-                        date = date
-                    )
+            return List(7) { index ->
+                val currentDate = startOfWeek.plusDays(index.toLong())
+                Day(
+                    value = currentDate.dayOfMonth.toString(),
+                    isCurrentMonth = true,
+                    isCurrentDay = today == currentDate,
+                    date = dateFormat.format(currentDate)
                 )
             }
+        }
 
-            return days
+        private fun Int.getDaysInMonthAndGivenYear(year: Int): List<Int> {
+            val calendar = Calendar.getInstance().apply {
+                set(Calendar.MONTH, this@getDaysInMonthAndGivenYear)
+                set(Calendar.YEAR, year)
+                set(Calendar.DAY_OF_MONTH, 1)
+            }
+            val numDaysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+            return (1..numDaysInMonth).toList()
         }
 
         internal fun getCurrentWeekNumber(): Int {
@@ -195,15 +196,6 @@ internal class Utils {
             return calendar[Calendar.MONTH]
         }
 
-        private fun Int.getDaysInMonthAndGivenYear(year: Int): List<Int> {
-            val calendar = Calendar.getInstance().apply {
-                set(Calendar.MONTH, this@getDaysInMonthAndGivenYear)
-                set(Calendar.YEAR, year)
-                set(Calendar.DAY_OF_MONTH, 1)
-            }
-            val numDaysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
-            return (1..numDaysInMonth).toList()
-        }
 
         internal fun Int.getMonthName(context: Context?): String {
             context ?: return ""
