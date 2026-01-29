@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -38,67 +39,67 @@
             android:visibility="gone" />
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/eventCalendarSingleWeekViewHeaderMonday"
+            android:id="@+id/eventCalendarSingleWeekViewHeaderDay1"
             style="@style/ECV_DayName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="0dp"
             android:layout_weight="1"
-            android:text="@string/ecv_day_name_monday" />
+            tools:text="@string/ecv_day_name_monday" />
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/eventCalendarSingleWeekViewHeaderTuesday"
+            android:id="@+id/eventCalendarSingleWeekViewHeaderDay2"
             style="@style/ECV_DayName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="0dp"
             android:layout_weight="1"
-            android:text="@string/ecv_day_name_tuesday" />
+            tools:text="@string/ecv_day_name_tuesday" />
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/eventCalendarSingleWeekViewHeaderWednesday"
+            android:id="@+id/eventCalendarSingleWeekViewHeaderDay3"
             style="@style/ECV_DayName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="0dp"
             android:layout_weight="1"
-            android:text="@string/ecv_day_name_wednesday" />
+            tools:text="@string/ecv_day_name_wednesday" />
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/eventCalendarSingleWeekViewHeaderThursday"
+            android:id="@+id/eventCalendarSingleWeekViewHeaderDay4"
             style="@style/ECV_DayName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="0dp"
             android:layout_weight="1"
-            android:text="@string/ecv_day_name_thursday" />
+            tools:text="@string/ecv_day_name_thursday" />
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/eventCalendarSingleWeekViewHeaderFriday"
+            android:id="@+id/eventCalendarSingleWeekViewHeaderDay5"
             style="@style/ECV_DayName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="0dp"
             android:layout_weight="1"
-            android:text="@string/ecv_day_name_friday" />
+            tools:text="@string/ecv_day_name_friday" />
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/eventCalendarSingleWeekViewHeaderSaturday"
+            android:id="@+id/eventCalendarSingleWeekViewHeaderDay6"
             style="@style/ECV_DayName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="0dp"
             android:layout_weight="1"
-            android:text="@string/ecv_day_name_saturday" />
+            tools:text="@string/ecv_day_name_saturday" />
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/eventCalendarSingleWeekViewHeaderSunday"
+            android:id="@+id/eventCalendarSingleWeekViewHeaderDay7"
             style="@style/ECV_DayName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="0dp"
             android:layout_weight="1"
-            android:text="@string/ecv_day_name_sunday" />
+            tools:text="@string/ecv_day_name_sunday" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

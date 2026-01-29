@@ -30,6 +30,7 @@ import com.nmd.eventCalendar.utils.Utils.Companion.expressiveCwHelper
 import com.nmd.eventCalendar.utils.Utils.Companion.getCurrentMonth
 import com.nmd.eventCalendar.utils.Utils.Companion.getCurrentWeekNumber
 import com.nmd.eventCalendar.utils.Utils.Companion.getCurrentYear
+import com.nmd.eventCalendar.utils.Utils.Companion.getDayName
 import com.nmd.eventCalendar.utils.Utils.Companion.getDaysForCurrentWeek
 import com.nmd.eventCalendar.utils.Utils.Companion.getDimensInt
 import com.nmd.eventCalendar.utils.Utils.Companion.getMonthName
@@ -313,7 +314,22 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
      * Internal method.
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    private fun renderWeekView(shouldStyleCurrentDayHeader: Boolean) {
+    private fun renderWeekView(shouldStyleCurrentDayHeader: Boolean) = with(binding) {
+        val startWithMonday = true
+        val headerViews = listOf(
+            eventCalendarSingleWeekViewHeaderDay1,
+            eventCalendarSingleWeekViewHeaderDay2,
+            eventCalendarSingleWeekViewHeaderDay3,
+            eventCalendarSingleWeekViewHeaderDay4,
+            eventCalendarSingleWeekViewHeaderDay5,
+            eventCalendarSingleWeekViewHeaderDay6,
+            eventCalendarSingleWeekViewHeaderDay7
+        )
+        headerViews.forEachIndexed { index, textView ->
+            textView.text =
+                root.context.getDayName(day = index + 1, startWithMonday = startWithMonday)
+        }
+
         styleTextViews()
         if (shouldStyleCurrentDayHeader) {
             styleHeaderCurrentWeekDay()
@@ -496,14 +512,14 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     private fun styleHeaderCurrentWeekDay(): Unit = with(binding) {
         val currentDayView = when (Calendar.getInstance().get(Calendar.DAY_OF_WEEK)) {
-            Calendar.MONDAY -> eventCalendarSingleWeekViewHeaderMonday
-            Calendar.TUESDAY -> eventCalendarSingleWeekViewHeaderTuesday
-            Calendar.WEDNESDAY -> eventCalendarSingleWeekViewHeaderWednesday
-            Calendar.THURSDAY -> eventCalendarSingleWeekViewHeaderThursday
-            Calendar.FRIDAY -> eventCalendarSingleWeekViewHeaderFriday
-            Calendar.SATURDAY -> eventCalendarSingleWeekViewHeaderSaturday
+            Calendar.MONDAY -> eventCalendarSingleWeekViewHeaderDay1
+            Calendar.TUESDAY -> eventCalendarSingleWeekViewHeaderDay2
+            Calendar.WEDNESDAY -> eventCalendarSingleWeekViewHeaderDay3
+            Calendar.THURSDAY -> eventCalendarSingleWeekViewHeaderDay4
+            Calendar.FRIDAY -> eventCalendarSingleWeekViewHeaderDay5
+            Calendar.SATURDAY -> eventCalendarSingleWeekViewHeaderDay6
             else -> {
-                eventCalendarSingleWeekViewHeaderSunday
+                eventCalendarSingleWeekViewHeaderDay7
             }
         }
 

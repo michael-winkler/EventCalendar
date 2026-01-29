@@ -203,6 +203,35 @@ internal class Utils {
             return array[this]
         }
 
+        internal fun Context?.getDayName(day: Int, startWithMonday: Boolean): String {
+            this ?: return ""
+
+            // Days ordered Monday..Sunday
+            val days = listOf(
+                R.string.ecv_day_name_monday,
+                R.string.ecv_day_name_tuesday,
+                R.string.ecv_day_name_wednesday,
+                R.string.ecv_day_name_thursday,
+                R.string.ecv_day_name_friday,
+                R.string.ecv_day_name_saturday,
+                R.string.ecv_day_name_sunday
+            )
+
+            // If the week starts with Sunday, rotate the list so Sunday comes first
+            val adjustedDays = if (startWithMonday) days else days.rotateRight(1)
+
+            // day is 1..7, convert to 0-based index safely
+            val index = ((day - 1) % 7).coerceIn(0, 6)
+            return resources.getString(adjustedDays[index])
+        }
+
+        // Helper function to rotate a list to the right
+        private fun <T> List<T>.rotateRight(steps: Int): List<T> {
+            if (isEmpty()) return this
+            val s = steps % size
+            return takeLast(s) + take(size - s)
+        }
+
         internal fun Day.dayEvents(events: ArrayList<Event>): ArrayList<Event> {
             return ArrayList(events.filter { it.date == date })
         }

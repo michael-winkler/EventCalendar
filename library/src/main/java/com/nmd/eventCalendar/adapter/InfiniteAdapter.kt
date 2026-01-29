@@ -34,6 +34,7 @@ import com.nmd.eventCalendar.model.Event
 import com.nmd.eventCalendar.utils.Utils.Companion.convertStringToCalendarWeek
 import com.nmd.eventCalendar.utils.Utils.Companion.dayEvents
 import com.nmd.eventCalendar.utils.Utils.Companion.expressiveCwHelper
+import com.nmd.eventCalendar.utils.Utils.Companion.getDayName
 import com.nmd.eventCalendar.utils.Utils.Companion.getDaysOfMonthAndGivenYear
 import com.nmd.eventCalendar.utils.Utils.Companion.getDimensInt
 import com.nmd.eventCalendar.utils.Utils.Companion.getMonthName
@@ -248,7 +249,7 @@ internal class InfiniteAdapter(
 
             // The header is not visible and the calendar week is not visible
             listOf(
-                eventCalendarViewHeaderMonday,
+                eventCalendarViewHeaderDay1,
                 eventCalendarViewRow1.eventCalendarViewDay1.eventCalendarViewDayRecyclerView,
                 eventCalendarViewRow2.eventCalendarViewDay1.eventCalendarViewDayRecyclerView,
                 eventCalendarViewRow3.eventCalendarViewDay1.eventCalendarViewDayRecyclerView,
@@ -307,18 +308,33 @@ internal class InfiniteAdapter(
                 cwBindingList = holder.ecvTextviewCwBinding()
             )
 
+            val startWithMonday = true
+            val headerViews = listOf(
+                eventCalendarViewHeaderDay1,
+                eventCalendarViewHeaderDay2,
+                eventCalendarViewHeaderDay3,
+                eventCalendarViewHeaderDay4,
+                eventCalendarViewHeaderDay5,
+                eventCalendarViewHeaderDay6,
+                eventCalendarViewHeaderDay7
+            )
+            headerViews.forEachIndexed { index, textView ->
+                textView.text =
+                    root.context.getDayName(day = index + 1, startWithMonday = startWithMonday)
+            }
+
             val calendar = Calendar.getInstance()
             // Only update the current day if it's the current year and month
             if (holder.yearAdapterViewHolder == year && calendar.get(Calendar.MONTH) == month) {
                 val currentDayView = when (calendar.get(Calendar.DAY_OF_WEEK)) {
-                    Calendar.MONDAY -> eventCalendarViewHeaderMonday
-                    Calendar.TUESDAY -> eventCalendarViewHeaderTuesday
-                    Calendar.WEDNESDAY -> eventCalendarViewHeaderWednesday
-                    Calendar.THURSDAY -> eventCalendarViewHeaderThursday
-                    Calendar.FRIDAY -> eventCalendarViewHeaderFriday
-                    Calendar.SATURDAY -> eventCalendarViewHeaderSaturday
+                    Calendar.MONDAY -> eventCalendarViewHeaderDay1
+                    Calendar.TUESDAY -> eventCalendarViewHeaderDay2
+                    Calendar.WEDNESDAY -> eventCalendarViewHeaderDay3
+                    Calendar.THURSDAY -> eventCalendarViewHeaderDay4
+                    Calendar.FRIDAY -> eventCalendarViewHeaderDay5
+                    Calendar.SATURDAY -> eventCalendarViewHeaderDay6
                     else -> {
-                        eventCalendarViewHeaderSunday
+                        eventCalendarViewHeaderDay7
                     }
                 }
 
