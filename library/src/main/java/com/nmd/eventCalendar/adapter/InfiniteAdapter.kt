@@ -225,7 +225,7 @@ internal class InfiniteAdapter(
                 bottomMargin = bottom
             }
 
-            return
+            return@with
         }
 
         // The header is not visible but the calendar week is visible
@@ -243,7 +243,7 @@ internal class InfiniteAdapter(
                     left = left
                 )
             }
-            return
+            return@with
         }
 
         // The header is not visible and the calendar week is not visible

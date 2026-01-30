@@ -130,7 +130,7 @@ internal class Utils {
                 val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
                 val currentDate = dateFormat.format(calendar.time)
 
-                // Berechne den Starttag der Woche rückwärts
+                // Calculate the start day of the week backwards
                 while (calendar.get(Calendar.DAY_OF_WEEK) != weekStartDay) {
                     calendar.add(Calendar.DAY_OF_MONTH, -1)
                 }
@@ -154,7 +154,7 @@ internal class Utils {
             val today = LocalDate.now()
             val desiredStartDay = calendarDayToDayOfWeek(weekStartDay)
 
-            // Berechne Start der Woche rückwärts
+            // Calculate the start of the week backwards
             var startOfWeek = today
             while (startOfWeek.dayOfWeek != desiredStartDay) {
                 startOfWeek = startOfWeek.minusDays(1)
