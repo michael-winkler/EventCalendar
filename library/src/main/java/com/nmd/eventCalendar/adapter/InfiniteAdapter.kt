@@ -173,7 +173,7 @@ internal class InfiniteAdapter(
             }
         }
 
-    private fun portaitHelper(binding: EcvEventCalendarViewBinding, bottom: Int): Unit =
+    private fun portaitHelper(binding: EcvEventCalendarViewBinding, bottom: Int) =
         with(binding) {
             eventCalendarViewRow6.eventCalendarViewCalendarWeek.root.updatePadding(
                 bottom = bottom
@@ -205,76 +205,75 @@ internal class InfiniteAdapter(
         left: Int,
         right: Int,
         bottom: Int
-    ): Unit =
-        with(binding) {
-            eventCalendarViewLandscapeEdgeHelper?.updatePadding(
-                right = right
+    ) = with(binding) {
+        eventCalendarViewLandscapeEdgeHelper?.updatePadding(
+            right = right
+        )
+
+        if (eventCalendarView.expressiveUi) {
+            eventCalendarViewNestedScrollView?.updatePadding(
+                bottom = bottom
             )
+        }
 
-            if (eventCalendarView.expressiveUi) {
-                eventCalendarViewNestedScrollView?.updatePadding(
-                    bottom = bottom
-                )
+        // The header is visible
+        if (eventCalendarView.headerVisible) {
+            eventCalendarViewMonthYearHeader.updatePadding(
+                left = left
+            )
+            eventCalendarViewMonthYearImageViewRight.updateLayoutParams<MarginLayoutParams> {
+                bottomMargin = bottom
             }
 
-            // The header is visible
-            if (eventCalendarView.headerVisible) {
-                eventCalendarViewMonthYearHeader.updatePadding(
-                    left = left
-                )
-                eventCalendarViewMonthYearImageViewRight.updateLayoutParams<MarginLayoutParams> {
-                    bottomMargin = bottom
-                }
+            return
+        }
 
-                return
-            }
-
-            // The header is not visible but the calendar week is visible
-            if (eventCalendarView.calendarWeekVisible) {
-                listOf(
-                    eventCalendarViewHeaderCw,
-                    eventCalendarViewRow1.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewInsetsFrameLayout,
-                    eventCalendarViewRow2.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewInsetsFrameLayout,
-                    eventCalendarViewRow3.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewInsetsFrameLayout,
-                    eventCalendarViewRow4.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewInsetsFrameLayout,
-                    eventCalendarViewRow5.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewInsetsFrameLayout,
-                    eventCalendarViewRow6.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewInsetsFrameLayout
-                ).forEach {
-                    it.updatePadding(
-                        left = left
-                    )
-                }
-                return
-            }
-
-            // The header is not visible and the calendar week is not visible
+        // The header is not visible but the calendar week is visible
+        if (eventCalendarView.calendarWeekVisible) {
             listOf(
-                eventCalendarViewHeaderDay1,
-                eventCalendarViewRow1.eventCalendarViewDay1.eventCalendarViewDayRecyclerView,
-                eventCalendarViewRow2.eventCalendarViewDay1.eventCalendarViewDayRecyclerView,
-                eventCalendarViewRow3.eventCalendarViewDay1.eventCalendarViewDayRecyclerView,
-                eventCalendarViewRow4.eventCalendarViewDay1.eventCalendarViewDayRecyclerView,
-                eventCalendarViewRow5.eventCalendarViewDay1.eventCalendarViewDayRecyclerView,
-                eventCalendarViewRow6.eventCalendarViewDay1.eventCalendarViewDayRecyclerView
+                eventCalendarViewHeaderCw,
+                eventCalendarViewRow1.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewInsetsFrameLayout,
+                eventCalendarViewRow2.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewInsetsFrameLayout,
+                eventCalendarViewRow3.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewInsetsFrameLayout,
+                eventCalendarViewRow4.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewInsetsFrameLayout,
+                eventCalendarViewRow5.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewInsetsFrameLayout,
+                eventCalendarViewRow6.eventCalendarViewCalendarWeek.eventCalendarViewDayTextViewInsetsFrameLayout
             ).forEach {
                 it.updatePadding(
                     left = left
                 )
             }
+            return
+        }
 
-            listOf(
-                eventCalendarViewRow1.eventCalendarViewDay1.eventCalendarViewDayTextView,
-                eventCalendarViewRow2.eventCalendarViewDay1.eventCalendarViewDayTextView,
-                eventCalendarViewRow3.eventCalendarViewDay1.eventCalendarViewDayTextView,
-                eventCalendarViewRow4.eventCalendarViewDay1.eventCalendarViewDayTextView,
-                eventCalendarViewRow5.eventCalendarViewDay1.eventCalendarViewDayTextView,
-                eventCalendarViewRow6.eventCalendarViewDay1.eventCalendarViewDayTextView
-            ).forEach {
-                it.updateLayoutParams<MarginLayoutParams> {
-                    marginStart = left.div(2)
-                }
+        // The header is not visible and the calendar week is not visible
+        listOf(
+            eventCalendarViewHeaderDay1,
+            eventCalendarViewRow1.eventCalendarViewDay1.eventCalendarViewDayRecyclerView,
+            eventCalendarViewRow2.eventCalendarViewDay1.eventCalendarViewDayRecyclerView,
+            eventCalendarViewRow3.eventCalendarViewDay1.eventCalendarViewDayRecyclerView,
+            eventCalendarViewRow4.eventCalendarViewDay1.eventCalendarViewDayRecyclerView,
+            eventCalendarViewRow5.eventCalendarViewDay1.eventCalendarViewDayRecyclerView,
+            eventCalendarViewRow6.eventCalendarViewDay1.eventCalendarViewDayRecyclerView
+        ).forEach {
+            it.updatePadding(
+                left = left
+            )
+        }
+
+        listOf(
+            eventCalendarViewRow1.eventCalendarViewDay1.eventCalendarViewDayTextView,
+            eventCalendarViewRow2.eventCalendarViewDay1.eventCalendarViewDayTextView,
+            eventCalendarViewRow3.eventCalendarViewDay1.eventCalendarViewDayTextView,
+            eventCalendarViewRow4.eventCalendarViewDay1.eventCalendarViewDayTextView,
+            eventCalendarViewRow5.eventCalendarViewDay1.eventCalendarViewDayTextView,
+            eventCalendarViewRow6.eventCalendarViewDay1.eventCalendarViewDayTextView
+        ).forEach {
+            it.updateLayoutParams<MarginLayoutParams> {
+                marginStart = left.div(2)
             }
         }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdapterViewHolder {
         return AdapterViewHolder(
@@ -284,63 +283,61 @@ internal class InfiniteAdapter(
         )
     }
 
-    override fun onBindViewHolder(holder: AdapterViewHolder, position: Int) {
-        with(holder.binding) {
-            val item = holder.bindingAdapterPosition.calculate()
-            val month = item.get(0)
-            val year = item.get(1)
+    override fun onBindViewHolder(holder: AdapterViewHolder, position: Int) = with(holder.binding) {
+        val item = holder.bindingAdapterPosition.calculate()
+        val month = item.get(0)
+        val year = item.get(1)
 
-            val monthName = month.getMonthName(root.context)
-            val monthYearText =
-                if (holder.yearAdapterViewHolder == year) monthName else "$monthName $year"
-            eventCalendarViewMonthYearTextView1?.text = monthYearText
-            eventCalendarViewMonthYearTextView2?.text = monthYearText
+        val monthName = month.getMonthName(root.context)
+        val monthYearText =
+            if (holder.yearAdapterViewHolder == year) monthName else "$monthName $year"
+        eventCalendarViewMonthYearTextView1?.text = monthYearText
+        eventCalendarViewMonthYearTextView2?.text = monthYearText
 
-            eventCalendarViewMonthYearImageViewLeft.visibility =
-                if (holder.bindingAdapterPosition == 0) View.INVISIBLE else View.VISIBLE
+        eventCalendarViewMonthYearImageViewLeft.visibility =
+            if (holder.bindingAdapterPosition == 0) View.INVISIBLE else View.VISIBLE
 
-            eventCalendarViewMonthYearImageViewRight.visibility =
-                if (holder.bindingAdapterPosition == itemCount.minus(1)) View.INVISIBLE else View.VISIBLE
+        eventCalendarViewMonthYearImageViewRight.visibility =
+            if (holder.bindingAdapterPosition == itemCount.minus(1)) View.INVISIBLE else View.VISIBLE
 
-            styleTextViews(
-                days = month.getDaysOfMonthAndGivenYear(year = year, startWithMonday = true),
-                circleBindingList = holder.ecvTextviewCircleBindings(),
-                cwBindingList = holder.ecvTextviewCwBinding()
-            )
+        styleTextViews(
+            days = month.getDaysOfMonthAndGivenYear(year = year, startWithMonday = true),
+            circleBindingList = holder.ecvTextviewCircleBindings(),
+            cwBindingList = holder.ecvTextviewCwBinding()
+        )
 
-            val startWithMonday = true
-            val headerViews = listOf(
-                eventCalendarViewHeaderDay1,
-                eventCalendarViewHeaderDay2,
-                eventCalendarViewHeaderDay3,
-                eventCalendarViewHeaderDay4,
-                eventCalendarViewHeaderDay5,
-                eventCalendarViewHeaderDay6,
-                eventCalendarViewHeaderDay7
-            )
-            headerViews.forEachIndexed { index, textView ->
-                textView.text =
-                    root.context.getDayName(day = index + 1, startWithMonday = startWithMonday)
-            }
+        val startWithMonday = true
+        val headerViews = listOf(
+            eventCalendarViewHeaderDay1,
+            eventCalendarViewHeaderDay2,
+            eventCalendarViewHeaderDay3,
+            eventCalendarViewHeaderDay4,
+            eventCalendarViewHeaderDay5,
+            eventCalendarViewHeaderDay6,
+            eventCalendarViewHeaderDay7
+        )
+        headerViews.forEachIndexed { index, textView ->
+            textView.text =
+                root.context.getDayName(day = index + 1, startWithMonday = startWithMonday)
+        }
 
-            val calendar = Calendar.getInstance()
-            // Only update the current day if it's the current year and month
-            if (holder.yearAdapterViewHolder == year && calendar.get(Calendar.MONTH) == month) {
-                val currentDayView = when (calendar.get(Calendar.DAY_OF_WEEK)) {
-                    Calendar.MONDAY -> eventCalendarViewHeaderDay1
-                    Calendar.TUESDAY -> eventCalendarViewHeaderDay2
-                    Calendar.WEDNESDAY -> eventCalendarViewHeaderDay3
-                    Calendar.THURSDAY -> eventCalendarViewHeaderDay4
-                    Calendar.FRIDAY -> eventCalendarViewHeaderDay5
-                    Calendar.SATURDAY -> eventCalendarViewHeaderDay6
-                    else -> {
-                        eventCalendarViewHeaderDay7
-                    }
+        val calendar = Calendar.getInstance()
+        // Only update the current day if it's the current year and month
+        if (holder.yearAdapterViewHolder == year && calendar.get(Calendar.MONTH) == month) {
+            val currentDayView = when (calendar.get(Calendar.DAY_OF_WEEK)) {
+                Calendar.MONDAY -> eventCalendarViewHeaderDay1
+                Calendar.TUESDAY -> eventCalendarViewHeaderDay2
+                Calendar.WEDNESDAY -> eventCalendarViewHeaderDay3
+                Calendar.THURSDAY -> eventCalendarViewHeaderDay4
+                Calendar.FRIDAY -> eventCalendarViewHeaderDay5
+                Calendar.SATURDAY -> eventCalendarViewHeaderDay6
+                else -> {
+                    eventCalendarViewHeaderDay7
                 }
-
-                currentDayView.setTypeface(currentDayView.typeface, Typeface.BOLD)
-                currentDayView.setTextColor(eventCalendarView.currentWeekdayTextColor)
             }
+
+            currentDayView.setTypeface(currentDayView.typeface, Typeface.BOLD)
+            currentDayView.setTextColor(eventCalendarView.currentWeekdayTextColor)
         }
     }
 

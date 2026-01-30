@@ -11,6 +11,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
+import androidx.lifecycle.LifecycleCoroutineScope
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.nmd.eventCalendar.MainActivity.RandomEventList.Companion.createRandomEventList
@@ -22,7 +24,6 @@ import com.nmd.eventCalendarSample.databinding.ActivityMainBinding
 import com.nmd.eventCalendarSample.databinding.BottomSheetBinding
 import com.nmd.eventCalendarSample.databinding.BottomSheetSingleWeekBinding
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -59,7 +60,7 @@ class MainActivity : AppCompatActivity() {
         initialize()
     }
 
-    private fun applyWindowInsets(insets: Insets): Unit = with(binding) {
+    private fun applyWindowInsets(insets: Insets) = with(binding) {
         activityMainAppBarLayout.updatePadding(
             left = insets.left,
             top = insets.top,
@@ -80,7 +81,7 @@ class MainActivity : AppCompatActivity() {
         return resources?.getDimensionPixelSize(this) ?: 0
     }
 
-    private fun initialize(): Unit = with(binding) {
+    private fun initialize() = with(binding) {
         activityMainProgressBar.isVisible = true
         activityMainEventCalendarView.isVisible = false
 
@@ -99,7 +100,10 @@ class MainActivity : AppCompatActivity() {
             activityMainProgressBar.isVisible = true
             activityMainEventCalendarView.isVisible = false
 
-            createRandomEventList(numRandomEvents = 512) {
+            createRandomEventList(
+                lifecycleCoroutineScope = lifecycleScope,
+                numRandomEvents = 512
+            ) {
                 randomEventList = it
                 activityMainEventCalendarView.events = it
                 activityMainEventCalendarView.post {
@@ -125,7 +129,10 @@ class MainActivity : AppCompatActivity() {
         })
 
         if (randomEventList.isEmpty()) {
-            createRandomEventList(numRandomEvents = 512) {
+            createRandomEventList(
+                lifecycleCoroutineScope = lifecycleScope,
+                numRandomEvents = 512
+            ) {
                 randomEventList = it
                 activityMainEventCalendarView.events = it
                 activityMainEventCalendarView.post {
@@ -320,41 +327,41 @@ class MainActivity : AppCompatActivity() {
             )
 
             fun createRandomEventList(
-                mainDispatcher: CoroutineDispatcher = Dispatchers.Main,
+                lifecycleCoroutineScope: LifecycleCoroutineScope,
+                ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
                 numRandomEvents: Int,
                 callback: (ArrayList<Event>) -> Unit
             ) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    val currentDate = Calendar.getInstance()
-                    val currentYear = currentDate.get(Calendar.YEAR)
+                val eventList = arrayListOf<Event>()
+                lifecycleCoroutineScope.launch {
+                    withContext(ioDispatcher) {
+                        val currentDate = Calendar.getInstance()
+                        val currentYear = currentDate.get(Calendar.YEAR)
 
-                    val eventList = arrayListOf<Event>()
-                    val eventsPerMonth = numRandomEvents / 12
+                        val eventsPerMonth = numRandomEvents / 12
 
-                    for (month in 1..12) {
-                        val calendar =
-                            Calendar.getInstance().apply { set(currentYear, month - 1, 1) }
-                        val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+                        for (month in 1..12) {
+                            val calendar =
+                                Calendar.getInstance().apply { set(currentYear, month - 1, 1) }
+                            val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
 
-                        repeat(eventsPerMonth) {
-                            val randomEvent = list.random()
-                            val randomDay = (1..daysInMonth).random()
-                            val dateStr = String.format(
-                                Locale.GERMAN,
-                                "%02d.%02d.%04d",
-                                randomDay,
-                                month,
-                                currentYear
-                            )
-                            eventList.add(Event(dateStr, randomEvent.name, randomEvent.color))
+                            repeat(eventsPerMonth) {
+                                val randomEvent = list.random()
+                                val randomDay = (1..daysInMonth).random()
+                                val dateStr = String.format(
+                                    Locale.GERMAN,
+                                    "%02d.%02d.%04d",
+                                    randomDay,
+                                    month,
+                                    currentYear
+                                )
+                                eventList.add(Event(dateStr, randomEvent.name, randomEvent.color))
+                            }
                         }
+                        eventList.shuffle()
                     }
 
-                    eventList.shuffle()
-
-                    withContext(mainDispatcher) {
-                        callback.invoke(eventList)
-                    }
+                    callback.invoke(eventList)
                 }
             }
 

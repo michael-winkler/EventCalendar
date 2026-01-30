@@ -38,9 +38,9 @@ internal class EventsAdapter(
         )
     }
 
-    override fun onBindViewHolder(holder: AdapterViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: AdapterViewHolder, position: Int) =
         with(holder.binding.itemEventMaterialTextView) {
-            val item = list.getOrNull(position) ?: return
+            val item = list[holder.bindingAdapterPosition]
             text = item.name
 
             val color = item.backgroundHexColor.toColorInt()
@@ -61,7 +61,6 @@ internal class EventsAdapter(
                 ColorStateList.valueOf(color)
             )
         }
-    }
 
     override fun getItemCount(): Int = list.size
 
