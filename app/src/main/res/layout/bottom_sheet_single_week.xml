@@ -36,6 +36,7 @@
         app:ecv_expressive_cw_background_tint_color="@color/ecv_expressive_cw_background_color"
         app:ecv_expressive_day_background_tint_color="@color/ecv_expressive_day_background_color"
         app:ecv_expressive_ui="true"
-        app:ecv_header_visible="true" />
+        app:ecv_header_visible="true"
+        app:ecv_week_start_day="monday" />
 
 </LinearLayout>

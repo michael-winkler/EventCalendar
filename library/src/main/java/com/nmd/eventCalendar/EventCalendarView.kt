@@ -130,6 +130,9 @@ class EventCalendarView @JvmOverloads constructor(
     internal var expressiveDayBackgroundTintColor =
         ContextCompat.getColor(getContext(), R.color.ecv_expressive_day_background_color)
 
+    // Week start day
+    internal var _weekStartDay: Int = Calendar.MONDAY
+
     init {
         getContext().withStyledAttributes(attrs, R.styleable.EventCalendarView) {
             headerVisible =
@@ -183,6 +186,10 @@ class EventCalendarView @JvmOverloads constructor(
             expressiveDayBackgroundTintColor = getColor(
                 (R.styleable.EventCalendarView_ecv_expressive_day_background_tint_color),
                 expressiveDayBackgroundTintColor
+            )
+            _weekStartDay = getInt(
+                R.styleable.EventCalendarView_ecv_week_start_day,
+                Calendar.MONDAY
             )
         }
 
@@ -443,7 +450,7 @@ class EventCalendarView @JvmOverloads constructor(
      * Set this to `true` if you want the [EventCalendarView] to handle scroll events instead of the [ViewPager2].
      * When this is enabled, the [EventCalendarView] will consume the scroll events, preventing them from being intercepted by the [ViewPager2].
      *
-     * You can also set this value in your XML layout as follows:
+     * Example usage in XML:
      * ```
      * app:ecv_disallow_intercept="true"
      * ```
@@ -461,7 +468,7 @@ class EventCalendarView @JvmOverloads constructor(
      *
      * Set this property to `true` to show the calendar week on each row. By default, this is `false`.
      *
-     * You can also set this value in your XML layout as follows:
+     * Example usage in XML:
      * ```
      * app:ecv_calendar_week_visible="true"
      * ```
@@ -478,7 +485,7 @@ class EventCalendarView @JvmOverloads constructor(
      *
      * Set this property to `true` to display the expressive UI. By default, this is `false`.
      *
-     * You can also set this value in your XML layout as follows:
+     * Example usage in XML:
      * ```
      * app:ecv_expressive_ui="true"
      * ```
@@ -487,6 +494,31 @@ class EventCalendarView @JvmOverloads constructor(
         get() = isExpressiveUi
         set(value) {
             isExpressiveUi = value
+            updateRecyclerView(dateRangeChanged = false, scrollToLastIfOutOfRange = false)
+        }
+
+    /**
+     * Sets the first day of the week for the calendar.
+     *
+     * You can choose the start day of the week, e.g., `Calendar.MONDAY` or `Calendar.SUNDAY`.
+     * By default, the week starts on Monday (`Calendar.MONDAY`).
+     *
+     * Changing this value will update the calendar layout immediately.
+     *
+     * Example usage in XML:
+     * ```
+     * app:ecv_week_start_day="monday"
+     * ```
+     *
+     * Example usage in code:
+     * ```
+     * eventCalendarView.weekStartDay = java.util.Calendar.SUNDAY
+     * ```
+     */
+    var weekStartDay: Int
+        get() = _weekStartDay
+        set(value) {
+            _weekStartDay = value
             updateRecyclerView(dateRangeChanged = false, scrollToLastIfOutOfRange = false)
         }
 

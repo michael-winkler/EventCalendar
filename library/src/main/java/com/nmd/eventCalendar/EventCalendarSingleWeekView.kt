@@ -85,6 +85,9 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
     private val allDividers =
         LinearLayoutCompat.SHOW_DIVIDER_BEGINNING or LinearLayoutCompat.SHOW_DIVIDER_MIDDLE or LinearLayoutCompat.SHOW_DIVIDER_END
 
+    // Week start day
+    internal var _weekStartDay: Int = Calendar.MONDAY
+
     init {
         getContext().withStyledAttributes(attrs, R.styleable.EventCalendarSingleWeekView) {
             headerVisible =
@@ -142,6 +145,10 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
             expressiveDayBackgroundTintColor = getColor(
                 (R.styleable.EventCalendarSingleWeekView_ecv_expressive_day_background_tint_color),
                 expressiveDayBackgroundTintColor
+            )
+            _weekStartDay = getInt(
+                R.styleable.EventCalendarSingleWeekView_ecv_week_start_day,
+                Calendar.MONDAY
             )
         }
 
@@ -248,7 +255,7 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
      *
      * Set this property to `true` to display the expressive UI. By default, this is `false`.
      *
-     * You can also set this value in your XML layout as follows:
+     * Example usage in XML:
      * ```
      * app:ecv_expressive_ui="true"
      * ```
@@ -260,6 +267,33 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
             updateCalendarWeekUiForExpressive()
             expressiveUi()
             updateLayout(shouldStyleCurrentDayHeader = false)
+        }
+
+    /**
+     * Sets the first day of the week for the calendar.
+     *
+     * You can choose the start day of the week, e.g., `Calendar.MONDAY` or `Calendar.SUNDAY`.
+     * By default, the week starts on Monday (`Calendar.MONDAY`).
+     *
+     * Changing this value will update the calendar layout immediately.
+     *
+     * Example usage in XML:
+     * ```
+     * app:ecv_week_start_day="monday"
+     * ```
+     *
+     * Example usage in code:
+     * ```
+     * eventCalendarSingleWeekView.weekStartDay = java.util.Calendar.SUNDAY
+     * ```
+     */
+    var weekStartDay: Int
+        get() = _weekStartDay
+        set(value) {
+            _weekStartDay = value
+            updateWeekNumberView()
+            updateCalendarWeekVisibility()
+            updateLayout(shouldStyleCurrentDayHeader = true)
         }
 
     /**
@@ -315,7 +349,6 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     private fun renderWeekView(shouldStyleCurrentDayHeader: Boolean) = with(binding) {
-        val startWithMonday = true
         val headerViews = listOf(
             eventCalendarSingleWeekViewHeaderDay1,
             eventCalendarSingleWeekViewHeaderDay2,
@@ -326,8 +359,10 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
             eventCalendarSingleWeekViewHeaderDay7
         )
         headerViews.forEachIndexed { index, textView ->
-            textView.text =
-                root.context.getDayName(day = index + 1, startWithMonday = startWithMonday)
+            textView.text = root.context.getDayName(
+                day = index + 1,
+                weekStartDay = _weekStartDay
+            )
         }
 
         styleTextViews()
@@ -358,7 +393,7 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     private fun styleTextViews() {
-        val currentWeekDays = getDaysForCurrentWeek(startWithMonday = true)
+        val currentWeekDays = getDaysForCurrentWeek(weekStartDay = _weekStartDay)
         val eventsList = ArrayList(eventArrayList.filter { event ->
             currentWeekDays.any { it.date == event.date }
         })
@@ -473,7 +508,7 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
      * Internal method.
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    private fun styleCalendarWeekUi(): Unit = with(binding) {
+    private fun styleCalendarWeekUi() = with(binding) {
         if (isCalendarWeekVisible) {
             expressiveUi.expressiveCwHelper(
                 frameLayout = eventCalendarSingleWeekViewCalendarWeek.eventCalendarSingleWeekViewExpressiveFrameLayout,
@@ -487,7 +522,7 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
      * Internal method.
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    private fun updateWeekNumberView(): Unit = with(binding) {
+    private fun updateWeekNumberView() = with(binding) {
         if (isCalendarWeekVisible) {
             eventCalendarSingleWeekViewCalendarWeek.eventCalendarSingleWeekViewTextView.text =
                 "${getCurrentWeekNumber()}"
@@ -498,7 +533,7 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
      * Internal method.
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    private fun updateCalendarWeekUiForExpressive(): Unit = with(binding) {
+    private fun updateCalendarWeekUiForExpressive() = with(binding) {
         eventCalendarSingleWeekViewCalendarWeek.root.showDividers = if (expressiveUi) {
             noDividers
         } else {
@@ -510,21 +545,24 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
      * Internal method.
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    private fun styleHeaderCurrentWeekDay(): Unit = with(binding) {
-        val currentDayView = when (Calendar.getInstance().get(Calendar.DAY_OF_WEEK)) {
-            Calendar.MONDAY -> eventCalendarSingleWeekViewHeaderDay1
-            Calendar.TUESDAY -> eventCalendarSingleWeekViewHeaderDay2
-            Calendar.WEDNESDAY -> eventCalendarSingleWeekViewHeaderDay3
-            Calendar.THURSDAY -> eventCalendarSingleWeekViewHeaderDay4
-            Calendar.FRIDAY -> eventCalendarSingleWeekViewHeaderDay5
-            Calendar.SATURDAY -> eventCalendarSingleWeekViewHeaderDay6
-            else -> {
-                eventCalendarSingleWeekViewHeaderDay7
-            }
-        }
+    private fun styleHeaderCurrentWeekDay() = with(binding) {
+        val today = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
+        val headerIndex = (today - _weekStartDay + 7) % 7
 
-        currentDayView.setTypeface(currentDayView.typeface, Typeface.BOLD)
-        currentDayView.setTextColor(currentWeekdayTextColor)
+        val headerViews = listOf(
+            eventCalendarSingleWeekViewHeaderDay1,
+            eventCalendarSingleWeekViewHeaderDay2,
+            eventCalendarSingleWeekViewHeaderDay3,
+            eventCalendarSingleWeekViewHeaderDay4,
+            eventCalendarSingleWeekViewHeaderDay5,
+            eventCalendarSingleWeekViewHeaderDay6,
+            eventCalendarSingleWeekViewHeaderDay7
+        )
+
+        headerViews.getOrNull(headerIndex)?.let { currentDayView ->
+            currentDayView.setTypeface(currentDayView.typeface, Typeface.BOLD)
+            currentDayView.setTextColor(currentWeekdayTextColor)
+        }
     }
 
     inner class LastPossibleVisibleItemForUserDecoration(private val eventList: ArrayList<Event>) :

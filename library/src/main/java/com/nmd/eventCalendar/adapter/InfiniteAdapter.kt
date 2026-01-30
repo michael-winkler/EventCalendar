@@ -301,12 +301,14 @@ internal class InfiniteAdapter(
             if (holder.bindingAdapterPosition == itemCount.minus(1)) View.INVISIBLE else View.VISIBLE
 
         styleTextViews(
-            days = month.getDaysOfMonthAndGivenYear(year = year, startWithMonday = true),
+            days = month.getDaysOfMonthAndGivenYear(
+                year = year,
+                weekStartDay = eventCalendarView._weekStartDay
+            ),
             circleBindingList = holder.ecvTextviewCircleBindings(),
             cwBindingList = holder.ecvTextviewCwBinding()
         )
 
-        val startWithMonday = true
         val headerViews = listOf(
             eventCalendarViewHeaderDay1,
             eventCalendarViewHeaderDay2,
@@ -317,27 +319,33 @@ internal class InfiniteAdapter(
             eventCalendarViewHeaderDay7
         )
         headerViews.forEachIndexed { index, textView ->
-            textView.text =
-                root.context.getDayName(day = index + 1, startWithMonday = startWithMonday)
+            textView.text = root.context.getDayName(
+                day = index + 1,
+                weekStartDay = eventCalendarView._weekStartDay
+            )
         }
 
         val calendar = Calendar.getInstance()
-        // Only update the current day if it's the current year and month
         if (holder.yearAdapterViewHolder == year && calendar.get(Calendar.MONTH) == month) {
-            val currentDayView = when (calendar.get(Calendar.DAY_OF_WEEK)) {
-                Calendar.MONDAY -> eventCalendarViewHeaderDay1
-                Calendar.TUESDAY -> eventCalendarViewHeaderDay2
-                Calendar.WEDNESDAY -> eventCalendarViewHeaderDay3
-                Calendar.THURSDAY -> eventCalendarViewHeaderDay4
-                Calendar.FRIDAY -> eventCalendarViewHeaderDay5
-                Calendar.SATURDAY -> eventCalendarViewHeaderDay6
-                else -> {
-                    eventCalendarViewHeaderDay7
-                }
-            }
+            val today = calendar.get(Calendar.DAY_OF_WEEK)
+            val weekStartDay = eventCalendarView._weekStartDay
 
-            currentDayView.setTypeface(currentDayView.typeface, Typeface.BOLD)
-            currentDayView.setTextColor(eventCalendarView.currentWeekdayTextColor)
+            val headerIndex = (today - weekStartDay + 7) % 7
+
+            val headerViews = listOf(
+                eventCalendarViewHeaderDay1,
+                eventCalendarViewHeaderDay2,
+                eventCalendarViewHeaderDay3,
+                eventCalendarViewHeaderDay4,
+                eventCalendarViewHeaderDay5,
+                eventCalendarViewHeaderDay6,
+                eventCalendarViewHeaderDay7
+            )
+
+            headerViews.getOrNull(headerIndex)?.let { currentDayView ->
+                currentDayView.setTypeface(currentDayView.typeface, Typeface.BOLD)
+                currentDayView.setTextColor(eventCalendarView.currentWeekdayTextColor)
+            }
         }
     }
 

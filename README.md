@@ -27,8 +27,22 @@ Or programmatically in code:
 eventCalendarView.expressiveUi = true
 ```
 
+<hr>
+
+Since version 1.12.0 you can also set the week start day.
+
+You can set the week start day in XML:
+```kotlin
+app:ecv_week_start_day="monday"
+```
+Or programmatically in code:
+```kotlin
+eventCalendarView.weekStartDay = java.util.Calendar.SUNDAY
+eventCalendarSingleWeekView.weekStartDay = java.util.Calendar.SUNDAY
+```
+
 ## Sample app
-https://github.com/michael-winkler/EventCalendar/releases/download/1.11.1/app-release-unsigned.apk
+https://github.com/michael-winkler/EventCalendar/releases/download/1.12.0/app-release-unsigned.apk
 
 
 ## Usage
@@ -42,7 +56,7 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.github.michael-winkler:EventCalendar:1.11.1'
+    implementation 'com.github.michael-winkler:EventCalendar:1.12.0'
 }
 ```
 
@@ -72,7 +86,8 @@ You can create a new `EventCalendarView` inside your XML-Layout like this:
     app:ecv_expressive_cw_background_tint_color="@color/ecv_expressive_cw_background_color"
     app:ecv_expressive_day_background_tint_color="@color/ecv_expressive_day_background_color"
     app:ecv_expressive_ui="true"
-    app:ecv_header_visible="true" />
+    app:ecv_header_visible="true"
+    app:ecv_week_start_day="monday" />
 ```
 
 Or if you just want the current calendar week you can use this one:
@@ -93,7 +108,8 @@ Or if you just want the current calendar week you can use this one:
     app:ecv_expressive_cw_background_tint_color="@color/ecv_expressive_cw_background_color"
     app:ecv_expressive_day_background_tint_color="@color/ecv_expressive_day_background_color"
     app:ecv_expressive_ui="true"
-    app:ecv_header_visible="true" />
+    app:ecv_header_visible="true"
+    app:ecv_week_start_day="monday" />
 ```
 
 Here you can see all custom `app` parameters which you can use:    

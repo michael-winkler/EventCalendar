@@ -31,32 +31,27 @@ internal class Utils {
 
         internal fun Int.getDaysOfMonthAndGivenYear(
             year: Int,
-            startWithMonday: Boolean
+            weekStartDay: Int
         ): List<Day> {
-
             val currentDate = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date())
 
             val calendar = Calendar.getInstance().apply {
-                set(Calendar.MONTH, this@getDaysOfMonthAndGivenYear)
                 set(Calendar.YEAR, year)
+                set(Calendar.MONTH, this@getDaysOfMonthAndGivenYear)
                 set(Calendar.DAY_OF_MONTH, 1)
             }
 
             val numDaysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+            val firstDayOfMonth = calendar.get(Calendar.DAY_OF_WEEK)
 
-            val firstDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
-            val offset = if (startWithMonday) {
-                (firstDayOfWeek + 5) % 7
-            } else {
-                firstDayOfWeek - 1
-            }
+            val offset = (firstDayOfMonth - weekStartDay + 7) % 7
 
             val days = mutableListOf<Day>()
 
             // Previous month
             val prevMonth = (this@getDaysOfMonthAndGivenYear + 11) % 12
             val prevYear = if (prevMonth == 11) year - 1 else year
-            val prevMonthDays = prevMonth.getDaysInMonthAndGivenYear(prevYear) // List<Int>
+            val prevMonthDays = prevMonth.getDaysInMonthAndGivenYear(prevYear)
 
             repeat(offset) { index ->
                 val dayOfMonth = prevMonthDays.last() - offset + index + 1
@@ -127,17 +122,18 @@ internal class Utils {
             return days
         }
 
-        internal fun getDaysForCurrentWeek(startWithMonday: Boolean): List<Day> {
+        internal fun getDaysForCurrentWeek(weekStartDay: Int): List<Day> {
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                getDaysForCurrentWeekApi26Impl(startWithMonday)
+                getDaysForCurrentWeekApi26Impl(weekStartDay = weekStartDay)
             } else {
-                val calendar = Calendar.getInstance().apply {
-                    firstDayOfWeek = if (startWithMonday) Calendar.MONDAY else Calendar.SUNDAY
-                    set(Calendar.DAY_OF_WEEK, firstDayOfWeek)
-                }
-
+                val calendar = Calendar.getInstance()
                 val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-                val currentDate = dateFormat.format(Date())
+                val currentDate = dateFormat.format(calendar.time)
+
+                // Berechne den Starttag der Woche rückwärts
+                while (calendar.get(Calendar.DAY_OF_WEEK) != weekStartDay) {
+                    calendar.add(Calendar.DAY_OF_MONTH, -1)
+                }
 
                 List(7) {
                     val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
@@ -154,10 +150,16 @@ internal class Utils {
         }
 
         @RequiresApi(Build.VERSION_CODES.O)
-        internal fun getDaysForCurrentWeekApi26Impl(startWithMonday: Boolean): List<Day> {
+        internal fun getDaysForCurrentWeekApi26Impl(weekStartDay: Int): List<Day> {
             val today = LocalDate.now()
-            val startOfWeek =
-                today.with(if (startWithMonday) DayOfWeek.MONDAY else DayOfWeek.SUNDAY)
+            val desiredStartDay = calendarDayToDayOfWeek(weekStartDay)
+
+            // Berechne Start der Woche rückwärts
+            var startOfWeek = today
+            while (startOfWeek.dayOfWeek != desiredStartDay) {
+                startOfWeek = startOfWeek.minusDays(1)
+            }
+
             val dateFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.getDefault())
 
             return List(7) { index ->
@@ -170,6 +172,37 @@ internal class Utils {
                 )
             }
         }
+
+        @RequiresApi(Build.VERSION_CODES.O)
+        internal fun getDaysForCurrentWeekApi26ImplOld(weekStartDay: Int): List<Day> {
+            val today = LocalDate.now()
+            val startOfWeek =
+                today.with(calendarDayToDayOfWeek(weekStartDay))
+            val dateFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.getDefault())
+
+            return List(7) { index ->
+                val currentDate = startOfWeek.plusDays(index.toLong())
+                Day(
+                    value = currentDate.dayOfMonth.toString(),
+                    isCurrentMonth = true,
+                    isCurrentDay = today == currentDate,
+                    date = dateFormat.format(currentDate)
+                )
+            }
+        }
+
+        @RequiresApi(Build.VERSION_CODES.O)
+        private fun calendarDayToDayOfWeek(day: Int): DayOfWeek =
+            when (day) {
+                Calendar.MONDAY -> DayOfWeek.MONDAY
+                Calendar.SUNDAY -> DayOfWeek.SUNDAY
+                Calendar.TUESDAY -> DayOfWeek.TUESDAY
+                Calendar.WEDNESDAY -> DayOfWeek.WEDNESDAY
+                Calendar.THURSDAY -> DayOfWeek.THURSDAY
+                Calendar.FRIDAY -> DayOfWeek.FRIDAY
+                Calendar.SATURDAY -> DayOfWeek.SATURDAY
+                else -> DayOfWeek.MONDAY
+            }
 
         private fun Int.getDaysInMonthAndGivenYear(year: Int): List<Int> {
             val calendar = Calendar.getInstance().apply {
@@ -196,41 +229,37 @@ internal class Utils {
             return calendar[Calendar.MONTH]
         }
 
-
         internal fun Int.getMonthName(context: Context?): String {
             context ?: return ""
             val array = context.resources.getStringArray(R.array.ecv_month_names)
             return array[this]
         }
 
-        internal fun Context?.getDayName(day: Int, startWithMonday: Boolean): String {
+        internal fun Context?.getDayName(
+            day: Int,
+            weekStartDay: Int
+        ): String {
             this ?: return ""
 
-            // Days ordered Monday..Sunday
-            val days = listOf(
-                R.string.ecv_day_name_monday,
-                R.string.ecv_day_name_tuesday,
-                R.string.ecv_day_name_wednesday,
-                R.string.ecv_day_name_thursday,
-                R.string.ecv_day_name_friday,
-                R.string.ecv_day_name_saturday,
-                R.string.ecv_day_name_sunday
-            )
+            val safeDayIndex = (day - 1).coerceIn(0, 6)
 
-            // If the week starts with Sunday, rotate the list so Sunday comes first
-            val adjustedDays = if (startWithMonday) days else days.rotateRight(1)
+            val calendarDay =
+                ((weekStartDay - Calendar.SUNDAY + safeDayIndex) % 7) + Calendar.SUNDAY
 
-            // day is 1..7, convert to 0-based index safely
-            val index = ((day - 1) % 7).coerceIn(0, 6)
-            return resources.getString(adjustedDays[index])
+            return resources.getString(calendarDayToStringRes(calendarDay))
         }
 
-        // Helper function to rotate a list to the right
-        private fun <T> List<T>.rotateRight(steps: Int): List<T> {
-            if (isEmpty()) return this
-            val s = steps % size
-            return takeLast(s) + take(size - s)
-        }
+        private fun calendarDayToStringRes(day: Int): Int =
+            when (day) {
+                Calendar.MONDAY -> R.string.ecv_day_name_monday
+                Calendar.TUESDAY -> R.string.ecv_day_name_tuesday
+                Calendar.WEDNESDAY -> R.string.ecv_day_name_wednesday
+                Calendar.THURSDAY -> R.string.ecv_day_name_thursday
+                Calendar.FRIDAY -> R.string.ecv_day_name_friday
+                Calendar.SATURDAY -> R.string.ecv_day_name_saturday
+                Calendar.SUNDAY -> R.string.ecv_day_name_sunday
+                else -> R.string.ecv_day_name_monday
+            }
 
         internal fun Day.dayEvents(events: ArrayList<Event>): ArrayList<Event> {
             return ArrayList(events.filter { it.date == date })

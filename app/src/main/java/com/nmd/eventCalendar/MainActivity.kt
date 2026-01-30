@@ -89,6 +89,20 @@ class MainActivity : AppCompatActivity() {
         activityMainEventCalendarView.setMonthAndYear(
             startMonth = 1, startYear = year, endMonth = 12, endYear = year
         )
+
+        var current = activityMainEventCalendarView.weekStartDay
+        activityMainWeekStartDayImageView.setOnClickListener {
+            // Find the current index in the weekDays list
+            val currentIndex = weekDays.indexOf(current)
+            // Calculate the next day index cyclically
+            val nextIndex = (currentIndex + 1) % weekDays.size
+            // Update the current day
+            current = weekDays[nextIndex]
+
+            // Apply the new start day to the calendar view
+            activityMainEventCalendarView.weekStartDay = current
+        }
+
         activityMainCalendarImageView.setOnClickListener {
             activityMainEventCalendarView.scrollToCurrentMonth(
                 smoothScroll = false,
@@ -205,6 +219,9 @@ class MainActivity : AppCompatActivity() {
         with(dialogBinding) {
             val bottomSheetDialog = BottomSheetDialog(this@MainActivity)
 
+            bottomSheetEventCalendarSingleWeekView.weekStartDay =
+                binding.activityMainEventCalendarView.weekStartDay
+
             bottomSheetEventCalendarSingleWeekView.expressiveUi =
                 binding.activityMainEventCalendarView.expressiveUi
 
@@ -233,6 +250,16 @@ class MainActivity : AppCompatActivity() {
             bottomSheetDialog.show()
         }
     }
+
+    private val weekDays = listOf(
+        Calendar.MONDAY,
+        Calendar.TUESDAY,
+        Calendar.WEDNESDAY,
+        Calendar.THURSDAY,
+        Calendar.FRIDAY,
+        Calendar.SATURDAY,
+        Calendar.SUNDAY
+    )
 
     data class RandomEventList(
         var name: String,

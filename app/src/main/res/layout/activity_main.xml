@@ -26,6 +26,16 @@
                 android:orientation="horizontal">
 
                 <ImageView
+                    android:id="@+id/activityMainWeekStartDayImageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?android:attr/actionBarItemBackground"
+                    android:padding="16dp"
+                    android:src="@drawable/icon_calendar_start"
+                    android:theme="@style/RippleColor"
+                    app:tint="@color/colorIconTint" />
+
+                <ImageView
                     android:id="@+id/activityMainCalendarImageView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -76,7 +86,8 @@
             app:ecv_expressive_cw_background_tint_color="@color/ecv_expressive_cw_background_color"
             app:ecv_expressive_day_background_tint_color="@color/ecv_expressive_day_background_color"
             app:ecv_expressive_ui="true"
-            app:ecv_header_visible="true" />
+            app:ecv_header_visible="true"
+            app:ecv_week_start_day="monday" />
 
         <ProgressBar
             android:id="@+id/activityMainProgressBar"

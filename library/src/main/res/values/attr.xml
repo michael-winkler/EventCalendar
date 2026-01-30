@@ -75,6 +75,33 @@
          Default value: @color/ecv_expressive_day_background_color -->
     <attr name="ecv_expressive_day_background_tint_color" format="color" />
 
+    <!--
+     Defines the first day of the week used by the EventCalendarView.
+
+     This attribute controls how weeks are laid out and how weekday headers
+     are ordered (e.g. Monday-first or Sunday-first).
+
+     Possible values are the standard Calendar.DAY_OF_WEEK constants:
+     - sunday (Calendar.SUNDAY)
+     - monday (Calendar.MONDAY)
+     - tuesday (Calendar.TUESDAY)
+     - wednesday (Calendar.WEDNESDAY)
+     - thursday (Calendar.THURSDAY)
+     - friday (Calendar.FRIDAY)
+     - saturday (Calendar.SATURDAY)
+
+     Default value: monday
+    -->
+    <attr name="ecv_week_start_day">
+        <enum name="sunday" value="1" />
+        <enum name="monday" value="2" />
+        <enum name="tuesday" value="3" />
+        <enum name="wednesday" value="4" />
+        <enum name="thursday" value="5" />
+        <enum name="friday" value="6" />
+        <enum name="saturday" value="7" />
+    </attr>
+
     <!-- ######################################################### -->
     <!-- EventCalendarView -->
     <!-- ######################################################### -->
@@ -95,6 +122,7 @@
         <attr name="ecv_expressive_ui" />
         <attr name="ecv_expressive_cw_background_tint_color" />
         <attr name="ecv_expressive_day_background_tint_color" />
+        <attr name="ecv_week_start_day" />
     </declare-styleable>
 
     <!-- ######################################################### -->
@@ -118,6 +146,7 @@
         <attr name="ecv_expressive_ui" />
         <attr name="ecv_expressive_cw_background_tint_color" />
         <attr name="ecv_expressive_day_background_tint_color" />
+        <attr name="ecv_week_start_day" />
     </declare-styleable>
 
 </resources>
