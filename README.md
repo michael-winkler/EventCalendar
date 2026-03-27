@@ -42,7 +42,7 @@ eventCalendarSingleWeekView.weekStartDay = java.util.Calendar.SUNDAY
 ```
 
 ## Sample app
-https://github.com/michael-winkler/EventCalendar/releases/download/1.13.1/app-release-unsigned.apk
+https://github.com/michael-winkler/EventCalendar/releases/download/1.13.2/app-release-unsigned.apk
 
 
 ## Usage
@@ -56,7 +56,7 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.github.michael-winkler:EventCalendar:1.13.1'
+    implementation 'com.github.michael-winkler:EventCalendar:1.13.2'
 }
 ```
 
