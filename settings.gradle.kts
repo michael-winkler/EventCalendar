@@ -1,21 +1,24 @@
+@file:Suppress("UnstableApiUsage")
+
 pluginManagement {
     repositories {
         google()
         mavenCentral()
         gradlePluginPortal()
     }
-}
-plugins {
-    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+
+    plugins {
+        id("org.jetbrains.kotlin.android") version "2.3.20"
+        id("org.jetbrains.kotlin.plugin.compose") version "2.3.20"
+    }
 }
 
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
     }
 }
+
 rootProject.name = "EventCalendar"
-include ':app'
-include ':xml'
+include(":app", ":xml", ":compose")

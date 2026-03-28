@@ -1,11 +1,11 @@
 plugins {
-    id 'com.android.library'
-    id 'org.jetbrains.kotlin.plugin.parcelize'
-    id 'maven-publish'
+    id("com.android.library")
+    id("org.jetbrains.kotlin.plugin.compose")
+    id("maven-publish")
 }
 
 android {
-    namespace = 'com.nmd.eventCalendar'
+    namespace = "com.nmd.eventcalendar.compose"
     compileSdk = 36
 
     defaultConfig {
@@ -14,23 +14,32 @@ android {
 
     buildTypes {
         debug {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
     buildFeatures {
         buildConfig = true
-        viewBinding = true
+        compose = true
     }
 
+    // ❌ NICHT mehr nötig bei Kotlin 2.x
+    // composeOptions { }
+
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_21
-        targetCompatibility JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     publishing {
@@ -38,15 +47,29 @@ android {
     }
 }
 
+dependencies {
+    implementation(platform("androidx.compose:compose-bom:2026.03.01"))
+
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+
+    debugImplementation("androidx.compose.ui:ui-tooling")
+}
+
 publishing {
     publications {
-        release(MavenPublication) {
+        create<MavenPublication>("release") {
             groupId = "com.nmd"
-            artifactId = "eventcalendar-xml"
+            artifactId = "eventcalendar-compose"
             version = project.property("VERSION_NAME") as String
 
+            afterEvaluate {
+                from(components["release"])
+            }
+
             pom {
-                name.set(artifactId)
+                name.set("eventcalendar-compose")
                 description.set("An Android event calendar library written in Kotlin, offering customizable views and event handling, supporting calendar week display and edge-to-edge functionality.")
                 url.set("https://github.com/michael-winkler/EventCalendar")
 
@@ -70,29 +93,6 @@ publishing {
                     url.set("https://github.com/michael-winkler/EventCalendar")
                 }
             }
-
-            afterEvaluate {
-                from components.release
-            }
-
         }
     }
-}
-
-dependencies {
-    implementation fileTree(dir: "libs", include: ["*.jar"])
-
-    // Android X
-    implementation 'androidx.activity:activity-ktx:1.13.0'
-    implementation 'androidx.appcompat:appcompat:1.7.1'
-    implementation 'androidx.core:core-ktx:1.18.0'
-    implementation('androidx.fragment:fragment-ktx:1.8.9')
-    implementation 'androidx.viewpager2:viewpager2:1.1.0'
-    implementation 'androidx.recyclerview:recyclerview:1.4.0'
-
-    // Gson
-    implementation('com.google.code.gson:gson:2.13.2')
-
-    // Google Material Design
-    implementation 'com.google.android.material:material:1.14.0-alpha10'
 }
