@@ -9,7 +9,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        minSdk = 23
+        minSdk = 26
     }
 
     buildTypes {
@@ -34,9 +34,6 @@ android {
         compose = true
     }
 
-    // ❌ NICHT mehr nötig bei Kotlin 2.x
-    // composeOptions { }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
@@ -53,6 +50,7 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
 }
