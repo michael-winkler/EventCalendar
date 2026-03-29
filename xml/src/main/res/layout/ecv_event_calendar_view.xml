@@ -26,7 +26,8 @@
             style="@style/ECV_MonthYear"
             android:layout_centerInParent="true"
             android:layout_toStartOf="@+id/eventCalendarViewMonthYearImageViewRight"
-            android:layout_toEndOf="@+id/eventCalendarViewMonthYearImageViewLeft" />
+            android:layout_toEndOf="@+id/eventCalendarViewMonthYearImageViewLeft"
+            tools:text="Month name" />
 
         <ImageView
             android:id="@+id/eventCalendarViewMonthYearImageViewRight"
