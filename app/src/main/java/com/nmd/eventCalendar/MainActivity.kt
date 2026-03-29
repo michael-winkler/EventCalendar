@@ -1,9 +1,12 @@
 package com.nmd.eventCalendar
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.Insets
@@ -89,6 +92,18 @@ class MainActivity : AppCompatActivity() {
         activityMainEventCalendarView.setMonthAndYear(
             startMonth = 1, startYear = year, endMonth = 12, endYear = year
         )
+
+        activityMainCompose.setOnClickListener {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startActivity(Intent(this@MainActivity, EventCalendarComposeActivity::class.java))
+            } else {
+                Toast.makeText(
+                    this@MainActivity,
+                    "This feature is only available on API 26 and higher.",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
 
         var current = activityMainEventCalendarView.weekStartDay
         activityMainWeekStartDayImageView.setOnClickListener {

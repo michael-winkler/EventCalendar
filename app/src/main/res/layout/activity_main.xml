@@ -26,6 +26,16 @@
                 android:orientation="horizontal">
 
                 <ImageView
+                    android:id="@+id/activityMainCompose"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?android:attr/actionBarItemBackground"
+                    android:padding="16dp"
+                    android:src="@drawable/icon_view_dashboard_outline"
+                    android:theme="@style/RippleColor"
+                    app:tint="@color/colorIconTint" />
+
+                <ImageView
                     android:id="@+id/activityMainWeekStartDayImageView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

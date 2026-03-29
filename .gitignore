@@ -18,3 +18,4 @@ local.properties
 .idea/appInsightsSettings.xml
 .idea/misc.xml
 *.salive
+.idea/inspectionProfiles/Project_Default.xml
