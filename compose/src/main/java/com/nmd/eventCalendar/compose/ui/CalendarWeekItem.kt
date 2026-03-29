@@ -8,13 +8,17 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun CalendarWeekItem(
+    modifier: Modifier = Modifier,
     weekNumber: Int,
-    modifier: Modifier = Modifier
+    calendarStyle: CalendarStyle
 ) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
-        Text(text = weekNumber.toString())
+        Text(
+            text = weekNumber.toString(),
+            color = calendarStyle.weekLabelColor
+        )
     }
 }

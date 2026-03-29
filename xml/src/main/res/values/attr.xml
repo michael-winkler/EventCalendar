@@ -19,7 +19,7 @@
 
     <!-- Sets the text color for the current weekday label.
          Default value: @color/ecv_item_day_name_color -->
-    <!-- TODO: Compose -->
+    <!-- TODO: Compose DONE -->
     <attr name="ecv_current_weekday_text_color" format="color" />
 
     <!-- Sets the tint color for the background of the current day indicator.
@@ -53,19 +53,18 @@
     <!-- Indicates whether the event item text color should be applied automatically
          based on the background color.
          Default value: true -->
-    <!-- TODO: Compose -->
     <attr name="ecv_event_item_automatic_text_color" format="boolean" />
 
     <!-- Sets the text color for event items.
          Used only if ecv_event_item_automatic_text_color is set to false.
          Default value: @color/ecv_white -->
-    <!-- TODO: Compose -->
+    <!-- TODO: Compose - Not needed - Should be Event style -->
     <attr name="ecv_event_item_text_color" format="color" />
 
     <!-- Sets the text color for event items in dark mode.
          Used only if ecv_event_item_automatic_text_color is set to false.
          Default value: @color/ecv_black -->
-    <!-- TODO: Compose -->
+    <!-- TODO: Compose - Not needed - Should be Event style -->
     <attr name="ecv_event_item_dark_text_color" format="color" />
 
     <!-- Indicates whether the event calendar view should handle edge-to-edge layouts.

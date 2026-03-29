@@ -10,14 +10,17 @@ import androidx.compose.ui.graphics.Color
 import com.nmd.eventCalendar.compose.model.CalendarDay
 
 @Composable
-fun DayItem(day: CalendarDay) {
+fun DayItem(
+    calendarDay: CalendarDay,
+    calendarStyle: CalendarStyle // TODO: Add colors to style
+) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = day.date.dayOfMonth.toString(),
-            color = if (day.isCurrentMonth) Color.Black else Color.Gray
+            text = calendarDay.date.dayOfMonth.toString(),
+            color = if (calendarDay.isCurrentMonth) Color.Black else Color.Gray
         )
     }
 }

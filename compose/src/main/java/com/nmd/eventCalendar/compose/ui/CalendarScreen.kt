@@ -21,7 +21,8 @@ fun CalendarScreen(
     modifier: Modifier,
     weekStart: DayOfWeek,
     headerVisible: Boolean,
-    calendarWeekVisible: Boolean
+    calendarWeekVisible: Boolean,
+    calendarStyle: CalendarStyle
 ) {
     val pagerState = rememberPagerState(
         initialPage = Int.MAX_VALUE / 2,
@@ -60,7 +61,8 @@ fun CalendarScreen(
             CalendarMonthView(
                 yearMonth = month,
                 weekStart = weekStart,
-                calendarWeekVisible = calendarWeekVisible
+                calendarWeekVisible = calendarWeekVisible,
+                calendarStyle = calendarStyle
             )
         }
     }
@@ -73,6 +75,7 @@ fun CalendarScreenPreview() {
         modifier = Modifier.fillMaxSize(),
         weekStart = DayOfWeek.MONDAY,
         headerVisible = true,
-        calendarWeekVisible = true
+        calendarWeekVisible = true,
+        calendarStyle = defaultCalendarStyle()
     )
 }

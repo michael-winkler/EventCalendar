@@ -96,5 +96,5 @@ fun Screen(callback: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun EventCalendarComposePreview() {
-    Screen({})
+    Screen(callback = {})
 }

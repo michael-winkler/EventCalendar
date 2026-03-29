@@ -2,6 +2,7 @@ package com.nmd.eventCalendar.compose.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -20,7 +21,8 @@ import java.time.temporal.WeekFields
 fun CalendarMonthView(
     yearMonth: YearMonth,
     weekStart: DayOfWeek,
-    calendarWeekVisible: Boolean
+    calendarWeekVisible: Boolean,
+    calendarStyle: CalendarStyle
 ) {
     val days = remember(yearMonth, weekStart) {
         generateMonthDays(yearMonth, weekStart)
@@ -31,32 +33,50 @@ fun CalendarMonthView(
     }
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val itemHeight = maxHeight / 6
+        val itemHeight = maxHeight / 7
 
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(if (calendarWeekVisible) 8 else 7)
-        ) {
-            weeks.forEach { week ->
+        Column {
 
-                if (calendarWeekVisible) {
-                    val weekNumber = week.first().date.get(WeekFields.ISO.weekOfWeekBasedYear())
+            CalendarWeekHeader(
+                yearMonth = yearMonth,
+                weekStart = weekStart,
+                calendarWeekVisible = calendarWeekVisible,
+                itemHeight = itemHeight,
+                calendarStyle = calendarStyle
+            )
 
-                    item {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(if (calendarWeekVisible) 8 else 7)
+            ) {
+                weeks.forEach { week ->
+
+                    if (calendarWeekVisible) {
+                        val weekNumber = week.first().date.get(WeekFields.ISO.weekOfWeekBasedYear())
+
+                        item {
+                            Box(
+                                modifier = Modifier.height(itemHeight),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CalendarWeekItem(
+                                    modifier = Modifier,
+                                    weekNumber = weekNumber,
+                                    calendarStyle = calendarStyle
+                                )
+                            }
+                        }
+                    }
+
+                    items(week) { day ->
                         Box(
                             modifier = Modifier.height(itemHeight),
                             contentAlignment = Alignment.Center
                         ) {
-                            CalendarWeekItem(weekNumber)
+                            DayItem(
+                                calendarDay = day,
+                                calendarStyle = calendarStyle
+                            )
                         }
-                    }
-                }
-
-                items(week) { day ->
-                    Box(
-                        modifier = Modifier.height(itemHeight),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        DayItem(day)
                     }
                 }
             }
