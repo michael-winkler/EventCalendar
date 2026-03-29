@@ -9,7 +9,7 @@
 
     <!-- Indicates whether the calendar week column is visible.
          Default value: false -->
-    <!-- TODO: Compose -->
+    <!-- TODO: Compose DONE -->
     <attr name="ecv_calendar_week_visible" format="boolean" />
 
     <!-- Indicates whether the child view should prevent the parent view from intercepting

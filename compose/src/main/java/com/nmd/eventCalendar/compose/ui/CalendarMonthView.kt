@@ -14,28 +14,50 @@ import androidx.compose.ui.Modifier
 import com.nmd.eventCalendar.compose.util.generateMonthDays
 import java.time.DayOfWeek
 import java.time.YearMonth
+import java.time.temporal.WeekFields
 
 @Composable
 fun CalendarMonthView(
     yearMonth: YearMonth,
-    weekStart: DayOfWeek
+    weekStart: DayOfWeek,
+    calendarWeekVisible: Boolean
 ) {
     val days = remember(yearMonth, weekStart) {
         generateMonthDays(yearMonth, weekStart)
+    }
+
+    val weeks = remember(days) {
+        days.chunked(7)
     }
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val itemHeight = maxHeight / 6
 
         LazyVerticalGrid(
-            columns = GridCells.Fixed(7)
+            columns = GridCells.Fixed(if (calendarWeekVisible) 8 else 7)
         ) {
-            items(days) { day ->
-                Box(
-                    modifier = Modifier.height(itemHeight),
-                    contentAlignment = Alignment.Center
-                ) {
-                    DayItem(day)
+            weeks.forEach { week ->
+
+                if (calendarWeekVisible) {
+                    val weekNumber = week.first().date.get(WeekFields.ISO.weekOfWeekBasedYear())
+
+                    item {
+                        Box(
+                            modifier = Modifier.height(itemHeight),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CalendarWeekItem(weekNumber)
+                        }
+                    }
+                }
+
+                items(week) { day ->
+                    Box(
+                        modifier = Modifier.height(itemHeight),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        DayItem(day)
+                    }
                 }
             }
         }

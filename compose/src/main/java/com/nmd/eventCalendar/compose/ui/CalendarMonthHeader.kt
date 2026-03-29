@@ -3,10 +3,11 @@ package com.nmd.eventCalendar.compose.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -14,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import java.time.YearMonth
 import java.time.format.TextStyle
@@ -28,12 +30,15 @@ fun CalendarMonthHeader(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 12.dp),
+            .height(56.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         IconButton(onClick = onPreviousMonth) {
-            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Previous month")
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                contentDescription = "Previous month",
+            )
         }
 
         Text(
@@ -43,11 +48,25 @@ fun CalendarMonthHeader(
                     Locale.getDefault()
                 )
             } ${currentMonth.year}",
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(vertical = 8.dp)
         )
 
         IconButton(onClick = onNextMonth) {
-            Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Next month")
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = "Next month"
+            )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun EventCalendarComposePreview() {
+    CalendarMonthHeader(
+        currentMonth = YearMonth.now(),
+        onPreviousMonth = {},
+        onNextMonth = {}
+    )
 }

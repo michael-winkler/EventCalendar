@@ -11,12 +11,14 @@ import java.time.DayOfWeek
 fun EventCalendarCompose(
     modifier: Modifier = Modifier,
     weekStart: DayOfWeek = DayOfWeek.MONDAY,
-    headerVisible: Boolean = true
+    headerVisible: Boolean = true,
+    calendarWeekVisible: Boolean = true
 ) {
     CalendarScreen(
         modifier = modifier.fillMaxSize(),
         weekStart = weekStart,
-        headerVisible = headerVisible
+        headerVisible = headerVisible,
+        calendarWeekVisible = calendarWeekVisible
     )
 }
 

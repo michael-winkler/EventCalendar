@@ -63,6 +63,8 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0")
     debugImplementation("androidx.compose.ui:ui-tooling")
+    implementation("androidx.compose.material3:material3:1.4.0")
+    implementation("androidx.compose.material:material-icons-extended:1.5.0")
 
     // Libraries
     implementation(project(":xml"))
