@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.nmd.eventCalendar.compose.EventCalendarCompose
+import com.nmd.eventCalendar.compose.ui.defaultCalendarOptions
 import com.nmd.eventCalendarSample.R
 
 class EventCalendarComposeActivity : ComponentActivity() {
@@ -83,6 +84,9 @@ fun Screen(callback: () -> Unit) {
             EventCalendarCompose(
                 modifier = Modifier.background(
                     if (isSystemInDarkTheme()) Color(0xFF1B1B1F) else Color(0xFFFFFFFF)
+                ),
+                calendarOptions = defaultCalendarOptions().copy(
+                    calendarWeekVisible = true
                 )
             )
             Spacer(

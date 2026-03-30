@@ -1,7 +1,9 @@
 package com.nmd.eventCalendar.compose.ui
 
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.rememberPagerState
@@ -12,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import java.time.YearMonth
 
@@ -25,41 +28,56 @@ fun CalendarScreen(
         initialPage = Int.MAX_VALUE / 2,
         pageCount = { Int.MAX_VALUE }
     )
-
     val scope = rememberCoroutineScope()
     val baseMonth = remember { YearMonth.now() }
-
     val currentMonth by remember {
         derivedStateOf {
             baseMonth.plusMonths((pagerState.currentPage - Int.MAX_VALUE / 2).toLong())
         }
     }
 
-    Column(modifier = modifier.fillMaxSize()) {
+    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+        val monthHeaderHeight = 56.dp
 
-        if (calendarOptions.headerVisible) {
-            CalendarMonthHeader(
+        val heightAfterMonthHeader =
+            maxHeight - (if (calendarOptions.headerVisible) monthHeaderHeight else 0.dp)
+
+        // 1 Reihe Wochentage + 6 Reihen Tage
+        val rowHeight = heightAfterMonthHeader / 7
+        val gridHeight = heightAfterMonthHeader - rowHeight
+
+        Column(Modifier.fillMaxSize()) {
+            if (calendarOptions.headerVisible) {
+                CalendarMonthHeader(
+                    currentMonth = currentMonth,
+                    onPreviousMonth = {
+                        scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
+                    },
+                    onNextMonth = {
+                        scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
+                    }
+                )
+            }
+
+            CalendarWeekHeader(
                 currentMonth = currentMonth,
-                onPreviousMonth = {
-                    scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
-                },
-                onNextMonth = {
-                    scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
-                }
-            )
-        }
-
-        HorizontalPager(
-            modifier = Modifier.fillMaxSize(),
-            state = pagerState,
-            pageSize = PageSize.Fill
-        ) { page ->
-            val month = baseMonth.plusMonths((page - Int.MAX_VALUE / 2).toLong())
-            CalendarMonthView(
-                yearMonth = month,
+                itemHeight = rowHeight,
                 calendarOptions = calendarOptions,
                 calendarStyle = calendarStyle
             )
+
+            HorizontalPager(
+                modifier = Modifier.height(gridHeight),
+                state = pagerState,
+                pageSize = PageSize.Fill
+            ) { page ->
+                val month = baseMonth.plusMonths((page - Int.MAX_VALUE / 2).toLong())
+                CalendarMonthView(
+                    yearMonth = month,
+                    calendarOptions = calendarOptions,
+                    calendarStyle = calendarStyle
+                )
+            }
         }
     }
 }

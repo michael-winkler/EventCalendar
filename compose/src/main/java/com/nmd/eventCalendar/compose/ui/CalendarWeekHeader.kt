@@ -10,8 +10,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import com.nmd.eventcalendar.compose.R
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
@@ -19,9 +22,9 @@ import java.util.Locale
 
 @Composable
 fun CalendarWeekHeader(
-    yearMonth: YearMonth,
-    calendarOptions: CalendarOptions,
+    currentMonth: YearMonth,
     itemHeight: Dp,
+    calendarOptions: CalendarOptions,
     calendarStyle: CalendarStyle
 ) {
     val daysOfWeek = remember(calendarOptions.weekStart) {
@@ -30,8 +33,8 @@ fun CalendarWeekHeader(
 
     val today = remember { LocalDate.now() }
 
-    val isCurrentMonth = today.year == yearMonth.year &&
-            today.month == yearMonth.month
+    val isCurrentMonth = today.year == currentMonth.year &&
+            today.month == currentMonth.month
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(if (calendarOptions.calendarWeekVisible) 8 else 7),
@@ -43,28 +46,36 @@ fun CalendarWeekHeader(
                     modifier = Modifier.height(itemHeight),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("KW")
+                    Text(text = stringResource(R.string.calendar_week_label))
                 }
             }
         }
 
         items(daysOfWeek) { day ->
-
-            val isToday = isCurrentMonth && day == today.dayOfWeek
+            val isToday = isCurrentMonth && (day == today.dayOfWeek)
 
             Box(
                 modifier = Modifier.height(itemHeight),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = day.getDisplayName(
-                        TextStyle.SHORT_STANDALONE,
-                        Locale.getDefault()
-                    ),
-                    color = if (isToday) calendarStyle.currentWeekDayTextColor else calendarStyle.defaultWeekDayTextColor,
+                    text = day.getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault()),
+                    color = if (isToday) calendarStyle.currentWeekDayTextColor
+                    else calendarStyle.defaultWeekDayTextColor,
                     fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal
                 )
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CalendarWeekHeaderPreview() {
+    CalendarWeekHeader(
+        currentMonth = YearMonth.now(),
+        itemHeight = Dp.Unspecified,
+        calendarOptions = defaultCalendarOptions(),
+        calendarStyle = defaultCalendarStyle()
+    )
 }

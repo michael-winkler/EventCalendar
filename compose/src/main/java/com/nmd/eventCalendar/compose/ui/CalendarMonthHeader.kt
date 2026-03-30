@@ -27,6 +27,9 @@ fun CalendarMonthHeader(
     onPreviousMonth: () -> Unit,
     onNextMonth: () -> Unit
 ) {
+    val now = YearMonth.now()
+    val showYear = currentMonth.year != now.year
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -41,13 +44,9 @@ fun CalendarMonthHeader(
             )
         }
 
+        val monthName = currentMonth.month.getDisplayName(TextStyle.FULL, Locale.getDefault())
         Text(
-            text = "${
-                currentMonth.month.getDisplayName(
-                    TextStyle.FULL,
-                    Locale.getDefault()
-                )
-            } ${currentMonth.year}",
+            text = if (showYear) "$monthName ${currentMonth.year}" else monthName,
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(vertical = 8.dp)
         )
