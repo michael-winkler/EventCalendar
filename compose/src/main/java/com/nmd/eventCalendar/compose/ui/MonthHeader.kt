@@ -1,10 +1,13 @@
 package com.nmd.eventCalendar.compose.ui
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -15,8 +18,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.nmd.eventCalendar.compose.model.MonthHeaderLayout
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
@@ -26,42 +33,115 @@ fun MonthHeader(
     currentMonth: YearMonth,
     onPreviousMonth: () -> Unit,
     onNextMonth: () -> Unit,
-    calendarStyle: CalendarStyle
+    calendarStyle: CalendarStyle,
+    layout: MonthHeaderLayout = MonthHeaderLayout.TopBar
 ) {
-    val now = YearMonth.now()
-    val showYear = currentMonth.year != now.year
+    val title = rememberMonthTitle(currentMonth)
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(48.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        IconButton(onClick = onPreviousMonth) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                contentDescription = "Previous month",
-                tint = calendarStyle.monthNavigationIconColor
-            )
+    when (layout) {
+        MonthHeaderLayout.TopBar -> {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                MonthNavButton(
+                    isPrevious = true,
+                    onClick = onPreviousMonth,
+                    calendarStyle = calendarStyle
+                )
+
+                MonthTitle(
+                    title = title,
+                    calendarStyle = calendarStyle,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+
+                MonthNavButton(
+                    isPrevious = false,
+                    onClick = onNextMonth,
+                    calendarStyle = calendarStyle
+                )
+            }
         }
 
-        val monthName = currentMonth.month.getDisplayName(TextStyle.FULL, Locale.getDefault())
-        Text(
-            text = if (showYear) "$monthName ${currentMonth.year}" else monthName,
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(vertical = 8.dp),
-            color = calendarStyle.monthNameTextColor
-        )
+        MonthHeaderLayout.SideBar -> {
+            Column(
+                modifier = Modifier.fillMaxHeight(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceBetween
+            ) {
+                MonthNavButton(
+                    isPrevious = true,
+                    onClick = onPreviousMonth,
+                    calendarStyle = calendarStyle
+                )
 
-        IconButton(onClick = onNextMonth) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = "Next month",
-                tint = calendarStyle.monthNavigationIconColor
-            )
+                MonthTitle(
+                    title = title,
+                    calendarStyle = calendarStyle,
+                    modifier = Modifier
+                        .wrapContentWidth(unbounded = true)
+                        .graphicsLayer(rotationZ = -90f)
+                        .padding(vertical = 8.dp),
+                    textAlign = TextAlign.Center
+                )
+
+                MonthNavButton(
+                    isPrevious = false,
+                    onClick = onNextMonth,
+                    calendarStyle = calendarStyle
+                )
+            }
         }
     }
+}
+
+@Composable
+private fun rememberMonthTitle(currentMonth: YearMonth): String {
+    val now = YearMonth.now()
+    val showYear = currentMonth.year != now.year
+    val monthName = currentMonth.month.getDisplayName(TextStyle.FULL, Locale.getDefault())
+    return if (showYear) "$monthName ${currentMonth.year}" else monthName
+}
+
+@Composable
+private fun MonthNavButton(
+    isPrevious: Boolean,
+    onClick: () -> Unit,
+    calendarStyle: CalendarStyle
+) {
+    IconButton(onClick = onClick) {
+        Icon(
+            imageVector = if (isPrevious)
+                Icons.AutoMirrored.Filled.KeyboardArrowLeft
+            else
+                Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            contentDescription = if (isPrevious) "Previous month" else "Next month",
+            tint = calendarStyle.monthNavigationIconColor
+        )
+    }
+}
+
+@Composable
+private fun MonthTitle(
+    title: String,
+    calendarStyle: CalendarStyle,
+    modifier: Modifier = Modifier,
+    textAlign: TextAlign? = null
+) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.titleMedium,
+        color = calendarStyle.monthNameTextColor,
+        textAlign = textAlign,
+        maxLines = 1,
+        softWrap = false,
+        overflow = TextOverflow.Clip,
+        modifier = modifier
+    )
 }
 
 @Preview(showBackground = true)
@@ -72,5 +152,22 @@ fun MonthHeaderPreview() {
         onPreviousMonth = {},
         onNextMonth = {},
         calendarStyle = defaultCalendarStyle()
+    )
+}
+
+@Preview(
+    name = "MonthHeader - SideBar",
+    showBackground = true,
+    widthDp = 96,
+    heightDp = 430
+)
+@Composable
+fun MonthHeaderSideBarPreview() {
+    MonthHeader(
+        currentMonth = YearMonth.now(),
+        onPreviousMonth = {},
+        onNextMonth = {},
+        calendarStyle = defaultCalendarStyle(),
+        layout = MonthHeaderLayout.SideBar
     )
 }
