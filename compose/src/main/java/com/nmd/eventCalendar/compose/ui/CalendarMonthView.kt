@@ -13,19 +13,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.nmd.eventCalendar.compose.util.generateMonthDays
-import java.time.DayOfWeek
 import java.time.YearMonth
 import java.time.temporal.WeekFields
 
 @Composable
 fun CalendarMonthView(
     yearMonth: YearMonth,
-    weekStart: DayOfWeek,
-    calendarWeekVisible: Boolean,
+    calendarOptions: CalendarOptions,
     calendarStyle: CalendarStyle
 ) {
-    val days = remember(yearMonth, weekStart) {
-        generateMonthDays(yearMonth, weekStart)
+    val days = remember(yearMonth, calendarOptions.weekStart) {
+        generateMonthDays(yearMonth, calendarOptions.weekStart)
     }
 
     val weeks = remember(days) {
@@ -39,18 +37,17 @@ fun CalendarMonthView(
 
             CalendarWeekHeader(
                 yearMonth = yearMonth,
-                weekStart = weekStart,
-                calendarWeekVisible = calendarWeekVisible,
+                calendarOptions = calendarOptions,
                 itemHeight = itemHeight,
                 calendarStyle = calendarStyle
             )
 
             LazyVerticalGrid(
-                columns = GridCells.Fixed(if (calendarWeekVisible) 8 else 7)
+                columns = GridCells.Fixed(if (calendarOptions.calendarWeekVisible) 8 else 7)
             ) {
                 weeks.forEach { week ->
 
-                    if (calendarWeekVisible) {
+                    if (calendarOptions.calendarWeekVisible) {
                         val weekNumber = week.first().date.get(WeekFields.ISO.weekOfWeekBasedYear())
 
                         item {

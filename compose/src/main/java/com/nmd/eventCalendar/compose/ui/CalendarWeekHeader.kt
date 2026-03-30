@@ -12,7 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
-import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
@@ -21,13 +20,12 @@ import java.util.Locale
 @Composable
 fun CalendarWeekHeader(
     yearMonth: YearMonth,
-    weekStart: DayOfWeek,
-    calendarWeekVisible: Boolean,
+    calendarOptions: CalendarOptions,
     itemHeight: Dp,
     calendarStyle: CalendarStyle
 ) {
-    val daysOfWeek = remember(weekStart) {
-        (0 until 7).map { weekStart.plus(it.toLong()) }
+    val daysOfWeek = remember(calendarOptions.weekStart) {
+        (0 until 7).map { calendarOptions.weekStart.plus(it.toLong()) }
     }
 
     val today = remember { LocalDate.now() }
@@ -36,10 +34,10 @@ fun CalendarWeekHeader(
             today.month == yearMonth.month
 
     LazyVerticalGrid(
-        columns = GridCells.Fixed(if (calendarWeekVisible) 8 else 7),
+        columns = GridCells.Fixed(if (calendarOptions.calendarWeekVisible) 8 else 7),
         userScrollEnabled = false
     ) {
-        if (calendarWeekVisible) {
+        if (calendarOptions.calendarWeekVisible) {
             item {
                 Box(
                     modifier = Modifier.height(itemHeight),

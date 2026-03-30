@@ -13,15 +13,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.coroutines.launch
-import java.time.DayOfWeek
 import java.time.YearMonth
 
 @Composable
 fun CalendarScreen(
     modifier: Modifier,
-    weekStart: DayOfWeek,
-    headerVisible: Boolean,
-    calendarWeekVisible: Boolean,
+    calendarOptions: CalendarOptions,
     calendarStyle: CalendarStyle
 ) {
     val pagerState = rememberPagerState(
@@ -40,7 +37,7 @@ fun CalendarScreen(
 
     Column(modifier = modifier.fillMaxSize()) {
 
-        if (headerVisible) {
+        if (calendarOptions.headerVisible) {
             CalendarMonthHeader(
                 currentMonth = currentMonth,
                 onPreviousMonth = {
@@ -60,8 +57,7 @@ fun CalendarScreen(
             val month = baseMonth.plusMonths((page - Int.MAX_VALUE / 2).toLong())
             CalendarMonthView(
                 yearMonth = month,
-                weekStart = weekStart,
-                calendarWeekVisible = calendarWeekVisible,
+                calendarOptions = calendarOptions,
                 calendarStyle = calendarStyle
             )
         }
@@ -73,9 +69,7 @@ fun CalendarScreen(
 fun CalendarScreenPreview() {
     CalendarScreen(
         modifier = Modifier.fillMaxSize(),
-        weekStart = DayOfWeek.MONDAY,
-        headerVisible = true,
-        calendarWeekVisible = true,
+        calendarOptions = defaultCalendarOptions(),
         calendarStyle = defaultCalendarStyle()
     )
 }
