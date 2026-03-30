@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.nmd.eventCalendar.compose.model.CalendarDay
 import com.nmd.eventCalendar.compose.model.MonthHeaderLayout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -31,7 +32,8 @@ import java.time.YearMonth
 fun CalendarScreen(
     modifier: Modifier,
     calendarOptions: CalendarOptions,
-    calendarStyle: CalendarStyle
+    calendarStyle: CalendarStyle,
+    onDaySelected: (calendarDay: CalendarDay) -> Unit
 ) {
     val pagerState = rememberPagerState(
         initialPage = Int.MAX_VALUE / 2,
@@ -79,7 +81,8 @@ fun CalendarScreen(
                     currentMonth = currentMonth,
                     weekHeaderHeight = weekHeaderHeight,
                     gridHeight = gridHeight,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    onDaySelected = onDaySelected
                 )
             }
         } else {
@@ -112,7 +115,8 @@ fun CalendarScreen(
                         currentMonth = currentMonth,
                         weekHeaderHeight = weekHeaderHeight,
                         gridHeight = gridHeight,
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
+                        onDaySelected = onDaySelected
                     )
                 }
             }
@@ -155,7 +159,8 @@ private fun CalendarPagerSection(
     calendarStyle: CalendarStyle,
     currentMonth: YearMonth,
     weekHeaderHeight: Dp,
-    gridHeight: Dp
+    gridHeight: Dp,
+    onDaySelected: (calendarDay: CalendarDay) -> Unit
 ) {
     Column(modifier = modifier) {
         WeekHeader(
@@ -176,7 +181,8 @@ private fun CalendarPagerSection(
             MonthView(
                 yearMonth = month,
                 calendarOptions = calendarOptions,
-                calendarStyle = calendarStyle
+                calendarStyle = calendarStyle,
+                onDaySelected = onDaySelected
             )
         }
     }
@@ -188,7 +194,8 @@ fun CalendarScreenPreview() {
     CalendarScreen(
         modifier = Modifier.fillMaxSize(),
         calendarOptions = defaultCalendarOptions(),
-        calendarStyle = defaultCalendarStyle()
+        calendarStyle = defaultCalendarStyle(),
+        onDaySelected = {}
     )
 }
 
@@ -203,6 +210,7 @@ fun CalendarScreenLandscapePreview() {
     CalendarScreen(
         modifier = Modifier.fillMaxSize(),
         calendarOptions = defaultCalendarOptions(),
-        calendarStyle = defaultCalendarStyle()
+        calendarStyle = defaultCalendarStyle(),
+        onDaySelected = {}
     )
 }

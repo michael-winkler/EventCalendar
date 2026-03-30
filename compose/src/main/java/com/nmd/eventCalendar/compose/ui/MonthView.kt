@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.nmd.eventCalendar.compose.model.CalendarDay
 import com.nmd.eventCalendar.compose.model.DayCornerPosition
 import com.nmd.eventCalendar.compose.model.WeekItemPosition
 import com.nmd.eventCalendar.compose.util.generateMonthDays
@@ -22,7 +23,8 @@ import java.time.temporal.WeekFields
 fun MonthView(
     yearMonth: YearMonth,
     calendarOptions: CalendarOptions,
-    calendarStyle: CalendarStyle
+    calendarStyle: CalendarStyle,
+    onDaySelected: (calendarDay: CalendarDay) -> Unit
 ) {
     val days = remember(yearMonth, calendarOptions.weekStart) {
         generateMonthDays(yearMonth, calendarOptions.weekStart)
@@ -74,7 +76,8 @@ fun MonthView(
                             calendarDay = day,
                             corner = corner,
                             visibleMonth = yearMonth,
-                            calendarStyle = calendarStyle
+                            calendarStyle = calendarStyle,
+                            onDaySelected = onDaySelected
                         )
                     }
                 }
@@ -101,6 +104,7 @@ fun MonthViewPreview() {
     MonthView(
         yearMonth = YearMonth.now(),
         calendarOptions = defaultCalendarOptions(),
-        calendarStyle = defaultCalendarStyle()
+        calendarStyle = defaultCalendarStyle(),
+        onDaySelected = {}
     )
 }

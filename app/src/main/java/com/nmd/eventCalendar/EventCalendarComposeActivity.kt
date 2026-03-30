@@ -3,6 +3,7 @@
 package com.nmd.eventCalendar
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -42,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import com.nmd.eventCalendar.compose.EventCalendarCompose
 import com.nmd.eventCalendar.compose.ui.defaultCalendarOptions
 import com.nmd.eventCalendar.compose.ui.defaultCalendarStyle
+import com.nmd.eventCalendar.theme.AppTheme
 import com.nmd.eventCalendarSample.R
 
 class EventCalendarComposeActivity : ComponentActivity() {
@@ -52,8 +54,10 @@ class EventCalendarComposeActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            Screen {
-                onBackPressedDispatcher.onBackPressed()
+            AppTheme {
+                Screen {
+                    onBackPressedDispatcher.onBackPressed()
+                }
             }
         }
     }
@@ -111,6 +115,10 @@ fun Screen(callback: () -> Unit) {
         ) {
             EventCalendarCompose(
                 modifier = Modifier.padding(bottom = 16.dp),
+                onDaySelected = {
+                    // Handle day selection
+                    Log.i("EventCalendarCompose", "Selected day: ${it.date}")
+                },
                 calendarOptions = defaultCalendarOptions().copy(
                     calendarWeekVisible = showCalendarWeek
                 ),
