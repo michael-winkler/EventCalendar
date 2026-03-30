@@ -5,7 +5,7 @@ package com.nmd.eventCalendar
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.nmd.eventCalendar.compose.EventCalendarCompose
 import com.nmd.eventCalendar.compose.ui.defaultCalendarOptions
 import com.nmd.eventCalendar.compose.ui.defaultCalendarStyle
@@ -40,6 +41,8 @@ import com.nmd.eventCalendarSample.R
 class EventCalendarComposeActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
+
         super.onCreate(savedInstanceState)
 
         setContent {
@@ -53,8 +56,7 @@ class EventCalendarComposeActivity : ComponentActivity() {
 @Composable
 fun Screen(callback: () -> Unit) {
     Scaffold(
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
                 title = {
@@ -76,7 +78,8 @@ fun Screen(callback: () -> Unit) {
                     containerColor = if (isSystemInDarkTheme()) Color(0xFF1B1B1F) else Color.White
                 )
             )
-        }
+        },
+        containerColor = if (isSystemInDarkTheme()) Color(0xFF1B1B1F) else Color.White
     ) { paddingValues ->
         val layoutDirection = LocalLayoutDirection.current
 
@@ -88,13 +91,12 @@ fun Screen(callback: () -> Unit) {
             )
         ) {
             EventCalendarCompose(
-                modifier = Modifier
-                    .background(
-                        if (isSystemInDarkTheme()) Color(0xFF1B1B1F) else Color(0xFFFFFFFF)
-                    )
-                    .padding(bottom = 16.dp),
+                modifier = Modifier.padding(bottom = 16.dp),
                 calendarOptions = defaultCalendarOptions().copy(
                     calendarWeekVisible = true
+                ),
+                calendarStyle = defaultCalendarStyle().copy(
+                    fontsize = 12.sp
                 )
             )
             Spacer(

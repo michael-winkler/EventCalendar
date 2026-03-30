@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.nmd.eventCalendar.compose.model.WeekItemPosition
 
 @Composable
-fun CalendarWeekItem(
+fun WeekItem(
     modifier: Modifier = Modifier,
     weekNumber: Int,
     position: WeekItemPosition,
@@ -48,15 +48,16 @@ fun CalendarWeekItem(
     ) {
         Text(
             text = weekNumber.toString(),
-            color = calendarStyle.weekItemTextColor
+            color = calendarStyle.weekItemTextColor,
+            fontSize = calendarStyle.fontsize
         )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun CalendarWeekItemPreview() {
-    CalendarWeekItem(
+fun WeekItemPreview() {
+    WeekItem(
         modifier = Modifier,
         weekNumber = 1,
         position = WeekItemPosition.Top,

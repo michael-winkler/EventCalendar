@@ -22,7 +22,7 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 @Composable
-fun CalendarMonthHeader(
+fun MonthHeader(
     currentMonth: YearMonth,
     onPreviousMonth: () -> Unit,
     onNextMonth: () -> Unit,
@@ -34,7 +34,7 @@ fun CalendarMonthHeader(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp),
+            .height(48.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -66,8 +66,8 @@ fun CalendarMonthHeader(
 
 @Preview(showBackground = true)
 @Composable
-fun CalendarMonthHeaderPreview() {
-    CalendarMonthHeader(
+fun MonthHeaderPreview() {
+    MonthHeader(
         currentMonth = YearMonth.now(),
         onPreviousMonth = {},
         onNextMonth = {},

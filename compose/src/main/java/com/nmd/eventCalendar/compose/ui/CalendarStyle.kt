@@ -3,8 +3,12 @@ package com.nmd.eventCalendar.compose.ui
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.sp
 
 data class CalendarStyle(
+    val fontsize: TextUnit,
+
     val monthNavigationIconColor: Color,
     val monthNameTextColor: Color,
 
@@ -20,6 +24,9 @@ data class CalendarStyle(
      */
     val weekDayInactiveTextColor: Color,
 
+    val dayItemTextColor: Color,
+    val dayItemBackgroundColor: Color,
+
     val weekItemTextColor: Color,
     val weekItemBackgroundColor: Color
 )
@@ -27,12 +34,15 @@ data class CalendarStyle(
 @Composable
 fun defaultCalendarStyle(): CalendarStyle {
     return CalendarStyle(
+        fontsize = 14.sp,
         monthNavigationIconColor = monthNavigationIconColor,
         monthNameTextColor = monthNameTextColor,
         currentWeekDayTextColor = currentWeekDayTextColor,
         defaultWeekDayTextColor = defaultWeekDayTextColor,
         weekDayTextColor = weekDayTextColor,
         weekDayInactiveTextColor = weekDayInactiveTextColor,
+        dayItemTextColor = dayItemTextColor,
+        dayItemBackgroundColor = dayItemBackgroundColor,
         weekItemTextColor = weekItemTextColor,
         weekItemBackgroundColor = weekItemBackgroundColor
     )
@@ -61,6 +71,14 @@ val monthNavigationIconColor: Color
 val monthNameTextColor: Color
     @Composable
     get() = if (isSystemInDarkTheme()) Color.White else Color.Black
+
+val dayItemTextColor: Color
+    @Composable
+    get() = if (isSystemInDarkTheme()) Color.White else Color.Black
+
+val dayItemBackgroundColor: Color
+    @Composable
+    get() = if (isSystemInDarkTheme()) Color(0xFF282A2C) else Color(0xFFF4F4F4)
 
 val weekItemTextColor: Color
     @Composable

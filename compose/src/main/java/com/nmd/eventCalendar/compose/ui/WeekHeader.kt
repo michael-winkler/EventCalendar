@@ -21,7 +21,7 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 @Composable
-fun CalendarWeekHeader(
+fun WeekHeader(
     currentMonth: YearMonth,
     itemHeight: Dp,
     calendarOptions: CalendarOptions,
@@ -48,7 +48,8 @@ fun CalendarWeekHeader(
                 ) {
                     Text(
                         text = stringResource(R.string.calendar_week_label),
-                        color = calendarStyle.defaultWeekDayTextColor
+                        color = calendarStyle.defaultWeekDayTextColor,
+                        fontSize = calendarStyle.fontsize
                     )
                 }
             }
@@ -65,7 +66,8 @@ fun CalendarWeekHeader(
                     text = day.getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault()),
                     color = if (isToday) calendarStyle.currentWeekDayTextColor
                     else calendarStyle.defaultWeekDayTextColor,
-                    fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal
+                    fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal,
+                    fontSize = calendarStyle.fontsize
                 )
             }
         }
@@ -74,8 +76,8 @@ fun CalendarWeekHeader(
 
 @Preview(showBackground = true)
 @Composable
-fun CalendarWeekHeaderPreview() {
-    CalendarWeekHeader(
+fun WeekHeaderPreview() {
+    WeekHeader(
         currentMonth = YearMonth.now(),
         itemHeight = Dp.Unspecified,
         calendarOptions = defaultCalendarOptions(),
