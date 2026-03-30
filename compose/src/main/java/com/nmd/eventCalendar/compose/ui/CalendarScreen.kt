@@ -38,13 +38,12 @@ fun CalendarScreen(
 
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
         val monthHeaderHeight = 56.dp
+        val weekHeaderHeight = 32.dp
 
         val heightAfterMonthHeader =
             maxHeight - (if (calendarOptions.headerVisible) monthHeaderHeight else 0.dp)
 
-        // 1 Reihe Wochentage + 6 Reihen Tage
-        val rowHeight = heightAfterMonthHeader / 7
-        val gridHeight = heightAfterMonthHeader - rowHeight
+        val gridHeight = (heightAfterMonthHeader - weekHeaderHeight).coerceAtLeast(0.dp)
 
         Column(Modifier.fillMaxSize()) {
             if (calendarOptions.headerVisible) {
@@ -55,13 +54,14 @@ fun CalendarScreen(
                     },
                     onNextMonth = {
                         scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
-                    }
+                    },
+                    calendarStyle = calendarStyle
                 )
             }
 
             CalendarWeekHeader(
                 currentMonth = currentMonth,
-                itemHeight = rowHeight,
+                itemHeight = weekHeaderHeight,
                 calendarOptions = calendarOptions,
                 calendarStyle = calendarStyle
             )

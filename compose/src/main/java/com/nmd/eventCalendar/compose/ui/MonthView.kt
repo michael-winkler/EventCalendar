@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.nmd.eventCalendar.compose.model.WeekItemPosition
 import com.nmd.eventCalendar.compose.util.generateMonthDays
 import java.time.YearMonth
 import java.time.temporal.WeekFields
@@ -31,19 +32,27 @@ fun CalendarMonthView(
         val itemHeight = maxHeight / 6
 
         LazyVerticalGrid(
-            columns = GridCells.Fixed(if (calendarOptions.calendarWeekVisible) 8 else 7)
+            columns = GridCells.Fixed(if (calendarOptions.calendarWeekVisible) 8 else 7),
         ) {
-            weeks.forEach { week ->
+            weeks.forEachIndexed { weekIndex, week ->
                 if (calendarOptions.calendarWeekVisible) {
                     val weekNumber = week.first().date.get(WeekFields.ISO.weekOfWeekBasedYear())
+
+                    val position = when (weekIndex) {
+                        0 -> WeekItemPosition.Top
+                        weeks.lastIndex -> WeekItemPosition.Bottom
+                        else -> WeekItemPosition.Middle
+                    }
+
                     item {
                         Box(
                             modifier = Modifier.height(itemHeight),
                             contentAlignment = Alignment.Center
                         ) {
                             CalendarWeekItem(
-                                modifier = Modifier,
+                                modifier = Modifier.fillMaxSize(),
                                 weekNumber = weekNumber,
+                                position = position,
                                 calendarStyle = calendarStyle
                             )
                         }

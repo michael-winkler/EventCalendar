@@ -25,7 +25,8 @@ import java.util.Locale
 fun CalendarMonthHeader(
     currentMonth: YearMonth,
     onPreviousMonth: () -> Unit,
-    onNextMonth: () -> Unit
+    onNextMonth: () -> Unit,
+    calendarStyle: CalendarStyle
 ) {
     val now = YearMonth.now()
     val showYear = currentMonth.year != now.year
@@ -41,6 +42,7 @@ fun CalendarMonthHeader(
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                 contentDescription = "Previous month",
+                tint = calendarStyle.monthNavigationIconColor
             )
         }
 
@@ -48,13 +50,15 @@ fun CalendarMonthHeader(
         Text(
             text = if (showYear) "$monthName ${currentMonth.year}" else monthName,
             style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(vertical = 8.dp)
+            modifier = Modifier.padding(vertical = 8.dp),
+            color = calendarStyle.monthNameTextColor
         )
 
         IconButton(onClick = onNextMonth) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                contentDescription = "Next month"
+                contentDescription = "Next month",
+                tint = calendarStyle.monthNavigationIconColor
             )
         }
     }
@@ -62,10 +66,11 @@ fun CalendarMonthHeader(
 
 @Preview(showBackground = true)
 @Composable
-fun EventCalendarComposePreview() {
+fun CalendarMonthHeaderPreview() {
     CalendarMonthHeader(
         currentMonth = YearMonth.now(),
         onPreviousMonth = {},
-        onNextMonth = {}
+        onNextMonth = {},
+        calendarStyle = defaultCalendarStyle()
     )
 }

@@ -46,7 +46,10 @@ fun CalendarWeekHeader(
                     modifier = Modifier.height(itemHeight),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = stringResource(R.string.calendar_week_label))
+                    Text(
+                        text = stringResource(R.string.calendar_week_label),
+                        color = calendarStyle.defaultWeekDayTextColor
+                    )
                 }
             }
         }

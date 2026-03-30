@@ -31,8 +31,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.nmd.eventCalendar.compose.EventCalendarCompose
 import com.nmd.eventCalendar.compose.ui.defaultCalendarOptions
+import com.nmd.eventCalendar.compose.ui.defaultCalendarStyle
 import com.nmd.eventCalendarSample.R
 
 class EventCalendarComposeActivity : ComponentActivity() {
@@ -55,19 +57,23 @@ fun Screen(callback: () -> Unit) {
             .fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text(text = stringResource(R.string.app_name_compose)) },
+                title = {
+                    Text(
+                        text = stringResource(R.string.app_name_compose),
+                        color = if (isSystemInDarkTheme()) Color.White else Color.Black
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = { callback() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
+                            contentDescription = "Back",
+                            tint = if (isSystemInDarkTheme()) Color.White else Color.Black
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = if (isSystemInDarkTheme()) Color(0xFF1B1B1F) else Color(
-                        0xFFFFFFFF
-                    )
+                    containerColor = if (isSystemInDarkTheme()) Color(0xFF1B1B1F) else Color.White
                 )
             )
         }
@@ -82,9 +88,11 @@ fun Screen(callback: () -> Unit) {
             )
         ) {
             EventCalendarCompose(
-                modifier = Modifier.background(
-                    if (isSystemInDarkTheme()) Color(0xFF1B1B1F) else Color(0xFFFFFFFF)
-                ),
+                modifier = Modifier
+                    .background(
+                        if (isSystemInDarkTheme()) Color(0xFF1B1B1F) else Color(0xFFFFFFFF)
+                    )
+                    .padding(bottom = 16.dp),
                 calendarOptions = defaultCalendarOptions().copy(
                     calendarWeekVisible = true
                 )
@@ -93,7 +101,6 @@ fun Screen(callback: () -> Unit) {
                 modifier = Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars)
             )
         }
-
     }
 }
 
