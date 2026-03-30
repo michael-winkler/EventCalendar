@@ -27,6 +27,9 @@ data class CalendarStyle(
     val dayItemTextColor: Color,
     val dayItemBackgroundColor: Color,
 
+    val currentDayTextColor: Color,
+    val currentDayBackgroundColor: Color,
+
     val weekItemTextColor: Color,
     val weekItemBackgroundColor: Color
 )
@@ -43,6 +46,8 @@ fun defaultCalendarStyle(): CalendarStyle {
         weekDayInactiveTextColor = weekDayInactiveTextColor,
         dayItemTextColor = dayItemTextColor,
         dayItemBackgroundColor = dayItemBackgroundColor,
+        currentDayTextColor = currentDayTextColor,
+        currentDayBackgroundColor = currentDayBackgroundColor,
         weekItemTextColor = weekItemTextColor,
         weekItemBackgroundColor = weekItemBackgroundColor
     )
@@ -79,6 +84,14 @@ val dayItemTextColor: Color
 val dayItemBackgroundColor: Color
     @Composable
     get() = if (isSystemInDarkTheme()) Color(0xFF282A2C) else Color(0xFFF4F4F4)
+
+val currentDayTextColor: Color
+    @Composable
+    get() = Color.White
+
+val currentDayBackgroundColor: Color
+    @Composable
+    get() = Color.Black
 
 val weekItemTextColor: Color
     @Composable

@@ -24,12 +24,12 @@
 
     <!-- Sets the tint color for the background of the current day indicator.
          Default value: @color/ecv_black -->
-    <!-- TODO: Compose -->
+    <!-- TODO: Compose DONE-->
     <attr name="ecv_current_day_background_tint_color" format="color" />
 
     <!-- Sets the text color for the current day indicator.
          Default value: @color/ecv_white -->
-    <!-- TODO: Compose -->
+    <!-- TODO: Compose DONE-->
     <attr name="ecv_current_day_text_color" format="color" />
 
     <!-- Sets the tint color for the background of the count indicator that appears
@@ -78,13 +78,13 @@
     <!-- Sets the tint color for the background of the calendar week indicator
          when expressive UI mode is enabled.
          Default value: @color/ecv_expressive_cw_background_color -->
-    <!-- TODO: Compose -->
+    <!-- TODO: Compose DONE -->
     <attr name="ecv_expressive_cw_background_tint_color" format="color" />
 
     <!-- Sets the tint color for the background of the day indicator
          when expressive UI mode is enabled.
          Default value: @color/ecv_expressive_day_background_color -->
-    <!-- TODO: Compose -->
+    <!-- TODO: Compose DONE -->
     <attr name="ecv_expressive_day_background_tint_color" format="color" />
 
     <!--

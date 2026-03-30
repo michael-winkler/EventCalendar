@@ -73,6 +73,7 @@ fun MonthView(
                         DayItem(
                             calendarDay = day,
                             corner = corner,
+                            visibleMonth = yearMonth,
                             calendarStyle = calendarStyle
                         )
                     }
