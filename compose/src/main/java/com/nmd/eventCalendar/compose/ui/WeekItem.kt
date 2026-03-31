@@ -4,8 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,23 +19,8 @@ fun WeekItem(
     position: WeekItemPosition,
     calendarStyle: CalendarStyle
 ) {
-    val shape = when (position) {
-        WeekItemPosition.Top -> RoundedCornerShape(
-            topStart = CornerSize(50),
-            topEnd = CornerSize(50),
-            bottomStart = CornerSize(4.dp),
-            bottomEnd = CornerSize(4.dp)
-        )
-
-        WeekItemPosition.Middle -> RoundedCornerShape(4.dp)
-
-        WeekItemPosition.Bottom -> RoundedCornerShape(
-            topStart = CornerSize(4.dp),
-            topEnd = CornerSize(4.dp),
-            bottomStart = CornerSize(50),
-            bottomEnd = CornerSize(50)
-        )
-    }
+    val shapes = rememberWeekItemShapes(outerRadius = 50.dp, innerRadius = 4.dp)
+    val shape = shapes.forPosition(position)
 
     Box(
         modifier = modifier

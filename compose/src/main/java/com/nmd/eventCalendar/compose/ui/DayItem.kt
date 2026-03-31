@@ -41,7 +41,6 @@ fun DayItem(
     val shapes = rememberDayCornerShapes(outerRadius = 16.dp, innerRadius = 4.dp)
     val shape = shapes.forPosition(corner)
 
-    // Note: remember { LocalDate.now() } will not update at midnight; pass "today" from above if needed.
     val today = remember { LocalDate.now() }
 
     val isVisibleMonthCurrent = visibleMonth == YearMonth.now()
@@ -54,7 +53,6 @@ fun DayItem(
     val defaultFontStyle =
         if (calendarDay.isCurrentMonth) FontStyle.Normal else FontStyle.Italic
 
-    // Assumption: events are pre-sorted upstream.
     val dayEvents = calendarDay.events
 
     Box(
@@ -105,7 +103,6 @@ fun DayItem(
                 }
             }
 
-            // Scrollable events area = remaining space
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
