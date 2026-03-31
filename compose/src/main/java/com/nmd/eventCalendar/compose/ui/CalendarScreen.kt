@@ -61,7 +61,7 @@ fun CalendarScreen(
             }
     }
 
-    // stable lookup (lets MonthView avoid depending on whole map)
+    // stable lookup
     val eventsForDate: (LocalDate) -> List<Event> = remember(eventsByDate) {
         { date -> eventsByDate[date].orEmpty() }
     }
@@ -179,6 +179,7 @@ private fun CalendarPagerSection(
     onDaySelected: (CalendarDay) -> Unit
 ) {
     Column(modifier = modifier) {
+        // WeekHeader stays unchanged (as you requested)
         WeekHeader(
             currentMonth = currentMonth,
             itemHeight = weekHeaderHeight,
@@ -186,27 +187,66 @@ private fun CalendarPagerSection(
             calendarStyle = calendarStyle
         )
 
-        HorizontalPager(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(gridHeight),
-            state = pagerState,
-            pageSize = PageSize.Fill,
-            // optional: a bit smoother because pages are kept around
-            beyondViewportPageCount = 1
-        ) { page ->
-            val month = remember(page, baseMonth, basePage) {
-                baseMonth.plusMonths((page - basePage).toLong())
-            }
-
-            androidx.compose.runtime.key(month) {
-                MonthView(
-                    yearMonth = month,
-                    calendarOptions = calendarOptions,
-                    calendarStyle = calendarStyle,
-                    eventsForDate = eventsForDate,
-                    onDaySelected = onDaySelected
+        if (calendarOptions.calendarWeekVisible) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(gridHeight)
+            ) {
+                WeekNumberColumn(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .weight(1f),
+                    yearMonth = currentMonth,
+                    weekStart = calendarOptions.weekStart,
+                    calendarStyle = calendarStyle
                 )
+
+                HorizontalPager(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .weight(7f),
+                    state = pagerState,
+                    pageSize = PageSize.Fill,
+                    beyondViewportPageCount = 1
+                ) { page ->
+                    val month = remember(page, baseMonth, basePage) {
+                        baseMonth.plusMonths((page - basePage).toLong())
+                    }
+
+                    androidx.compose.runtime.key(month) {
+                        MonthView(
+                            yearMonth = month,
+                            calendarOptions = calendarOptions.copy(calendarWeekVisible = false),
+                            calendarStyle = calendarStyle,
+                            eventsForDate = eventsForDate,
+                            onDaySelected = onDaySelected
+                        )
+                    }
+                }
+            }
+        } else {
+            HorizontalPager(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(gridHeight),
+                state = pagerState,
+                pageSize = PageSize.Fill,
+                beyondViewportPageCount = 1
+            ) { page ->
+                val month = remember(page, baseMonth, basePage) {
+                    baseMonth.plusMonths((page - basePage).toLong())
+                }
+
+                androidx.compose.runtime.key(month) {
+                    MonthView(
+                        yearMonth = month,
+                        calendarOptions = calendarOptions,
+                        calendarStyle = calendarStyle,
+                        eventsForDate = eventsForDate,
+                        onDaySelected = onDaySelected
+                    )
+                }
             }
         }
     }
@@ -219,7 +259,7 @@ fun CalendarScreenPreview() {
     CalendarScreen(
         modifier = Modifier.fillMaxSize(),
         calendarController = rememberCalendarController(),
-        calendarOptions = defaultCalendarOptions(),
+        calendarOptions = defaultCalendarOptions().copy(calendarWeekVisible = true),
         calendarStyle = defaultCalendarStyle(),
         events = listOf(
             Event(today, "Cooking", shapeColor = Color(0xFFEF6C00), textColor = Color.White),

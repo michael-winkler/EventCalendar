@@ -30,7 +30,6 @@ fun MonthView(
     eventsForDate: (LocalDate) -> List<Event>,
     onDaySelected: (calendarDay: CalendarDay) -> Unit
 ) {
-    // Generate calendar structure only from month + weekStart (stable)
     val baseDays = remember(yearMonth, calendarOptions.weekStart) {
         generateMonthDays(
             yearMonth = yearMonth,
@@ -39,18 +38,12 @@ fun MonthView(
         )
     }
 
-    // Attach events via lookup (42 per month; cheap and stable)
     val days = remember(baseDays, eventsForDate) {
-        baseDays.map { day ->
-            // requires CalendarDay is data class with `events: List<Event>`
-            day.copy(events = eventsForDate(day.date))
-        }
+        baseDays.map { day -> day.copy(events = eventsForDate(day.date)) }
     }
 
-    // Pre-split into weeks once
     val weeks = remember(days) { days.chunked(7) }
 
-    // Precompute week numbers once (avoid WeekFields calls while laying out cells)
     val weekNumbers = remember(weeks, calendarOptions.calendarWeekVisible) {
         if (!calendarOptions.calendarWeekVisible) emptyList()
         else weeks.map { week -> week.first().date.get(WeekFields.ISO.weekOfWeekBasedYear()) }
@@ -122,11 +115,11 @@ private fun dayCornerFor(
     row: Int,
     col: Int,
     lastRow: Int
-): DayCornerPosition = when {
-    row == 0 && col == 0 -> DayCornerPosition.TopLeft
-    row == 0 && col == 6 -> DayCornerPosition.TopRight
-    row == lastRow && col == 0 -> DayCornerPosition.BottomLeft
-    row == lastRow && col == 6 -> DayCornerPosition.BottomRight
+): DayCornerPosition = when (row) {
+    0 if col == 0 -> DayCornerPosition.TopLeft
+    0 if col == 6 -> DayCornerPosition.TopRight
+    lastRow if col == 0 -> DayCornerPosition.BottomLeft
+    lastRow if col == 6 -> DayCornerPosition.BottomRight
     else -> DayCornerPosition.Default
 }
 
@@ -136,16 +129,41 @@ fun MonthViewPreview() {
     val today = LocalDate.now()
     MonthView(
         yearMonth = YearMonth.now(),
-        calendarOptions = defaultCalendarOptions(),
+        calendarOptions = defaultCalendarOptions().copy(calendarWeekVisible = true),
         calendarStyle = defaultCalendarStyle(),
         eventsForDate = { date ->
             if (date == today) {
                 listOf(
-                    Event(today, "Cooking", shapeColor = Color(0xFFEF6C00), textColor = Color.White),
-                    Event(today, "Board Games", shapeColor = Color(0xFF43A047), textColor = Color.White),
-                    Event(today, "Volunteer", shapeColor = Color(0xFF3949AB), textColor = Color.White),
-                    Event(today, "Movie Night", shapeColor = Color(0xFFFDD835), textColor = Color.Black),
-                    Event(today, "Vacation", shapeColor = Color(0xFF039BE5), textColor = Color.White),
+                    Event(
+                        today,
+                        "Cooking",
+                        shapeColor = Color(0xFFEF6C00),
+                        textColor = Color.White
+                    ),
+                    Event(
+                        today,
+                        "Board Games",
+                        shapeColor = Color(0xFF43A047),
+                        textColor = Color.White
+                    ),
+                    Event(
+                        today,
+                        "Volunteer",
+                        shapeColor = Color(0xFF3949AB),
+                        textColor = Color.White
+                    ),
+                    Event(
+                        today,
+                        "Movie Night",
+                        shapeColor = Color(0xFFFDD835),
+                        textColor = Color.Black
+                    ),
+                    Event(
+                        today,
+                        "Vacation",
+                        shapeColor = Color(0xFF039BE5),
+                        textColor = Color.White
+                    ),
                 )
             } else emptyList()
         },
