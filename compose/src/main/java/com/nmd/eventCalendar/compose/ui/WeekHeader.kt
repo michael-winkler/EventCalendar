@@ -1,10 +1,9 @@
 package com.nmd.eventCalendar.compose.ui
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -33,33 +32,33 @@ fun WeekHeader(
 
     val today = remember { LocalDate.now() }
 
-    val isCurrentMonth = today.year == currentMonth.year &&
-            today.month == currentMonth.month
+    val isCurrentMonth =
+        today.year == currentMonth.year && today.month == currentMonth.month
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(if (calendarOptions.calendarWeekVisible) 8 else 7),
-        userScrollEnabled = false
-    ) {
+    Row(modifier = Modifier.fillMaxWidth()) {
+
         if (calendarOptions.calendarWeekVisible) {
-            item {
-                Box(
-                    modifier = Modifier.height(itemHeight),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = stringResource(R.string.calendar_week_label),
-                        color = calendarStyle.defaultWeekDayTextColor,
-                        fontSize = calendarStyle.textUnit
-                    )
-                }
+            Box(
+                modifier = Modifier
+                    .height(itemHeight)
+                    .weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = stringResource(R.string.calendar_week_label),
+                    color = calendarStyle.defaultWeekDayTextColor,
+                    fontSize = calendarStyle.textUnit
+                )
             }
         }
 
-        items(daysOfWeek) { day ->
+        daysOfWeek.forEach { day ->
             val isToday = isCurrentMonth && (day == today.dayOfWeek)
 
             Box(
-                modifier = Modifier.height(itemHeight),
+                modifier = Modifier
+                    .height(itemHeight)
+                    .weight(1f),
                 contentAlignment = Alignment.Center
             ) {
                 Text(

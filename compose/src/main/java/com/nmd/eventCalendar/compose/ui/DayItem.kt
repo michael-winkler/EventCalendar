@@ -38,27 +38,12 @@ fun DayItem(
     calendarStyle: CalendarStyle,
     onDaySelected: (calendarDay: CalendarDay) -> Unit
 ) {
-    val outerRadius = 16.dp
-    val innerRadius = 4.dp
+    val shapes = rememberDayCornerShapes(outerRadius = 16.dp, innerRadius = 4.dp)
+    val shape = shapes.forPosition(corner)
 
-    val shape = when (corner) {
-        DayCornerPosition.TopLeft ->
-            RoundedCornerShape(outerRadius, innerRadius, innerRadius, innerRadius)
-
-        DayCornerPosition.TopRight ->
-            RoundedCornerShape(innerRadius, outerRadius, innerRadius, innerRadius)
-
-        DayCornerPosition.BottomLeft ->
-            RoundedCornerShape(innerRadius, innerRadius, innerRadius, outerRadius)
-
-        DayCornerPosition.BottomRight ->
-            RoundedCornerShape(innerRadius, innerRadius, outerRadius, innerRadius)
-
-        DayCornerPosition.Default ->
-            RoundedCornerShape(innerRadius)
-    }
-
+    // Note: remember { LocalDate.now() } will not update at midnight; pass "today" from above if needed.
     val today = remember { LocalDate.now() }
+
     val isVisibleMonthCurrent = visibleMonth == YearMonth.now()
     val isToday = isVisibleMonthCurrent && calendarDay.date == today
 
@@ -69,7 +54,7 @@ fun DayItem(
     val defaultFontStyle =
         if (calendarDay.isCurrentMonth) FontStyle.Normal else FontStyle.Italic
 
-    // Voraussetzung: events sind idealerweise schon vorsortiert (z.B. in CalendarScreen beim groupBy)
+    // Assumption: events are pre-sorted upstream.
     val dayEvents = calendarDay.events
 
     Box(
@@ -131,7 +116,9 @@ fun DayItem(
             ) {
                 items(
                     items = dayEvents,
-                    key = { e -> "${e.date}-${e.name}-${e.timeRange?.startHour}-${e.timeRange?.startMinute}" }
+                    key = { e ->
+                        "${e.date}-${e.name}-${e.timeRange?.startHour}-${e.timeRange?.startMinute}"
+                    }
                 ) { event ->
                     EventChip(
                         text = event.name,

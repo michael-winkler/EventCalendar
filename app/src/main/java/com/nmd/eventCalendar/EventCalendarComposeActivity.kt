@@ -69,8 +69,6 @@ class EventCalendarComposeActivity : ComponentActivity() {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Screen(callback: () -> Unit) {
-    val calendarController = rememberCalendarController()
-
     // Saveable primitives
     var weekStartValue by rememberSaveable { mutableIntStateOf(DayOfWeek.MONDAY.value) }
     var headerVisible by rememberSaveable { mutableStateOf(true) }
@@ -79,8 +77,13 @@ fun Screen(callback: () -> Unit) {
     val calendarOptions = CalendarOptions(
         weekStart = DayOfWeek.of(weekStartValue),
         headerVisible = headerVisible,
-        calendarWeekVisible = showCalendarWeek
+        calendarWeekVisible = showCalendarWeek,
+        minDate = null, //LocalDate.of(2026, 1, 1),
+        maxDate = null, // LocalDate.of(2026, 2, 1),
+        openEndedWindowMonths = 5 * 12 // 60 months total window (usually split around current month)
     )
+
+    val calendarController = rememberCalendarController(calendarOptions)
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -153,11 +156,36 @@ fun Screen(callback: () -> Unit) {
                 modifier = Modifier.padding(bottom = 16.dp),
                 calendarController = calendarController,
                 events = listOf(
-                    Event(today, "Cooking", shapeColor = Color(0xFFEF6C00), textColor = Color.White),
-                    Event(today, "Board Games", shapeColor = Color(0xFF43A047), textColor = Color.White),
-                    Event(today, "Volunteer", shapeColor = Color(0xFF3949AB), textColor = Color.White),
-                    Event(today, "Movie Night", shapeColor = Color(0xFFFDD835), textColor = Color.Black),
-                    Event(today, "Vacation", shapeColor = Color(0xFF039BE5), textColor = Color.White),
+                    Event(
+                        today,
+                        "Cooking",
+                        shapeColor = Color(0xFFEF6C00),
+                        textColor = Color.White
+                    ),
+                    Event(
+                        today,
+                        "Board Games",
+                        shapeColor = Color(0xFF43A047),
+                        textColor = Color.White
+                    ),
+                    Event(
+                        today,
+                        "Volunteer",
+                        shapeColor = Color(0xFF3949AB),
+                        textColor = Color.White
+                    ),
+                    Event(
+                        today,
+                        "Movie Night",
+                        shapeColor = Color(0xFFFDD835),
+                        textColor = Color.Black
+                    ),
+                    Event(
+                        today,
+                        "Vacation",
+                        shapeColor = Color(0xFF039BE5),
+                        textColor = Color.White
+                    ),
                 ),
                 onDaySelected = {
                     Log.i("EventCalendarCompose", "Selected day: ${it.date}")

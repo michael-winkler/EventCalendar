@@ -18,12 +18,12 @@ import java.time.YearMonth
 @Composable
 fun EventCalendarCompose(
     modifier: Modifier = Modifier,
-    calendarController: CalendarController = rememberCalendarController(),
+    calendarOptions: CalendarOptions = defaultCalendarOptions(),
+    calendarStyle: CalendarStyle = defaultCalendarStyle(),
+    calendarController: CalendarController = rememberCalendarController(calendarOptions),
     events: List<Event> = emptyList(),
     onDaySelected: (calendarDay: CalendarDay) -> Unit,
-    onMonthChange: (YearMonth) -> Unit,
-    calendarOptions: CalendarOptions = defaultCalendarOptions(),
-    calendarStyle: CalendarStyle = defaultCalendarStyle()
+    onMonthChange: (YearMonth) -> Unit
 ) {
     CalendarScreen(
         modifier = modifier.fillMaxSize(),
