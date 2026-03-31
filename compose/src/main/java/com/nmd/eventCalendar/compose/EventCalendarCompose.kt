@@ -13,23 +13,26 @@ import com.nmd.eventCalendar.compose.ui.CalendarStyle
 import com.nmd.eventCalendar.compose.ui.defaultCalendarOptions
 import com.nmd.eventCalendar.compose.ui.defaultCalendarStyle
 import com.nmd.eventCalendar.compose.ui.rememberCalendarController
+import java.time.YearMonth
 
 @Composable
 fun EventCalendarCompose(
     modifier: Modifier = Modifier,
     calendarController: CalendarController = rememberCalendarController(),
-    onDaySelected: (calendarDay: CalendarDay) -> Unit,
     events: List<Event> = emptyList(),
+    onDaySelected: (calendarDay: CalendarDay) -> Unit,
+    onMonthChange: (YearMonth) -> Unit,
     calendarOptions: CalendarOptions = defaultCalendarOptions(),
     calendarStyle: CalendarStyle = defaultCalendarStyle()
 ) {
     CalendarScreen(
         modifier = modifier.fillMaxSize(),
         calendarController = calendarController,
-        calendarOptions = calendarOptions,
-        calendarStyle = calendarStyle,
         events = events,
         onDaySelected = onDaySelected,
+        onMonthChange = onMonthChange,
+        calendarOptions = calendarOptions,
+        calendarStyle = calendarStyle,
     )
 }
 
@@ -37,6 +40,7 @@ fun EventCalendarCompose(
 @Composable
 fun EventCalendarComposePreview() {
     EventCalendarCompose(
-        onDaySelected = {}
+        onDaySelected = {},
+        onMonthChange = {}
     )
 }

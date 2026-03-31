@@ -13,9 +13,11 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.nmd.eventCalendar.compose.model.CalendarDay
 import com.nmd.eventCalendar.compose.model.Event
 import com.nmd.eventCalendar.compose.model.MonthHeaderLayout
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
@@ -32,10 +35,11 @@ import java.time.YearMonth
 fun CalendarScreen(
     modifier: Modifier,
     calendarController: CalendarController,
-    calendarOptions: CalendarOptions,
-    calendarStyle: CalendarStyle,
     events: List<Event> = emptyList(),
-    onDaySelected: (CalendarDay) -> Unit
+    onDaySelected: (CalendarDay) -> Unit,
+    onMonthChange: (YearMonth) -> Unit,
+    calendarOptions: CalendarOptions,
+    calendarStyle: CalendarStyle
 ) {
     val pagerState = calendarController.pagerState
     val scope = calendarController.scope
@@ -46,6 +50,24 @@ fun CalendarScreen(
         derivedStateOf {
             baseMonth.plusMonths((pagerState.currentPage - basePage).toLong())
         }
+    }
+
+    /**
+     * onMonthChange should fire only after scrolling/settling is finished.
+     *
+     * We use pagerState.isScrollInProgress as a reliable cross-version gate:
+     * - emit when it switches to false (scroll finished)
+     * - compute current month and call listener
+     */
+    LaunchedEffect(pagerState, baseMonth, basePage) {
+        snapshotFlow { pagerState.isScrollInProgress }
+            .distinctUntilChanged()
+            .collect { scrolling ->
+                if (!scrolling) {
+                    val month = baseMonth.plusMonths((pagerState.currentPage - basePage).toLong())
+                    onMonthChange(month)
+                }
+            }
     }
 
     // group + sort once
@@ -179,7 +201,6 @@ private fun CalendarPagerSection(
     onDaySelected: (CalendarDay) -> Unit
 ) {
     Column(modifier = modifier) {
-        // WeekHeader stays unchanged (as you requested)
         WeekHeader(
             currentMonth = currentMonth,
             itemHeight = weekHeaderHeight,
@@ -259,8 +280,6 @@ fun CalendarScreenPreview() {
     CalendarScreen(
         modifier = Modifier.fillMaxSize(),
         calendarController = rememberCalendarController(),
-        calendarOptions = defaultCalendarOptions().copy(calendarWeekVisible = true),
-        calendarStyle = defaultCalendarStyle(),
         events = listOf(
             Event(today, "Cooking", shapeColor = Color(0xFFEF6C00), textColor = Color.White),
             Event(today, "Board Games", shapeColor = Color(0xFF43A047), textColor = Color.White),
@@ -268,6 +287,9 @@ fun CalendarScreenPreview() {
             Event(today, "Movie Night", shapeColor = Color(0xFFFDD835), textColor = Color.Black),
             Event(today, "Vacation", shapeColor = Color(0xFF039BE5), textColor = Color.White),
         ),
-        onDaySelected = {}
+        onDaySelected = {},
+        onMonthChange = {},
+        calendarOptions = defaultCalendarOptions().copy(calendarWeekVisible = true),
+        calendarStyle = defaultCalendarStyle()
     )
 }
