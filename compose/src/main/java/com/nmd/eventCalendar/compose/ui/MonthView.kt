@@ -11,11 +11,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.nmd.eventCalendar.compose.model.CalendarDay
 import com.nmd.eventCalendar.compose.model.DayCornerPosition
+import com.nmd.eventCalendar.compose.model.Event
 import com.nmd.eventCalendar.compose.model.WeekItemPosition
 import com.nmd.eventCalendar.compose.util.generateMonthDays
+import java.time.LocalDate
 import java.time.YearMonth
 import java.time.temporal.WeekFields
 
@@ -24,15 +27,22 @@ fun MonthView(
     yearMonth: YearMonth,
     calendarOptions: CalendarOptions,
     calendarStyle: CalendarStyle,
+    eventsByDate: Map<LocalDate, List<Event>>,
     onDaySelected: (calendarDay: CalendarDay) -> Unit
 ) {
-    val days = remember(yearMonth, calendarOptions.weekStart) {
-        generateMonthDays(yearMonth, calendarOptions.weekStart)
+    val days = remember(yearMonth, calendarOptions.weekStart, eventsByDate) {
+        generateMonthDays(
+            yearMonth = yearMonth,
+            weekStart = calendarOptions.weekStart,
+            eventsByDate = eventsByDate
+        )
     }
+
     val weeks = remember(days) { days.chunked(7) }
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val itemHeight = maxHeight / 6
+        val constraintsScope = this
+        val itemHeight = constraintsScope.maxHeight / 6
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(if (calendarOptions.calendarWeekVisible) 8 else 7),
@@ -101,10 +111,30 @@ private fun dayCornerFor(
 @Preview(showBackground = true)
 @Composable
 fun MonthViewPreview() {
+    val today = LocalDate.now()
     MonthView(
         yearMonth = YearMonth.now(),
         calendarOptions = defaultCalendarOptions(),
         calendarStyle = defaultCalendarStyle(),
+        eventsByDate = mapOf(
+            today to listOf(
+                Event(today, "Cooking", shapeColor = Color(0xFFEF6C00), textColor = Color.White),
+                Event(
+                    today,
+                    "Board Games",
+                    shapeColor = Color(0xFF43A047),
+                    textColor = Color.White
+                ),
+                Event(today, "Volunteer", shapeColor = Color(0xFF3949AB), textColor = Color.White),
+                Event(
+                    today,
+                    "Movie Night",
+                    shapeColor = Color(0xFFFDD835),
+                    textColor = Color.Black
+                ),
+                Event(today, "Vacation", shapeColor = Color(0xFF039BE5), textColor = Color.White),
+            )
+        ),
         onDaySelected = {}
     )
 }

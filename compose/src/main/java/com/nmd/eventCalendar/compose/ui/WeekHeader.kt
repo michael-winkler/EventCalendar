@@ -49,7 +49,7 @@ fun WeekHeader(
                     Text(
                         text = stringResource(R.string.calendar_week_label),
                         color = calendarStyle.defaultWeekDayTextColor,
-                        fontSize = calendarStyle.fontsize
+                        fontSize = calendarStyle.textUnit
                     )
                 }
             }
@@ -67,7 +67,7 @@ fun WeekHeader(
                     color = if (isToday) calendarStyle.currentWeekDayTextColor
                     else calendarStyle.defaultWeekDayTextColor,
                     fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal,
-                    fontSize = calendarStyle.fontsize
+                    fontSize = calendarStyle.textUnit
                 )
             }
         }

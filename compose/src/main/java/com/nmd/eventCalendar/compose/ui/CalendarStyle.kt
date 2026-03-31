@@ -7,14 +7,11 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 
 data class CalendarStyle(
-    val fontsize: TextUnit,
-
+    val textUnit: TextUnit,
     val monthNavigationIconColor: Color,
     val monthNameTextColor: Color,
-
     val currentWeekDayTextColor: Color,
     val defaultWeekDayTextColor: Color,
-
     /**
      * Days in current month
      */
@@ -23,13 +20,10 @@ data class CalendarStyle(
      * Past or next month
      */
     val weekDayInactiveTextColor: Color,
-
     val dayItemTextColor: Color,
     val dayItemBackgroundColor: Color,
-
     val currentDayTextColor: Color,
     val currentDayBackgroundColor: Color,
-
     val weekItemTextColor: Color,
     val weekItemBackgroundColor: Color
 )
@@ -37,7 +31,7 @@ data class CalendarStyle(
 @Composable
 fun defaultCalendarStyle(): CalendarStyle {
     return CalendarStyle(
-        fontsize = 14.sp,
+        textUnit = 14.sp,
         monthNavigationIconColor = monthNavigationIconColor,
         monthNameTextColor = monthNameTextColor,
         currentWeekDayTextColor = currentWeekDayTextColor,
@@ -54,49 +48,26 @@ fun defaultCalendarStyle(): CalendarStyle {
 }
 
 val currentWeekDayTextColor: Color
-    @Composable
-    get() = if (isSystemInDarkTheme()) Color.Green else Color.Blue
-
+    @Composable get() = if (isSystemInDarkTheme()) Color.Green else Color.Blue
 val defaultWeekDayTextColor: Color
-    @Composable
-    get() = if (isSystemInDarkTheme()) Color.White else Color.Black
-
+    @Composable get() = if (isSystemInDarkTheme()) Color.White else Color.Black
 val weekDayTextColor: Color
-    @Composable
-    get() = if (isSystemInDarkTheme()) Color.White else Color.Black
-
+    @Composable get() = if (isSystemInDarkTheme()) Color.White else Color.Black
 val weekDayInactiveTextColor: Color
-    @Composable
-    get() = if (isSystemInDarkTheme()) Color.LightGray else Color.Gray
-
+    @Composable get() = if (isSystemInDarkTheme()) Color.LightGray else Color.Gray
 val monthNavigationIconColor: Color
-    @Composable
-    get() = if (isSystemInDarkTheme()) Color.White else Color.Black
-
+    @Composable get() = if (isSystemInDarkTheme()) Color.White else Color.Black
 val monthNameTextColor: Color
-    @Composable
-    get() = if (isSystemInDarkTheme()) Color.White else Color.Black
-
+    @Composable get() = if (isSystemInDarkTheme()) Color.White else Color.Black
 val dayItemTextColor: Color
-    @Composable
-    get() = if (isSystemInDarkTheme()) Color.White else Color.Black
-
+    @Composable get() = if (isSystemInDarkTheme()) Color.White else Color.Black
 val dayItemBackgroundColor: Color
-    @Composable
-    get() = if (isSystemInDarkTheme()) Color(0xFF282A2C) else Color(0xFFF4F4F4)
-
+    @Composable get() = if (isSystemInDarkTheme()) Color(0xFF282A2C) else Color(0xFFF4F4F4)
 val currentDayTextColor: Color
-    @Composable
-    get() = Color.White
-
+    @Composable get() = Color.White
 val currentDayBackgroundColor: Color
-    @Composable
-    get() = Color.Black
-
+    @Composable get() = Color.Black
 val weekItemTextColor: Color
-    @Composable
-    get() = if (isSystemInDarkTheme()) Color.White else Color.Black
-
+    @Composable get() = if (isSystemInDarkTheme()) Color.White else Color.Black
 val weekItemBackgroundColor: Color
-    @Composable
-    get() = if (isSystemInDarkTheme()) Color(0xFF3D4043) else Color(0xFFDBDCE0)
+    @Composable get() = if (isSystemInDarkTheme()) Color(0xFF3D4043) else Color(0xFFDBDCE0)

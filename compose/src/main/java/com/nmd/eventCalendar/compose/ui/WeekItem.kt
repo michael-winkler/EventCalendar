@@ -49,7 +49,7 @@ fun WeekItem(
         Text(
             text = weekNumber.toString(),
             color = calendarStyle.weekItemTextColor,
-            fontSize = calendarStyle.fontsize
+            fontSize = calendarStyle.textUnit
         )
     }
 }

@@ -4,5 +4,6 @@ import java.time.LocalDate
 
 data class CalendarDay(
     val date: LocalDate,
-    val isCurrentMonth: Boolean
+    val isCurrentMonth: Boolean,
+    val events: List<Event> = emptyList()
 )

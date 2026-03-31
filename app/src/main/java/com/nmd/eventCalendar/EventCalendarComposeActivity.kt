@@ -42,12 +42,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nmd.eventCalendar.compose.EventCalendarCompose
+import com.nmd.eventCalendar.compose.model.Event
 import com.nmd.eventCalendar.compose.ui.CalendarOptions
 import com.nmd.eventCalendar.compose.ui.defaultCalendarStyle
 import com.nmd.eventCalendar.compose.ui.rememberCalendarController
 import com.nmd.eventCalendar.theme.AppTheme
 import com.nmd.eventCalendarSample.R
 import java.time.DayOfWeek
+import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 class EventCalendarComposeActivity : ComponentActivity() {
@@ -145,15 +147,25 @@ fun Screen(callback: () -> Unit) {
                 top = paddingValues.calculateTopPadding()
             )
         ) {
+            val today = LocalDate.now()
+
             EventCalendarCompose(
                 modifier = Modifier.padding(bottom = 16.dp),
                 calendarController = calendarController,
                 onDaySelected = {
                     Log.i("EventCalendarCompose", "Selected day: ${it.date}")
+                    Log.i("EventCalendarCompose", "Selected events: ${it.events}")
                 },
                 calendarOptions = calendarOptions,
                 calendarStyle = defaultCalendarStyle().copy(
-                    fontsize = 12.sp
+                    textUnit = 12.sp
+                ),
+                events = listOf(
+                    Event(today, "Cooking", shapeColor = Color(0xFFEF6C00), textColor = Color.White),
+                    Event(today, "Board Games", shapeColor = Color(0xFF43A047), textColor = Color.White),
+                    Event(today, "Volunteer", shapeColor = Color(0xFF3949AB), textColor = Color.White),
+                    Event(today, "Movie Night", shapeColor = Color(0xFFFDD835), textColor = Color.Black),
+                    Event(today, "Vacation", shapeColor = Color(0xFF039BE5), textColor = Color.White),
                 )
             )
 

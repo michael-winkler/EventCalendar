@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.nmd.eventCalendar.compose.model.CalendarDay
+import com.nmd.eventCalendar.compose.model.Event
 import com.nmd.eventCalendar.compose.ui.CalendarController
 import com.nmd.eventCalendar.compose.ui.CalendarOptions
 import com.nmd.eventCalendar.compose.ui.CalendarScreen
@@ -18,15 +19,17 @@ fun EventCalendarCompose(
     modifier: Modifier = Modifier,
     calendarController: CalendarController = rememberCalendarController(),
     onDaySelected: (calendarDay: CalendarDay) -> Unit,
+    events: List<Event> = emptyList(),
     calendarOptions: CalendarOptions = defaultCalendarOptions(),
     calendarStyle: CalendarStyle = defaultCalendarStyle()
 ) {
     CalendarScreen(
         modifier = modifier.fillMaxSize(),
         calendarController = calendarController,
-        onDaySelected = onDaySelected,
         calendarOptions = calendarOptions,
-        calendarStyle = calendarStyle
+        calendarStyle = calendarStyle,
+        events = events,
+        onDaySelected = onDaySelected,
     )
 }
 
