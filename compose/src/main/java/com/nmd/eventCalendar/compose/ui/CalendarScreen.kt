@@ -42,18 +42,13 @@ fun CalendarScreen(
     val baseMonth = calendarController.baseMonth
     val basePage = calendarController.basePage
 
-    val currentMonth by remember {
+    val currentMonth by remember(pagerState, baseMonth, basePage) {
         derivedStateOf {
             baseMonth.plusMonths((pagerState.currentPage - basePage).toLong())
         }
     }
 
-    /**
-     * OPTIMIZATION:
-     * - group once
-     * - sort once (by timeRange start, then by name)
-     * No more sorting inside DayItem.
-     */
+    // group + sort once
     val eventsByDate: Map<LocalDate, List<Event>> = remember(events) {
         events
             .groupBy { it.date }
@@ -64,6 +59,23 @@ fun CalendarScreen(
                         .thenBy { it.name }
                 )
             }
+    }
+
+    // stable lookup (lets MonthView avoid depending on whole map)
+    val eventsForDate: (LocalDate) -> List<Event> = remember(eventsByDate) {
+        { date -> eventsByDate[date].orEmpty() }
+    }
+
+    // ensure Unit (not Job)
+    val onPrevMonth: () -> Unit = remember(scope, pagerState) {
+        {
+            scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
+        }
+    }
+    val onNextMonth: () -> Unit = remember(scope, pagerState) {
+        {
+            scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
+        }
     }
 
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
@@ -84,17 +96,12 @@ fun CalendarScreen(
                 if (calendarOptions.headerVisible) {
                     MonthHeader(
                         currentMonth = currentMonth,
-                        onPreviousMonth = {
-                            scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
-                        },
-                        onNextMonth = {
-                            scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
-                        },
+                        onPreviousMonth = onPrevMonth,
+                        onNextMonth = onNextMonth,
                         calendarStyle = calendarStyle,
                         layout = MonthHeaderLayout.TopBar
                     )
                 }
-
                 CalendarPagerSection(
                     baseMonth = baseMonth,
                     basePage = basePage,
@@ -104,7 +111,7 @@ fun CalendarScreen(
                     currentMonth = currentMonth,
                     weekHeaderHeight = weekHeaderHeight,
                     gridHeight = gridHeight,
-                    eventsByDate = eventsByDate,
+                    eventsForDate = eventsForDate,
                     modifier = Modifier.fillMaxSize(),
                     onDaySelected = onDaySelected
                 )
@@ -125,12 +132,8 @@ fun CalendarScreen(
                     ) {
                         MonthHeader(
                             currentMonth = currentMonth,
-                            onPreviousMonth = {
-                                scope.launch { pagerState.animateScrollToPage(pagerState.currentPage - 1) }
-                            },
-                            onNextMonth = {
-                                scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
-                            },
+                            onPreviousMonth = onPrevMonth,
+                            onNextMonth = onNextMonth,
                             calendarStyle = calendarStyle,
                             layout = MonthHeaderLayout.SideBar
                         )
@@ -151,7 +154,7 @@ fun CalendarScreen(
                         currentMonth = currentMonth,
                         weekHeaderHeight = weekHeaderHeight,
                         gridHeight = gridHeight,
-                        eventsByDate = eventsByDate,
+                        eventsForDate = eventsForDate,
                         modifier = Modifier.fillMaxSize(),
                         onDaySelected = onDaySelected
                     )
@@ -172,7 +175,7 @@ private fun CalendarPagerSection(
     currentMonth: YearMonth,
     weekHeaderHeight: Dp,
     gridHeight: Dp,
-    eventsByDate: Map<LocalDate, List<Event>>,
+    eventsForDate: (LocalDate) -> List<Event>,
     onDaySelected: (CalendarDay) -> Unit
 ) {
     Column(modifier = modifier) {
@@ -188,17 +191,23 @@ private fun CalendarPagerSection(
                 .fillMaxWidth()
                 .height(gridHeight),
             state = pagerState,
-            pageSize = PageSize.Fill
+            pageSize = PageSize.Fill,
+            // optional: a bit smoother because pages are kept around
+            beyondViewportPageCount = 1
         ) { page ->
-            val month = baseMonth.plusMonths((page - basePage).toLong())
+            val month = remember(page, baseMonth, basePage) {
+                baseMonth.plusMonths((page - basePage).toLong())
+            }
 
-            MonthView(
-                yearMonth = month,
-                calendarOptions = calendarOptions,
-                calendarStyle = calendarStyle,
-                eventsByDate = eventsByDate,
-                onDaySelected = onDaySelected
-            )
+            androidx.compose.runtime.key(month) {
+                MonthView(
+                    yearMonth = month,
+                    calendarOptions = calendarOptions,
+                    calendarStyle = calendarStyle,
+                    eventsForDate = eventsForDate,
+                    onDaySelected = onDaySelected
+                )
+            }
         }
     }
 }

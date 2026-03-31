@@ -2,11 +2,11 @@ package com.nmd.eventCalendar.compose.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -27,38 +27,58 @@ fun MonthView(
     yearMonth: YearMonth,
     calendarOptions: CalendarOptions,
     calendarStyle: CalendarStyle,
-    eventsByDate: Map<LocalDate, List<Event>>,
+    eventsForDate: (LocalDate) -> List<Event>,
     onDaySelected: (calendarDay: CalendarDay) -> Unit
 ) {
-    val days = remember(yearMonth, calendarOptions.weekStart, eventsByDate) {
+    // Generate calendar structure only from month + weekStart (stable)
+    val baseDays = remember(yearMonth, calendarOptions.weekStart) {
         generateMonthDays(
             yearMonth = yearMonth,
             weekStart = calendarOptions.weekStart,
-            eventsByDate = eventsByDate
+            eventsByDate = emptyMap()
         )
     }
 
+    // Attach events via lookup (42 per month; cheap and stable)
+    val days = remember(baseDays, eventsForDate) {
+        baseDays.map { day ->
+            // requires CalendarDay is data class with `events: List<Event>`
+            day.copy(events = eventsForDate(day.date))
+        }
+    }
+
+    // Pre-split into weeks once
     val weeks = remember(days) { days.chunked(7) }
+
+    // Precompute week numbers once (avoid WeekFields calls while laying out cells)
+    val weekNumbers = remember(weeks, calendarOptions.calendarWeekVisible) {
+        if (!calendarOptions.calendarWeekVisible) emptyList()
+        else weeks.map { week -> week.first().date.get(WeekFields.ISO.weekOfWeekBasedYear()) }
+    }
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val constraintsScope = this
-        val itemHeight = constraintsScope.maxHeight / 6
 
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(if (calendarOptions.calendarWeekVisible) 8 else 7),
-        ) {
+        val rows = 6
+        val cellHeight = constraintsScope.maxHeight / rows
+        val columns = if (calendarOptions.calendarWeekVisible) 8 else 7
+        val cellWidth = constraintsScope.maxWidth / columns
+
+        Column(Modifier.fillMaxSize()) {
             weeks.forEachIndexed { weekIndex, week ->
-                if (calendarOptions.calendarWeekVisible) {
-                    val weekNumber = week.first().date.get(WeekFields.ISO.weekOfWeekBasedYear())
-                    val position = when (weekIndex) {
-                        0 -> WeekItemPosition.Top
-                        weeks.lastIndex -> WeekItemPosition.Bottom
-                        else -> WeekItemPosition.Middle
-                    }
+                Row(Modifier.height(cellHeight)) {
+                    if (calendarOptions.calendarWeekVisible) {
+                        val weekNumber = weekNumbers[weekIndex]
+                        val position = when (weekIndex) {
+                            0 -> WeekItemPosition.Top
+                            weeks.lastIndex -> WeekItemPosition.Bottom
+                            else -> WeekItemPosition.Middle
+                        }
 
-                    item {
                         Box(
-                            modifier = Modifier.height(itemHeight),
+                            modifier = Modifier
+                                .width(cellWidth)
+                                .height(cellHeight),
                             contentAlignment = Alignment.Center
                         ) {
                             WeekItem(
@@ -69,26 +89,28 @@ fun MonthView(
                             )
                         }
                     }
-                }
 
-                itemsIndexed(week) { dayIndex, day ->
-                    val corner = dayCornerFor(
-                        row = weekIndex,
-                        col = dayIndex,
-                        lastRow = weeks.lastIndex
-                    )
-
-                    Box(
-                        modifier = Modifier.height(itemHeight),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        DayItem(
-                            calendarDay = day,
-                            corner = corner,
-                            visibleMonth = yearMonth,
-                            calendarStyle = calendarStyle,
-                            onDaySelected = onDaySelected
+                    week.forEachIndexed { dayIndex, day ->
+                        val corner = dayCornerFor(
+                            row = weekIndex,
+                            col = dayIndex,
+                            lastRow = weeks.lastIndex
                         )
+
+                        Box(
+                            modifier = Modifier
+                                .width(cellWidth)
+                                .height(cellHeight),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            DayItem(
+                                calendarDay = day,
+                                corner = corner,
+                                visibleMonth = yearMonth,
+                                calendarStyle = calendarStyle,
+                                onDaySelected = onDaySelected
+                            )
+                        }
                     }
                 }
             }
@@ -100,11 +122,11 @@ private fun dayCornerFor(
     row: Int,
     col: Int,
     lastRow: Int
-): DayCornerPosition = when (row) {
-    0 if col == 0 -> DayCornerPosition.TopLeft
-    0 if col == 6 -> DayCornerPosition.TopRight
-    lastRow if col == 0 -> DayCornerPosition.BottomLeft
-    lastRow if col == 6 -> DayCornerPosition.BottomRight
+): DayCornerPosition = when {
+    row == 0 && col == 0 -> DayCornerPosition.TopLeft
+    row == 0 && col == 6 -> DayCornerPosition.TopRight
+    row == lastRow && col == 0 -> DayCornerPosition.BottomLeft
+    row == lastRow && col == 6 -> DayCornerPosition.BottomRight
     else -> DayCornerPosition.Default
 }
 
@@ -116,25 +138,17 @@ fun MonthViewPreview() {
         yearMonth = YearMonth.now(),
         calendarOptions = defaultCalendarOptions(),
         calendarStyle = defaultCalendarStyle(),
-        eventsByDate = mapOf(
-            today to listOf(
-                Event(today, "Cooking", shapeColor = Color(0xFFEF6C00), textColor = Color.White),
-                Event(
-                    today,
-                    "Board Games",
-                    shapeColor = Color(0xFF43A047),
-                    textColor = Color.White
-                ),
-                Event(today, "Volunteer", shapeColor = Color(0xFF3949AB), textColor = Color.White),
-                Event(
-                    today,
-                    "Movie Night",
-                    shapeColor = Color(0xFFFDD835),
-                    textColor = Color.Black
-                ),
-                Event(today, "Vacation", shapeColor = Color(0xFF039BE5), textColor = Color.White),
-            )
-        ),
+        eventsForDate = { date ->
+            if (date == today) {
+                listOf(
+                    Event(today, "Cooking", shapeColor = Color(0xFFEF6C00), textColor = Color.White),
+                    Event(today, "Board Games", shapeColor = Color(0xFF43A047), textColor = Color.White),
+                    Event(today, "Volunteer", shapeColor = Color(0xFF3949AB), textColor = Color.White),
+                    Event(today, "Movie Night", shapeColor = Color(0xFFFDD835), textColor = Color.Black),
+                    Event(today, "Vacation", shapeColor = Color(0xFF039BE5), textColor = Color.White),
+                )
+            } else emptyList()
+        },
         onDaySelected = {}
     )
 }
