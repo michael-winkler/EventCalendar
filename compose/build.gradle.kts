@@ -45,24 +45,19 @@ android {
 }
 
 dependencies {
-    implementation(platform("androidx.compose:compose-bom:2026.03.01"))
+    api("androidx.compose.ui:ui:1.10.6")
+    api("androidx.compose.material3:material3:1.4.0")
+    api("androidx.compose.ui:ui-tooling-preview:1.10.6")
+    api("androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0")
 
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.material3:material3")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0")
-
-    debugImplementation("androidx.compose.ui:ui-tooling")
-
-    implementation("androidx.compose.material3:material3:1.4.0")
-    implementation("androidx.compose.material:material-icons-extended:1.7.8")
+    debugImplementation("androidx.compose.ui:ui-tooling:1.10.6")
 }
 
 publishing {
     publications {
         create<MavenPublication>("release") {
-            groupId = "com.nmd"
-            artifactId = "eventcalendar-compose"
+            groupId = "com.nmd.eventcalendar"
+            artifactId = "compose"
             version = project.property("VERSION_NAME") as String
 
             afterEvaluate {

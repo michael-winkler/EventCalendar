@@ -8,9 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -19,11 +16,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nmd.eventCalendar.compose.model.MonthHeaderLayout
+import com.nmd.eventcalendar.compose.R
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
@@ -115,10 +114,7 @@ private fun MonthNavButton(
 ) {
     IconButton(onClick = onClick) {
         Icon(
-            imageVector = if (isPrevious)
-                Icons.AutoMirrored.Filled.KeyboardArrowLeft
-            else
-                Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            painter = painterResource(if (isPrevious) R.drawable.chevron_left else R.drawable.chevron_right),
             contentDescription = if (isPrevious) "Previous month" else "Next month",
             tint = calendarStyle.monthNavigationIconColor
         )
