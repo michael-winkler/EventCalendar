@@ -90,7 +90,7 @@ fun Screen(
     val calendarStyle = remember(baseStyle) { baseStyle.copy(textUnit = 12.sp) }
 
     val initialSeed = rememberSaveable { System.currentTimeMillis() }
-    val eventsStore = rememberCalendarEventsStore(
+    val calendarEventsStore = rememberCalendarEventsStore(
         initialEvents = shuffleEventsForCurrentYear(
             templates = eventTemplates,
             eventCount = 250,
@@ -126,9 +126,9 @@ fun Screen(
         { showCalendarWeek = !showCalendarWeek }
     }
 
-    val onShuffleEvents: () -> Unit = remember(eventsStore) {
+    val onShuffleEvents: () -> Unit = remember(calendarEventsStore) {
         {
-            eventsStore.setEvents(
+            calendarEventsStore.setEvents(
                 shuffleEventsForCurrentYear(
                     templates = eventTemplates,
                     eventCount = 250
@@ -207,7 +207,7 @@ fun Screen(
             calendarStyle = calendarStyle,
             calendarOptions = calendarOptions,
             calendarController = calendarController,
-            calendarEventsStore = eventsStore,
+            calendarEventsStore = calendarEventsStore,
             onDaySelected = onDaySelected,
             onMonthChange = onMonthChange
         )

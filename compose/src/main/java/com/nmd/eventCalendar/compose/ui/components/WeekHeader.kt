@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,7 +21,6 @@ import com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle
 import com.nmd.eventcalendar.compose.R
 import java.time.YearMonth
 import java.time.format.TextStyle
-import java.util.Locale
 
 @Composable
 fun WeekHeader(
@@ -61,7 +61,10 @@ fun WeekHeader(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = day.getDisplayName(TextStyle.SHORT_STANDALONE, Locale.getDefault()),
+                    text = day.getDisplayName(
+                        TextStyle.SHORT_STANDALONE,
+                        LocalLocale.current.platformLocale
+                    ),
                     color = if (isToday) calendarStyle.currentWeekDayTextColor
                     else calendarStyle.defaultWeekDayTextColor,
                     fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal,
