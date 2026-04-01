@@ -109,10 +109,9 @@ fun DayItem(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f, fill = true)
+                    .weight(1f)
                     .padding(top = 4.dp),
-                verticalArrangement = Arrangement.spacedBy(2.dp),
-                userScrollEnabled = true
+                verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
                 items(
                     items = dayEvents,
@@ -121,8 +120,7 @@ fun DayItem(
                     EventChip(
                         text = event.name,
                         shapeColor = event.shapeColor,
-                        textColor = event.textColor,
-                        modifier = Modifier.fillMaxWidth()
+                        textColor = event.textColor
                     )
                 }
             }
