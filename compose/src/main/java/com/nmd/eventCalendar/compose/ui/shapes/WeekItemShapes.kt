@@ -1,8 +1,9 @@
-package com.nmd.eventCalendar.compose.ui
+package com.nmd.eventCalendar.compose.ui.shapes
 
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -11,6 +12,7 @@ import com.nmd.eventCalendar.compose.model.WeekItemPosition
 /**
  * Prebuilt shapes for week number items to avoid allocating new shapes on every recomposition.
  */
+@Stable
 data class WeekItemShapes(
     val outerRadius: Dp = 50.dp,
     val innerRadius: Dp = 4.dp,

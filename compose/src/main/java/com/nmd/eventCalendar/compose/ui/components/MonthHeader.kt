@@ -1,4 +1,4 @@
-package com.nmd.eventCalendar.compose.ui
+package com.nmd.eventCalendar.compose.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,6 +13,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -22,10 +23,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nmd.eventCalendar.compose.model.MonthHeaderLayout
+import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
+import com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle
 import com.nmd.eventcalendar.compose.R
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
+
+private val nowMonth: YearMonth = YearMonth.now()
 
 @Composable
 fun MonthHeader(
@@ -35,7 +40,11 @@ fun MonthHeader(
     calendarStyle: CalendarStyle,
     layout: MonthHeaderLayout = MonthHeaderLayout.TopBar
 ) {
-    val title = rememberMonthTitle(currentMonth)
+    val title = remember(currentMonth) {
+        val showYear = currentMonth.year != nowMonth.year
+        val monthName = currentMonth.month.getDisplayName(TextStyle.FULL, Locale.getDefault())
+        if (showYear) "$monthName ${currentMonth.year}" else monthName
+    }
 
     when (layout) {
         MonthHeaderLayout.TopBar -> {
@@ -51,13 +60,11 @@ fun MonthHeader(
                     onClick = onPreviousMonth,
                     calendarStyle = calendarStyle
                 )
-
                 MonthTitle(
                     title = title,
                     calendarStyle = calendarStyle,
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
-
                 MonthNavButton(
                     isPrevious = false,
                     onClick = onNextMonth,
@@ -77,7 +84,6 @@ fun MonthHeader(
                     onClick = onPreviousMonth,
                     calendarStyle = calendarStyle
                 )
-
                 MonthTitle(
                     title = title,
                     calendarStyle = calendarStyle,
@@ -87,7 +93,6 @@ fun MonthHeader(
                         .padding(vertical = 8.dp),
                     textAlign = TextAlign.Center
                 )
-
                 MonthNavButton(
                     isPrevious = false,
                     onClick = onNextMonth,
@@ -96,14 +101,6 @@ fun MonthHeader(
             }
         }
     }
-}
-
-@Composable
-private fun rememberMonthTitle(currentMonth: YearMonth): String {
-    val now = YearMonth.now()
-    val showYear = currentMonth.year != now.year
-    val monthName = currentMonth.month.getDisplayName(TextStyle.FULL, Locale.getDefault())
-    return if (showYear) "$monthName ${currentMonth.year}" else monthName
 }
 
 @Composable
@@ -151,12 +148,7 @@ fun MonthHeaderPreview() {
     )
 }
 
-@Preview(
-    name = "MonthHeader - SideBar",
-    showBackground = true,
-    widthDp = 96,
-    heightDp = 430
-)
+@Preview(name = "MonthHeader - SideBar", showBackground = true, widthDp = 96, heightDp = 430)
 @Composable
 fun MonthHeaderSideBarPreview() {
     MonthHeader(

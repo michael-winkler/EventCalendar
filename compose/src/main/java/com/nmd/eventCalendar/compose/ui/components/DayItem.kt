@@ -1,4 +1,4 @@
-package com.nmd.eventCalendar.compose.ui
+package com.nmd.eventCalendar.compose.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,8 +27,13 @@ import androidx.compose.ui.unit.sp
 import com.nmd.eventCalendar.compose.model.CalendarDay
 import com.nmd.eventCalendar.compose.model.DayCornerPosition
 import com.nmd.eventCalendar.compose.model.Event
+import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
+import com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle
+import com.nmd.eventCalendar.compose.ui.shapes.rememberDayCornerShapes
 import java.time.LocalDate
 import java.time.YearMonth
+
+internal val today: LocalDate = LocalDate.now()
 
 @Composable
 fun DayItem(
@@ -41,9 +46,7 @@ fun DayItem(
     val shapes = rememberDayCornerShapes(outerRadius = 16.dp, innerRadius = 4.dp)
     val shape = shapes.forPosition(corner)
 
-    val today = remember { LocalDate.now() }
-
-    val isVisibleMonthCurrent = visibleMonth == YearMonth.now()
+    val isVisibleMonthCurrent = remember(visibleMonth) { visibleMonth == YearMonth.now() }
     val isToday = isVisibleMonthCurrent && calendarDay.date == today
 
     val defaultTextColor =
@@ -54,6 +57,8 @@ fun DayItem(
         if (calendarDay.isCurrentMonth) FontStyle.Normal else FontStyle.Italic
 
     val dayEvents = calendarDay.events
+
+    val todayBadgeShape = remember { RoundedCornerShape(size = 50f) }
 
     Box(
         modifier = Modifier
@@ -70,7 +75,6 @@ fun DayItem(
                 .padding(horizontal = 4.dp, vertical = 4.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Day number (fixed area)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -82,7 +86,7 @@ fun DayItem(
                         modifier = Modifier
                             .height(23.dp)
                             .defaultMinSize(minWidth = 24.dp)
-                            .clip(RoundedCornerShape(size = 50f))
+                            .clip(todayBadgeShape)
                             .background(calendarStyle.currentDayBackgroundColor)
                             .padding(horizontal = 8.dp),
                         contentAlignment = Alignment.Center
@@ -102,7 +106,6 @@ fun DayItem(
                     )
                 }
             }
-
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -113,9 +116,7 @@ fun DayItem(
             ) {
                 items(
                     items = dayEvents,
-                    key = { e ->
-                        "${e.date}-${e.name}-${e.timeRange?.startHour}-${e.timeRange?.startMinute}"
-                    }
+                    key = { it.id }
                 ) { event ->
                     EventChip(
                         text = event.name,
@@ -132,27 +133,42 @@ fun DayItem(
 @Preview(showBackground = true)
 @Composable
 fun DayItemPreview() {
-    val today = LocalDate.now()
+    val previewToday = LocalDate.now()
     DayItem(
         calendarDay = CalendarDay(
-            date = today,
+            date = previewToday,
             isCurrentMonth = true,
             events = listOf(
-                Event(today, "Cooking", shapeColor = Color(0xFFEF6C00), textColor = Color.White),
                 Event(
-                    today,
+                    previewToday,
+                    "Cooking",
+                    shapeColor = Color(0xFFEF6C00),
+                    textColor = Color.White
+                ),
+                Event(
+                    previewToday,
                     "Board Games",
                     shapeColor = Color(0xFF43A047),
                     textColor = Color.White
                 ),
-                Event(today, "Volunteer", shapeColor = Color(0xFF3949AB), textColor = Color.White),
                 Event(
-                    today,
+                    previewToday,
+                    "Volunteer",
+                    shapeColor = Color(0xFF3949AB),
+                    textColor = Color.White
+                ),
+                Event(
+                    previewToday,
                     "Movie Night",
                     shapeColor = Color(0xFFFDD835),
                     textColor = Color.Black
                 ),
-                Event(today, "Vacation", shapeColor = Color(0xFF039BE5), textColor = Color.White),
+                Event(
+                    previewToday,
+                    "Vacation",
+                    shapeColor = Color(0xFF039BE5),
+                    textColor = Color.White
+                ),
             )
         ),
         corner = DayCornerPosition.Default,

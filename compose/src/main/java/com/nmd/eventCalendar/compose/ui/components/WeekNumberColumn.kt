@@ -1,4 +1,4 @@
-package com.nmd.eventCalendar.compose.ui
+package com.nmd.eventCalendar.compose.ui.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -11,6 +11,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.nmd.eventCalendar.compose.model.WeekItemPosition
+import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
+import com.nmd.eventCalendar.compose.util.generateMonthDays
 import java.time.DayOfWeek
 import java.time.YearMonth
 import java.time.temporal.WeekFields
@@ -23,7 +25,7 @@ fun WeekNumberColumn(
     calendarStyle: CalendarStyle
 ) {
     val weekNumbers = remember(yearMonth, weekStart) {
-        val days = com.nmd.eventCalendar.compose.util.generateMonthDays(
+        val days = generateMonthDays(
             yearMonth = yearMonth,
             weekStart = weekStart,
             eventsByDate = emptyMap()

@@ -1,7 +1,8 @@
-package com.nmd.eventCalendar.compose.ui
+package com.nmd.eventCalendar.compose.ui.shapes
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -10,6 +11,7 @@ import com.nmd.eventCalendar.compose.model.DayCornerPosition
 /**
  * Holds prebuilt day cell corner shapes to avoid re-allocating shapes on every recomposition.
  */
+@Stable
 data class DayCornerShapes(
     val outerRadius: Dp = 16.dp,
     val innerRadius: Dp = 4.dp,

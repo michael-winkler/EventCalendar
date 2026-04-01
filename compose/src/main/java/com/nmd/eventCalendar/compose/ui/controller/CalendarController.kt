@@ -1,4 +1,4 @@
-package com.nmd.eventCalendar.compose.ui
+package com.nmd.eventCalendar.compose.ui.controller
 
 import androidx.compose.foundation.pager.PagerState
 import kotlinx.coroutines.CoroutineScope

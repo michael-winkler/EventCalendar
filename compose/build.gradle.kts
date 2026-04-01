@@ -49,6 +49,8 @@ dependencies {
     api("androidx.compose.material3:material3:1.4.0")
     api("androidx.compose.ui:ui-tooling-preview:1.10.6")
     api("androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0")
+    api("androidx.compose.foundation:foundation:1.10.6")
+    api("androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0")
 
     debugImplementation("androidx.compose.ui:ui-tooling:1.10.6")
 }

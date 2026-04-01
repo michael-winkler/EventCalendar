@@ -1,7 +1,8 @@
-package com.nmd.eventCalendar.compose.ui
+package com.nmd.eventCalendar.compose.ui.config
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
@@ -15,6 +16,7 @@ import androidx.compose.ui.unit.sp
  * Tip:
  * If you need a theme-like approach, consider providing this via CompositionLocal.
  */
+@Immutable
 data class CalendarStyle(
     /** Default text size used across the calendar. */
     val textUnit: TextUnit,

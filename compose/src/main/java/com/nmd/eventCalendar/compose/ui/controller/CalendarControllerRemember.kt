@@ -1,9 +1,10 @@
-package com.nmd.eventCalendar.compose.ui
+package com.nmd.eventCalendar.compose.ui.controller
 
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import com.nmd.eventCalendar.compose.ui.config.CalendarOptions
 import java.time.YearMonth
 import kotlin.math.max
 

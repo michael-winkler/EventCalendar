@@ -1,6 +1,7 @@
-package com.nmd.eventCalendar.compose.ui
+package com.nmd.eventCalendar.compose.ui.config
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import java.time.DayOfWeek
 import java.time.LocalDate
 
@@ -21,6 +22,7 @@ import java.time.LocalDate
  * Example: {@code openEndedWindowMonths = 5 * 12} creates a 60-month window in total (not 5 years into the past AND
  * 5 years into the future).
  */
+@Immutable
 data class CalendarOptions(
     val weekStart: DayOfWeek,
     val headerVisible: Boolean,

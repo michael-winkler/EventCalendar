@@ -1,4 +1,4 @@
-package com.nmd.eventCalendar.compose.ui
+package com.nmd.eventCalendar.compose.ui.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -13,8 +13,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import com.nmd.eventCalendar.compose.ui.config.CalendarOptions
+import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
+import com.nmd.eventCalendar.compose.ui.config.defaultCalendarOptions
+import com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle
 import com.nmd.eventcalendar.compose.R
-import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
@@ -30,13 +33,11 @@ fun WeekHeader(
         (0 until 7).map { calendarOptions.weekStart.plus(it.toLong()) }
     }
 
-    val today = remember { LocalDate.now() }
-
-    val isCurrentMonth =
+    val isCurrentMonth = remember(currentMonth) {
         today.year == currentMonth.year && today.month == currentMonth.month
+    }
 
     Row(modifier = Modifier.fillMaxWidth()) {
-
         if (calendarOptions.calendarWeekVisible) {
             Box(
                 modifier = Modifier
@@ -51,10 +52,8 @@ fun WeekHeader(
                 )
             }
         }
-
         daysOfWeek.forEach { day ->
             val isToday = isCurrentMonth && (day == today.dayOfWeek)
-
             Box(
                 modifier = Modifier
                     .height(itemHeight)

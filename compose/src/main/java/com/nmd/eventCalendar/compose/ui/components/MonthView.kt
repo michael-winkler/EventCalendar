@@ -1,4 +1,4 @@
-package com.nmd.eventCalendar.compose.ui
+package com.nmd.eventCalendar.compose.ui.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -17,6 +17,10 @@ import com.nmd.eventCalendar.compose.model.CalendarDay
 import com.nmd.eventCalendar.compose.model.DayCornerPosition
 import com.nmd.eventCalendar.compose.model.Event
 import com.nmd.eventCalendar.compose.model.WeekItemPosition
+import com.nmd.eventCalendar.compose.ui.config.CalendarOptions
+import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
+import com.nmd.eventCalendar.compose.ui.config.defaultCalendarOptions
+import com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle
 import com.nmd.eventCalendar.compose.util.generateMonthDays
 import java.time.LocalDate
 import java.time.YearMonth
@@ -51,7 +55,6 @@ fun MonthView(
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val constraintsScope = this
-
         val rows = 6
         val cellHeight = constraintsScope.maxHeight / rows
         val columns = if (calendarOptions.calendarWeekVisible) 8 else 7
@@ -67,7 +70,6 @@ fun MonthView(
                             weeks.lastIndex -> WeekItemPosition.Bottom
                             else -> WeekItemPosition.Middle
                         }
-
                         Box(
                             modifier = Modifier
                                 .width(cellWidth)
@@ -82,14 +84,12 @@ fun MonthView(
                             )
                         }
                     }
-
                     week.forEachIndexed { dayIndex, day ->
                         val corner = dayCornerFor(
                             row = weekIndex,
                             col = dayIndex,
                             lastRow = weeks.lastIndex
                         )
-
                         Box(
                             modifier = Modifier
                                 .width(cellWidth)
@@ -111,11 +111,7 @@ fun MonthView(
     }
 }
 
-private fun dayCornerFor(
-    row: Int,
-    col: Int,
-    lastRow: Int
-): DayCornerPosition = when (row) {
+private fun dayCornerFor(row: Int, col: Int, lastRow: Int): DayCornerPosition = when (row) {
     0 if col == 0 -> DayCornerPosition.TopLeft
     0 if col == 6 -> DayCornerPosition.TopRight
     lastRow if col == 0 -> DayCornerPosition.BottomLeft
@@ -126,40 +122,40 @@ private fun dayCornerFor(
 @Preview(showBackground = true)
 @Composable
 fun MonthViewPreview() {
-    val today = LocalDate.now()
+    val previewToday = LocalDate.now()
     MonthView(
         yearMonth = YearMonth.now(),
         calendarOptions = defaultCalendarOptions().copy(calendarWeekVisible = true),
         calendarStyle = defaultCalendarStyle(),
         eventsForDate = { date ->
-            if (date == today) {
+            if (date == previewToday) {
                 listOf(
                     Event(
-                        today,
+                        previewToday,
                         "Cooking",
                         shapeColor = Color(0xFFEF6C00),
                         textColor = Color.White
                     ),
                     Event(
-                        today,
+                        previewToday,
                         "Board Games",
                         shapeColor = Color(0xFF43A047),
                         textColor = Color.White
                     ),
                     Event(
-                        today,
+                        previewToday,
                         "Volunteer",
                         shapeColor = Color(0xFF3949AB),
                         textColor = Color.White
                     ),
                     Event(
-                        today,
+                        previewToday,
                         "Movie Night",
                         shapeColor = Color(0xFFFDD835),
                         textColor = Color.Black
                     ),
                     Event(
-                        today,
+                        previewToday,
                         "Vacation",
                         shapeColor = Color(0xFF039BE5),
                         textColor = Color.White
