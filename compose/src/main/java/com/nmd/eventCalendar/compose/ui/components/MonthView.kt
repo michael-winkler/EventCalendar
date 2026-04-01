@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.nmd.eventCalendar.compose.model.CalendarDay
 import com.nmd.eventCalendar.compose.model.DayCornerPosition
 import com.nmd.eventCalendar.compose.model.Event
@@ -19,6 +20,7 @@ import com.nmd.eventCalendar.compose.ui.config.CalendarOptions
 import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
 import com.nmd.eventCalendar.compose.ui.config.defaultCalendarOptions
 import com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle
+import com.nmd.eventCalendar.compose.ui.shapes.rememberDayCornerShapes
 import com.nmd.eventCalendar.compose.util.generateMonthDays
 import java.time.LocalDate
 import java.time.YearMonth
@@ -46,6 +48,11 @@ fun MonthView(
         if (!calendarOptions.calendarWeekVisible) emptyList()
         else weeks.map { week -> week.first().date.get(WeekFields.ISO.weekOfWeekBasedYear()) }
     }
+
+    val cornerShapes = rememberDayCornerShapes(
+        outerRadius = 16.dp,
+        innerRadius = 4.dp
+    )
 
     Column(modifier = Modifier.fillMaxSize()) {
         weeks.forEachIndexed { weekIndex, week ->
@@ -86,7 +93,7 @@ fun MonthView(
                             .weight(1f),
                         calendarDay = day,
                         events = eventsForDate(day.date),
-                        corner = corner,
+                        shape = cornerShapes.forPosition(corner),
                         visibleMonth = yearMonth,
                         calendarStyle = calendarStyle,
                         onDaySelected = onDaySelected

@@ -5,10 +5,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -20,34 +18,31 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nmd.eventCalendar.compose.model.CalendarDay
-import com.nmd.eventCalendar.compose.model.DayCornerPosition
 import com.nmd.eventCalendar.compose.model.Event
 import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
 import com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle
-import com.nmd.eventCalendar.compose.ui.shapes.rememberDayCornerShapes
 import java.time.LocalDate
 import java.time.YearMonth
 
 internal val today: LocalDate = LocalDate.now()
+private val TodayBadgeShape = RoundedCornerShape(50)
 
 @Composable
 fun DayItem(
     modifier: Modifier = Modifier,
     calendarDay: CalendarDay,
     events: List<Event>,
-    corner: DayCornerPosition,
+    shape: Shape,
     visibleMonth: YearMonth,
     calendarStyle: CalendarStyle,
     onDaySelected: (calendarDay: CalendarDay) -> Unit
 ) {
-    val shapes = rememberDayCornerShapes(outerRadius = 16.dp, innerRadius = 4.dp)
-    val shape = shapes.forPosition(corner)
-
     val isVisibleMonthCurrent = remember(visibleMonth) { visibleMonth == YearMonth.now() }
     val isToday = isVisibleMonthCurrent && calendarDay.date == today
 
@@ -58,7 +53,8 @@ fun DayItem(
     val defaultFontStyle =
         if (calendarDay.isCurrentMonth) FontStyle.Normal else FontStyle.Italic
 
-    val todayBadgeShape = remember { RoundedCornerShape(size = 50f) }
+    val dayNumberLineHeight =
+        remember(calendarStyle.textUnit) { (calendarStyle.textUnit.value + 2f).sp }
 
     Box(
         modifier = modifier
@@ -77,16 +73,13 @@ fun DayItem(
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(23.dp),
+                    .fillMaxWidth(),
                 contentAlignment = Alignment.TopCenter
             ) {
                 if (isToday) {
                     Box(
                         modifier = Modifier
-                            .height(23.dp)
-                            .defaultMinSize(minWidth = 24.dp)
-                            .clip(todayBadgeShape)
+                            .clip(TodayBadgeShape)
                             .background(calendarStyle.currentDayBackgroundColor)
                             .padding(horizontal = 8.dp),
                         contentAlignment = Alignment.Center
@@ -94,7 +87,8 @@ fun DayItem(
                         Text(
                             text = calendarDay.date.dayOfMonth.toString(),
                             color = calendarStyle.currentDayTextColor,
-                            fontSize = calendarStyle.textUnit
+                            fontSize = calendarStyle.textUnit,
+                            lineHeight = dayNumberLineHeight
                         )
                     }
                 } else {
@@ -102,7 +96,8 @@ fun DayItem(
                         text = calendarDay.date.dayOfMonth.toString(),
                         color = defaultTextColor,
                         fontStyle = defaultFontStyle,
-                        fontSize = calendarStyle.textUnit
+                        fontSize = calendarStyle.textUnit,
+                        lineHeight = dayNumberLineHeight
                     )
                 }
             }
@@ -151,7 +146,6 @@ fun DayItem(
 @Composable
 fun DayItemPreview() {
     val previewToday = LocalDate.now()
-
     val events = listOf(
         Event(previewToday, "Cooking", shapeColor = Color(0xFFEF6C00), textColor = Color.White),
         Event(previewToday, "Board Games", shapeColor = Color(0xFF43A047), textColor = Color.White),
@@ -168,7 +162,7 @@ fun DayItemPreview() {
             events = emptyList()
         ),
         events = events,
-        corner = DayCornerPosition.Default,
+        shape = RoundedCornerShape(8.dp),
         visibleMonth = YearMonth.now(),
         calendarStyle = defaultCalendarStyle().copy(textUnit = 12.sp),
         onDaySelected = {}
