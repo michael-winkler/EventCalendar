@@ -23,21 +23,21 @@ import java.time.YearMonth
 @Composable
 fun EventCalendarCompose(
     modifier: Modifier = Modifier,
-    calendarOptions: CalendarOptions = defaultCalendarOptions(),
     calendarStyle: CalendarStyle = defaultCalendarStyle(),
+    calendarOptions: CalendarOptions = defaultCalendarOptions(),
     calendarController: CalendarController = rememberCalendarController(calendarOptions),
-    eventsStore: CalendarEventsStore,
+    calendarEventsStore: CalendarEventsStore,
     onDaySelected: (calendarDay: CalendarDay) -> Unit,
     onMonthChange: (YearMonth) -> Unit
 ) {
     CalendarScreen(
         modifier = modifier.fillMaxSize(),
-        calendarController = calendarController,
-        eventsStore = eventsStore,
-        onDaySelected = onDaySelected,
-        onMonthChange = onMonthChange,
-        calendarOptions = calendarOptions,
         calendarStyle = calendarStyle,
+        calendarOptions = calendarOptions,
+        calendarController = calendarController,
+        calendarEventsStore = calendarEventsStore,
+        onDaySelected = onDaySelected,
+        onMonthChange = onMonthChange
     )
 }
 
@@ -61,8 +61,8 @@ fun EventCalendarComposePreview() {
     }
 
     EventCalendarCompose(
+        calendarEventsStore = store,
         onDaySelected = {},
-        onMonthChange = {},
-        eventsStore = store
+        onMonthChange = {}
     )
 }

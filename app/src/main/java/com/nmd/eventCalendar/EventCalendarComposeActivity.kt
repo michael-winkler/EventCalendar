@@ -211,12 +211,12 @@ fun Screen(
         ) {
             EventCalendarCompose(
                 modifier = Modifier.padding(bottom = 16.dp),
-                calendarController = calendarController,
-                eventsStore = eventsStore,
-                onDaySelected = onDaySelected,
-                onMonthChange = onMonthChange,
+                calendarStyle = calendarStyle,
                 calendarOptions = calendarOptions,
-                calendarStyle = calendarStyle
+                calendarController = calendarController,
+                calendarEventsStore = eventsStore,
+                onDaySelected = onDaySelected,
+                onMonthChange = onMonthChange
             )
 
             Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))

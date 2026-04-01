@@ -49,13 +49,13 @@ import java.time.YearMonth
 fun CalendarScreen(
     modifier: Modifier,
     calendarController: CalendarController,
-    eventsStore: CalendarEventsStore,
-    onDaySelected: (CalendarDay) -> Unit,
-    onMonthChange: (YearMonth) -> Unit,
+    calendarEventsStore: CalendarEventsStore,
     calendarOptions: CalendarOptions,
-    calendarStyle: CalendarStyle
+    calendarStyle: CalendarStyle,
+    onDaySelected: (CalendarDay) -> Unit,
+    onMonthChange: (YearMonth) -> Unit
 ) {
-    val effectiveEvents = eventsStore.events()
+    val effectiveEvents = calendarEventsStore.events()
 
     val pagerState = calendarController.pagerState
     val currentMonth by remember(calendarController, pagerState) {
@@ -304,7 +304,7 @@ fun CalendarScreenPreview() {
     CalendarScreen(
         modifier = Modifier.fillMaxSize(),
         calendarController = rememberCalendarController(defaultCalendarOptions()),
-        eventsStore = store,
+        calendarEventsStore = store,
         onDaySelected = {},
         onMonthChange = {},
         calendarOptions = defaultCalendarOptions().copy(calendarWeekVisible = true),
