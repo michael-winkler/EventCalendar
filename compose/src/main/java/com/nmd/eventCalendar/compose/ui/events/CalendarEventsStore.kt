@@ -1,36 +1,48 @@
 package com.nmd.eventCalendar.compose.ui.events
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import com.nmd.eventCalendar.compose.model.Event
+import kotlinx.coroutines.flow.StateFlow
+import java.time.LocalDate
 
 /**
- * A composable-backed store for calendar [com.nmd.eventCalendar.compose.model.Event]s.
+ * Store abstraction for calendar events.
  *
- * The store is responsible for holding the current list of events and exposing it to Compose.
- * Implementations should ensure that:
- * - [events] returns a value that triggers recomposition when the underlying data changes
- *   (e.g. by using `mutableStateOf`, `SnapshotStateList`, `StateFlow` + `collectAsState`, etc.).
- * - [setEvents] updates the underlying state accordingly.
+ * This interface defines a simple contract for providing calendar events to the UI in a way that is
+ * efficient for Jetpack Compose.
  *
- * Note: [events] is marked as [androidx.compose.runtime.Composable] so implementations can read Compose state directly.
+ * ## Grouped events
+ * Events are exposed grouped by their [LocalDate] so the calendar UI can render each day with a
+ * fast lookup (e.g. `eventsByDate[date].orEmpty()`), avoiding repeated filtering of a flat list.
+ *
+ * ## Reactive updates
+ * [eventsByDateFlow] is a hot [StateFlow]. Consumers (Compose UI) should collect it (e.g. via
+ * `collectAsStateWithLifecycle()`) to automatically recompose when the event data changes.
+ *
+ * ## Updating events
+ * Implementations should ensure that [setEvents] updates the underlying state so that
+ * [eventsByDateFlow] emits a new value when the content changes.
+ *
+ * Threading note: Implementations may choose how and where grouping/sorting is performed
+ * (e.g. on a background dispatcher), but updates must ultimately be published through the flow.
  */
-@Immutable
 interface CalendarEventsStore {
 
     /**
-     * Returns the current list of events.
+     * A hot [StateFlow] emitting the current events grouped by date.
      *
-     * This function is composable so it can read Compose state and automatically recompose
-     * callers when the events change.
+     * The map key is the calendar day ([LocalDate]), and the value is the list of events for that day.
+     * The lists are typically pre-sorted for display (e.g. by time, then name), depending on the
+     * implementation.
      */
-    @Composable
-    fun events(): List<Event>
+    val eventsByDateFlow: StateFlow<Map<LocalDate, List<Event>>>
 
     /**
-     * Replaces the current list of events.
+     * Replaces the current set of events.
      *
-     * Implementations should update their internal observable state so UI recomposes.
+     * Implementations should update their internal observable state so [eventsByDateFlow] emits a
+     * new map reflecting the new events.
+     *
+     * @param events The new list of events to store.
      */
     fun setEvents(events: List<Event>)
 }

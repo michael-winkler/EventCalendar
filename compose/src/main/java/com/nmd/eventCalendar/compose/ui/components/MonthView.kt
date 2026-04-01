@@ -1,12 +1,10 @@
 package com.nmd.eventCalendar.compose.ui.components
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -42,69 +40,57 @@ fun MonthView(
         )
     }
 
-    val days = remember(baseDays, eventsForDate) {
-        baseDays.map { day -> day.copy(events = eventsForDate(day.date)) }
-    }
-
-    val weeks = remember(days) { days.chunked(7) }
+    val weeks: List<List<CalendarDay>> = remember(baseDays) { baseDays.chunked(7) }
 
     val weekNumbers = remember(weeks, calendarOptions.calendarWeekVisible) {
         if (!calendarOptions.calendarWeekVisible) emptyList()
         else weeks.map { week -> week.first().date.get(WeekFields.ISO.weekOfWeekBasedYear()) }
     }
 
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val constraintsScope = this
-        val rows = 6
-        val cellHeight = constraintsScope.maxHeight / rows
-        val columns = if (calendarOptions.calendarWeekVisible) 8 else 7
-        val cellWidth = constraintsScope.maxWidth / columns
+    Column(modifier = Modifier.fillMaxSize()) {
+        weeks.forEachIndexed { weekIndex, week ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (calendarOptions.calendarWeekVisible) {
+                    val weekNumber = weekNumbers[weekIndex]
+                    val position = when (weekIndex) {
+                        0 -> WeekItemPosition.Top
+                        weeks.lastIndex -> WeekItemPosition.Bottom
+                        else -> WeekItemPosition.Middle
+                    }
 
-        Column(Modifier.fillMaxSize()) {
-            weeks.forEachIndexed { weekIndex, week ->
-                Row(Modifier.height(cellHeight)) {
-                    if (calendarOptions.calendarWeekVisible) {
-                        val weekNumber = weekNumbers[weekIndex]
-                        val position = when (weekIndex) {
-                            0 -> WeekItemPosition.Top
-                            weeks.lastIndex -> WeekItemPosition.Bottom
-                            else -> WeekItemPosition.Middle
-                        }
-                        Box(
-                            modifier = Modifier
-                                .width(cellWidth)
-                                .height(cellHeight),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            WeekItem(
-                                modifier = Modifier.fillMaxSize(),
-                                weekNumber = weekNumber,
-                                position = position,
-                                calendarStyle = calendarStyle
-                            )
-                        }
-                    }
-                    week.forEachIndexed { dayIndex, day ->
-                        val corner = dayCornerFor(
-                            row = weekIndex,
-                            col = dayIndex,
-                            lastRow = weeks.lastIndex
-                        )
-                        Box(
-                            modifier = Modifier
-                                .width(cellWidth)
-                                .height(cellHeight),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            DayItem(
-                                calendarDay = day,
-                                corner = corner,
-                                visibleMonth = yearMonth,
-                                calendarStyle = calendarStyle,
-                                onDaySelected = onDaySelected
-                            )
-                        }
-                    }
+                    WeekItem(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .weight(1f),
+                        weekNumber = weekNumber,
+                        position = position,
+                        calendarStyle = calendarStyle
+                    )
+                }
+
+                week.forEachIndexed { dayIndex, day ->
+                    val corner = dayCornerFor(
+                        row = weekIndex,
+                        col = dayIndex,
+                        lastRow = weeks.lastIndex
+                    )
+
+                    DayItem(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .weight(1f),
+                        calendarDay = day,
+                        events = eventsForDate(day.date),
+                        corner = corner,
+                        visibleMonth = yearMonth,
+                        calendarStyle = calendarStyle,
+                        onDaySelected = onDaySelected
+                    )
                 }
             }
         }
@@ -123,6 +109,7 @@ private fun dayCornerFor(row: Int, col: Int, lastRow: Int): DayCornerPosition = 
 @Composable
 fun MonthViewPreview() {
     val previewToday = LocalDate.now()
+
     MonthView(
         yearMonth = YearMonth.now(),
         calendarOptions = defaultCalendarOptions().copy(calendarWeekVisible = true),

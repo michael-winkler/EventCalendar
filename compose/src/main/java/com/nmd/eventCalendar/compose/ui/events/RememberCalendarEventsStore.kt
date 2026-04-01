@@ -8,15 +8,17 @@ import com.nmd.eventCalendar.compose.model.Event
 import com.nmd.eventCalendar.compose.viewmodel.CalendarEventsViewModel
 
 /**
- * Public API: Returns a [CalendarEventsStore] backed by a [CalendarEventsViewModel],
- * so the event list survives configuration changes (e.g. device rotation).
+ * Public API that returns a [CalendarEventsStore] backed by a [CalendarEventsViewModel],
+ * so the event data survives configuration changes (e.g., device rotation).
  *
  * Behavior:
- * - [initialEvents] are applied only if the store is currently empty.
- * - No shuffling/sample-data generation logic is included in the library.
+ * - [initialEvents] are applied only if the current store is empty.
  *
- * @param initialEvents Initial list of events to seed the store with (only if empty).
- * @return A [CalendarEventsStore] that exposes the current events and allows updating them.
+ * The store exposes a [kotlinx.coroutines.flow.StateFlow] of events grouped by date via
+ * [CalendarEventsStore.eventsByDateFlow].
+ *
+ * @param initialEvents Initial list of events used to seed the store (only if the store is empty).
+ * @return A stable [CalendarEventsStore] instance.
  */
 @Composable
 fun rememberCalendarEventsStore(
@@ -25,19 +27,15 @@ fun rememberCalendarEventsStore(
     val vm: CalendarEventsViewModel = viewModel()
 
     LaunchedEffect(initialEvents) {
-        if (vm.events.isEmpty() && initialEvents.isNotEmpty()) {
-            vm.events = initialEvents
+        if (vm.rawEvents.value.isEmpty() && initialEvents.isNotEmpty()) {
+            vm.setEvents(initialEvents)
         }
     }
 
     return remember(vm) {
         object : CalendarEventsStore {
-            @Composable
-            override fun events(): List<Event> = vm.events
-
-            override fun setEvents(events: List<Event>) {
-                vm.events = events
-            }
+            override val eventsByDateFlow = vm.eventsByDateFlow
+            override fun setEvents(events: List<Event>) = vm.setEvents(events)
         }
     }
 }

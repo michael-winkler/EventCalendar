@@ -1,32 +1,39 @@
 package com.nmd.eventCalendar.compose.ui.events
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import com.nmd.eventCalendar.compose.model.Event
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import java.time.LocalDate
 
 /**
  * Simple in-memory [CalendarEventsStore] intended for previews and tests.
  *
- * It keeps events in Compose state so UI recomposes when [setEvents] replaces the list.
- *
- * @param initialEvents Initial events shown by the preview store.
+ * Stores a pre-grouped + sorted map in a StateFlow so Compose can collect it efficiently.
  */
-@Immutable
 internal class PreviewCalendarEventsStore(
     initialEvents: List<Event>
 ) : CalendarEventsStore {
 
-    private var _events by mutableStateOf(initialEvents)
+    private val _eventsByDateFlow = MutableStateFlow(buildEventsByDate(initialEvents))
+    override val eventsByDateFlow: StateFlow<Map<LocalDate, List<Event>>> =
+        _eventsByDateFlow.asStateFlow()
 
-    /** Returns the current events (observable Compose state). */
-    @Composable
-    override fun events(): List<Event> = _events
-
-    /** Replaces the current events list and triggers recomposition. */
     override fun setEvents(events: List<Event>) {
-        _events = events
+        _eventsByDateFlow.value = buildEventsByDate(events)
+    }
+
+    private fun buildEventsByDate(events: List<Event>): Map<LocalDate, List<Event>> {
+        if (events.isEmpty()) return emptyMap()
+
+        return events
+            .groupBy { it.date }
+            .mapValues { (_, list) ->
+                list.sortedWith(
+                    compareBy<Event> { it.timeRange?.startHour ?: Int.MAX_VALUE }
+                        .thenBy { it.timeRange?.startMinute ?: Int.MAX_VALUE }
+                        .thenBy { it.name }
+                )
+            }
     }
 }

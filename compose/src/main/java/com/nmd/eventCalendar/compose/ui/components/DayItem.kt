@@ -37,7 +37,9 @@ internal val today: LocalDate = LocalDate.now()
 
 @Composable
 fun DayItem(
+    modifier: Modifier = Modifier,
     calendarDay: CalendarDay,
+    events: List<Event>,
     corner: DayCornerPosition,
     visibleMonth: YearMonth,
     calendarStyle: CalendarStyle,
@@ -56,12 +58,10 @@ fun DayItem(
     val defaultFontStyle =
         if (calendarDay.isCurrentMonth) FontStyle.Normal else FontStyle.Italic
 
-    val dayEvents = calendarDay.events
-
     val todayBadgeShape = remember { RoundedCornerShape(size = 50f) }
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(2.dp)
             .background(calendarStyle.dayItemBackgroundColor, shape)
@@ -106,22 +106,41 @@ fun DayItem(
                     )
                 }
             }
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(top = 4.dp),
-                verticalArrangement = Arrangement.spacedBy(2.dp)
-            ) {
-                items(
-                    items = dayEvents,
-                    key = { it.id }
-                ) { event ->
-                    EventChip(
-                        text = event.name,
-                        shapeColor = event.shapeColor,
-                        textColor = event.textColor
-                    )
+
+            val listModifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(top = 4.dp)
+
+            if (events.size > 3) {
+                LazyColumn(
+                    modifier = listModifier,
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
+                    items(
+                        items = events,
+                        key = { it.id }
+                    ) { event ->
+                        EventChip(
+                            text = event.name,
+                            shapeColor = event.shapeColor,
+                            textColor = event.effectiveTextColor
+                        )
+                    }
+                }
+            } else {
+                Column(
+                    modifier = listModifier,
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    events.forEach { event ->
+                        EventChip(
+                            text = event.name,
+                            shapeColor = event.shapeColor,
+                            textColor = event.effectiveTextColor
+                        )
+                    }
                 }
             }
         }
@@ -132,43 +151,23 @@ fun DayItem(
 @Composable
 fun DayItemPreview() {
     val previewToday = LocalDate.now()
+
+    val events = listOf(
+        Event(previewToday, "Cooking", shapeColor = Color(0xFFEF6C00), textColor = Color.White),
+        Event(previewToday, "Board Games", shapeColor = Color(0xFF43A047), textColor = Color.White),
+        Event(previewToday, "Volunteer", shapeColor = Color(0xFF3949AB), textColor = Color.White),
+        Event(previewToday, "Movie Night", shapeColor = Color(0xFFFDD835), textColor = Color.Black),
+        Event(previewToday, "Vacation", shapeColor = Color(0xFF039BE5), textColor = Color.White),
+    )
+
     DayItem(
+        modifier = Modifier.fillMaxSize(),
         calendarDay = CalendarDay(
             date = previewToday,
             isCurrentMonth = true,
-            events = listOf(
-                Event(
-                    previewToday,
-                    "Cooking",
-                    shapeColor = Color(0xFFEF6C00),
-                    textColor = Color.White
-                ),
-                Event(
-                    previewToday,
-                    "Board Games",
-                    shapeColor = Color(0xFF43A047),
-                    textColor = Color.White
-                ),
-                Event(
-                    previewToday,
-                    "Volunteer",
-                    shapeColor = Color(0xFF3949AB),
-                    textColor = Color.White
-                ),
-                Event(
-                    previewToday,
-                    "Movie Night",
-                    shapeColor = Color(0xFFFDD835),
-                    textColor = Color.Black
-                ),
-                Event(
-                    previewToday,
-                    "Vacation",
-                    shapeColor = Color(0xFF039BE5),
-                    textColor = Color.White
-                ),
-            )
+            events = emptyList()
         ),
+        events = events,
         corner = DayCornerPosition.Default,
         visibleMonth = YearMonth.now(),
         calendarStyle = defaultCalendarStyle().copy(textUnit = 12.sp),

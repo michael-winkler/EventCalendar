@@ -1,7 +1,6 @@
 package com.nmd.eventCalendar.compose.ui
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -21,9 +20,11 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nmd.eventCalendar.compose.model.CalendarDay
 import com.nmd.eventCalendar.compose.model.Event
 import com.nmd.eventCalendar.compose.model.MonthHeaderLayout
@@ -40,10 +41,12 @@ import com.nmd.eventCalendar.compose.ui.controller.rememberCalendarController
 import com.nmd.eventCalendar.compose.ui.events.CalendarEventsStore
 import com.nmd.eventCalendar.compose.ui.events.PreviewCalendarEventsStore
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 import java.time.YearMonth
+
+private val WeekHeaderHeight = 32.dp
+private val MonthHeaderWidthLandscape = 48.dp
 
 @Composable
 fun CalendarScreen(
@@ -55,123 +58,100 @@ fun CalendarScreen(
     onDaySelected: (CalendarDay) -> Unit,
     onMonthChange: (YearMonth) -> Unit
 ) {
-    val effectiveEvents = calendarEventsStore.events()
+    val onMonthChangeState = rememberUpdatedState(onMonthChange)
+    val onDaySelectedState = rememberUpdatedState(onDaySelected)
 
     val pagerState = calendarController.pagerState
+
     val currentMonth by remember(calendarController, pagerState) {
         derivedStateOf { calendarController.pageToMonth(pagerState.currentPage) }
     }
 
-    val onMonthChangeState = rememberUpdatedState(onMonthChange)
     LaunchedEffect(pagerState, calendarController) {
-        snapshotFlow { pagerState.currentPage to pagerState.isScrollInProgress }
-            .filter { (_, scrolling) -> !scrolling }
-            .map { (page, _) -> calendarController.pageToMonth(page) }
+        snapshotFlow { pagerState.currentPage }
+            .distinctUntilChanged()
+            .map { page -> calendarController.pageToMonth(page) }
             .distinctUntilChanged()
             .collect { month -> onMonthChangeState.value(month) }
     }
 
-    val eventsByDate: Map<LocalDate, List<Event>> = remember(effectiveEvents) {
-        effectiveEvents
-            .groupBy { it.date }
-            .mapValues { (_, list) ->
-                list.sortedWith(
-                    compareBy<Event> { it.timeRange?.startHour ?: Int.MAX_VALUE }
-                        .thenBy { it.timeRange?.startMinute ?: Int.MAX_VALUE }
-                        .thenBy { it.name }
-                )
-            }
-    }
+    val eventsByDate = calendarEventsStore.eventsByDateFlow.collectAsStateWithLifecycle().value
 
     val eventsForDate: (LocalDate) -> List<Event> = remember(eventsByDate) {
         { date -> eventsByDate[date].orEmpty() }
     }
 
-    val onPrevMonth: () -> Unit = remember(calendarController) {
-        { calendarController.goToPreviousMonth() }
-    }
-    val onNextMonth: () -> Unit = remember(calendarController) {
-        { calendarController.goToNextMonth() }
-    }
+    val onPrevMonth: () -> Unit =
+        remember(calendarController) { { calendarController.goToPreviousMonth() } }
+    val onNextMonth: () -> Unit =
+        remember(calendarController) { { calendarController.goToNextMonth() } }
 
-    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
-        val isLandscape = maxWidth > maxHeight
-        val weekHeaderHeight = 32.dp
-        val monthHeaderHeightPortrait = 48.dp
-        val monthHeaderWidthLandscape = 48.dp
+    val configuration = LocalConfiguration.current
+    val isLandscape =
+        configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
 
-        if (!isLandscape) {
-            val gridHeight = remember(maxHeight, calendarOptions.headerVisible) {
-                val heightAfterHeader =
-                    maxHeight - (if (calendarOptions.headerVisible) monthHeaderHeightPortrait else 0.dp)
-                (heightAfterHeader - weekHeaderHeight).coerceAtLeast(0.dp)
-            }
-            Column(Modifier.fillMaxSize()) {
-                if (calendarOptions.headerVisible) {
+    if (isLandscape) {
+        Row(modifier = modifier.fillMaxSize()) {
+            if (calendarOptions.headerVisible) {
+                Column(
+                    modifier = Modifier
+                        .width(MonthHeaderWidthLandscape)
+                        .fillMaxHeight(),
+                    verticalArrangement = Arrangement.Top
+                ) {
                     MonthHeader(
                         currentMonth = currentMonth,
                         onPreviousMonth = onPrevMonth,
                         onNextMonth = onNextMonth,
                         calendarStyle = calendarStyle,
-                        layout = MonthHeaderLayout.TopBar
+                        layout = MonthHeaderLayout.SideBar
                     )
                 }
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .weight(1f)
+            ) {
                 CalendarPagerSection(
+                    modifier = Modifier.fillMaxSize(),
                     pagerState = pagerState,
                     calendarController = calendarController,
                     calendarOptions = calendarOptions,
                     calendarStyle = calendarStyle,
                     currentMonth = currentMonth,
-                    weekHeaderHeight = weekHeaderHeight,
-                    gridHeight = gridHeight,
+                    weekHeaderHeight = WeekHeaderHeight,
                     eventsForDate = eventsForDate,
-                    modifier = Modifier.fillMaxSize(),
-                    onDaySelected = onDaySelected
+                    onDaySelected = { day -> onDaySelectedState.value(day) }
                 )
             }
-        } else {
-            val rightWidth = remember(maxWidth) {
-                (maxWidth - monthHeaderWidthLandscape).coerceAtLeast(0.dp)
+        }
+    } else {
+        Column(modifier = modifier.fillMaxSize()) {
+            if (calendarOptions.headerVisible) {
+                MonthHeader(
+                    currentMonth = currentMonth,
+                    onPreviousMonth = onPrevMonth,
+                    onNextMonth = onNextMonth,
+                    calendarStyle = calendarStyle,
+                    layout = MonthHeaderLayout.TopBar
+                )
+            } else {
+                Column(Modifier.height(0.dp)) {}
             }
-            val gridHeight = remember(maxHeight) {
-                (maxHeight - weekHeaderHeight).coerceAtLeast(0.dp)
-            }
-            Row(Modifier.fillMaxSize()) {
-                if (calendarOptions.headerVisible) {
-                    Column(
-                        modifier = Modifier
-                            .width(monthHeaderWidthLandscape)
-                            .fillMaxHeight(),
-                        verticalArrangement = Arrangement.Top
-                    ) {
-                        MonthHeader(
-                            currentMonth = currentMonth,
-                            onPreviousMonth = onPrevMonth,
-                            onNextMonth = onNextMonth,
-                            calendarStyle = calendarStyle,
-                            layout = MonthHeaderLayout.SideBar
-                        )
-                    }
-                }
-                Column(
-                    modifier = Modifier
-                        .width(rightWidth)
-                        .fillMaxHeight()
-                ) {
-                    CalendarPagerSection(
-                        pagerState = pagerState,
-                        calendarController = calendarController,
-                        calendarOptions = calendarOptions,
-                        calendarStyle = calendarStyle,
-                        currentMonth = currentMonth,
-                        weekHeaderHeight = weekHeaderHeight,
-                        gridHeight = gridHeight,
-                        eventsForDate = eventsForDate,
-                        modifier = Modifier.fillMaxSize(),
-                        onDaySelected = onDaySelected
-                    )
-                }
-            }
+
+            CalendarPagerSection(
+                modifier = Modifier.fillMaxSize(),
+                pagerState = pagerState,
+                calendarController = calendarController,
+                calendarOptions = calendarOptions,
+                calendarStyle = calendarStyle,
+                currentMonth = currentMonth,
+                weekHeaderHeight = WeekHeaderHeight,
+                eventsForDate = eventsForDate,
+                onDaySelected = { day -> onDaySelectedState.value(day) }
+            )
         }
     }
 }
@@ -185,7 +165,6 @@ private fun CalendarPagerSection(
     calendarStyle: CalendarStyle,
     currentMonth: YearMonth,
     weekHeaderHeight: Dp,
-    gridHeight: Dp,
     eventsForDate: (LocalDate) -> List<Event>,
     onDaySelected: (CalendarDay) -> Unit
 ) {
@@ -197,19 +176,15 @@ private fun CalendarPagerSection(
             calendarStyle = calendarStyle
         )
 
-        val pagerModifier = remember(gridHeight) {
-            Modifier
-                .fillMaxWidth()
-                .height(gridHeight)
-        }
-
         if (calendarOptions.calendarWeekVisible) {
+            val monthOptionsNoWeek = remember(calendarOptions) {
+                calendarOptions.copy(calendarWeekVisible = false)
+            }
+
             Row(
-                modifier = remember(gridHeight) {
-                    Modifier
-                        .fillMaxWidth()
-                        .height(gridHeight)
-                }
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
             ) {
                 WeekNumberColumn(
                     modifier = Modifier
@@ -219,13 +194,14 @@ private fun CalendarPagerSection(
                     weekStart = calendarOptions.weekStart,
                     calendarStyle = calendarStyle
                 )
+
                 MonthPager(
                     modifier = Modifier
                         .fillMaxHeight()
                         .weight(7f),
                     pagerState = pagerState,
                     calendarController = calendarController,
-                    calendarOptions = calendarOptions.copy(calendarWeekVisible = false),
+                    calendarOptions = monthOptionsNoWeek,
                     calendarStyle = calendarStyle,
                     eventsForDate = eventsForDate,
                     onDaySelected = onDaySelected
@@ -233,7 +209,9 @@ private fun CalendarPagerSection(
             }
         } else {
             MonthPager(
-                modifier = pagerModifier,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
                 pagerState = pagerState,
                 calendarController = calendarController,
                 calendarOptions = calendarOptions,
@@ -259,18 +237,17 @@ private fun MonthPager(
         modifier = modifier,
         state = pagerState,
         pageSize = PageSize.Fill,
-        beyondViewportPageCount = 1
+        beyondViewportPageCount = 0,
+        key = { page -> calendarController.pageToMonth(page) }
     ) { page ->
         val month = calendarController.pageToMonth(page)
-        androidx.compose.runtime.key(month) {
-            MonthView(
-                yearMonth = month,
-                calendarOptions = calendarOptions,
-                calendarStyle = calendarStyle,
-                eventsForDate = eventsForDate,
-                onDaySelected = onDaySelected
-            )
-        }
+        MonthView(
+            yearMonth = month,
+            calendarOptions = calendarOptions,
+            calendarStyle = calendarStyle,
+            eventsForDate = eventsForDate,
+            onDaySelected = onDaySelected
+        )
     }
 }
 
@@ -278,7 +255,6 @@ private fun MonthPager(
 @Composable
 fun CalendarScreenPreview() {
     val today = LocalDate.now()
-
     val store = remember {
         PreviewCalendarEventsStore(
             initialEvents = listOf(

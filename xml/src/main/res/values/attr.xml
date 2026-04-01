@@ -4,12 +4,10 @@
     <!-- Indicates whether the header layout, which displays the left and right icons
          as well as the month name and year, is visible.
          Default value: true -->
-    <!-- TODO: Compose DONE -->
     <attr name="ecv_header_visible" format="boolean" />
 
     <!-- Indicates whether the calendar week column is visible.
          Default value: false -->
-    <!-- TODO: Compose DONE -->
     <attr name="ecv_calendar_week_visible" format="boolean" />
 
     <!-- Indicates whether the child view should prevent the parent view from intercepting
@@ -19,35 +17,29 @@
 
     <!-- Sets the text color for the current weekday label.
          Default value: @color/ecv_item_day_name_color -->
-    <!-- TODO: Compose DONE -->
     <attr name="ecv_current_weekday_text_color" format="color" />
 
     <!-- Sets the tint color for the background of the current day indicator.
          Default value: @color/ecv_black -->
-    <!-- TODO: Compose DONE-->
     <attr name="ecv_current_day_background_tint_color" format="color" />
 
     <!-- Sets the text color for the current day indicator.
          Default value: @color/ecv_white -->
-    <!-- TODO: Compose DONE-->
     <attr name="ecv_current_day_text_color" format="color" />
 
     <!-- Sets the tint color for the background of the count indicator that appears
          when more events exist than can be displayed on a given day.
          Default value: @color/ecv_black -->
-    <!-- TODO: Compose -->
     <attr name="ecv_count_background_tint_color" format="color" />
 
     <!-- Sets the text color for the count indicator that appears
          when more events exist than can be displayed on a given day.
          Default value: @color/ecv_white -->
-    <!-- TODO: Compose -->
     <attr name="ecv_count_background_text_color" format="color" />
 
     <!-- Indicates whether the count indicator should be visible
          when more events exist than can be displayed on a given day.
          Default value: true -->
-    <!-- TODO: Compose -->
     <attr name="ecv_count_visible" format="boolean" />
 
     <!-- Indicates whether the event item text color should be applied automatically
@@ -58,13 +50,11 @@
     <!-- Sets the text color for event items.
          Used only if ecv_event_item_automatic_text_color is set to false.
          Default value: @color/ecv_white -->
-    <!-- TODO: Compose - Not needed - Should be Event style -->
     <attr name="ecv_event_item_text_color" format="color" />
 
     <!-- Sets the text color for event items in dark mode.
          Used only if ecv_event_item_automatic_text_color is set to false.
          Default value: @color/ecv_black -->
-    <!-- TODO: Compose - Not needed - Should be Event style -->
     <attr name="ecv_event_item_dark_text_color" format="color" />
 
     <!-- Indicates whether the event calendar view should handle edge-to-edge layouts.
@@ -78,13 +68,11 @@
     <!-- Sets the tint color for the background of the calendar week indicator
          when expressive UI mode is enabled.
          Default value: @color/ecv_expressive_cw_background_color -->
-    <!-- TODO: Compose DONE -->
     <attr name="ecv_expressive_cw_background_tint_color" format="color" />
 
     <!-- Sets the tint color for the background of the day indicator
          when expressive UI mode is enabled.
          Default value: @color/ecv_expressive_day_background_color -->
-    <!-- TODO: Compose DONE -->
     <attr name="ecv_expressive_day_background_tint_color" format="color" />
 
     <!--
@@ -104,7 +92,6 @@
 
      Default value: monday
     -->
-    <!-- TODO: Compose -->
     <attr name="ecv_week_start_day">
         <enum name="sunday" value="1" />
         <enum name="monday" value="2" />

@@ -10,15 +10,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -202,25 +197,20 @@ fun Screen(
         containerColor = containerColor
     ) { paddingValues ->
         val layoutDirection = LocalLayoutDirection.current
-        Column(
+        EventCalendarCompose(
             modifier = Modifier.padding(
                 start = paddingValues.calculateStartPadding(layoutDirection),
                 end = paddingValues.calculateEndPadding(layoutDirection),
-                top = paddingValues.calculateTopPadding()
-            )
-        ) {
-            EventCalendarCompose(
-                modifier = Modifier.padding(bottom = 16.dp),
-                calendarStyle = calendarStyle,
-                calendarOptions = calendarOptions,
-                calendarController = calendarController,
-                calendarEventsStore = eventsStore,
-                onDaySelected = onDaySelected,
-                onMonthChange = onMonthChange
-            )
-
-            Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
-        }
+                top = paddingValues.calculateTopPadding(),
+                bottom = paddingValues.calculateBottomPadding() + 16.dp
+            ),
+            calendarStyle = calendarStyle,
+            calendarOptions = calendarOptions,
+            calendarController = calendarController,
+            calendarEventsStore = eventsStore,
+            onDaySelected = onDaySelected,
+            onMonthChange = onMonthChange
+        )
     }
 }
 
@@ -341,6 +331,19 @@ private val eventTemplates: List<Pair<String, Color>> = listOf(
 @Preview(showBackground = true)
 @Composable
 fun EventCalendarComposePreview() {
+    AppTheme {
+        Screen(callback = {})
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview(
+    showBackground = true,
+    widthDp = 740,
+    heightDp = 360
+)
+@Composable
+fun EventCalendarComposePreviewLandscape() {
     AppTheme {
         Screen(callback = {})
     }
