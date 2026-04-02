@@ -32,6 +32,21 @@ import java.util.Locale
 
 private val nowMonth: YearMonth = YearMonth.now()
 
+/**
+ * Displays the current month label and navigation buttons to move to the previous/next month.
+ *
+ * The component supports two layouts:
+ * - [MonthHeaderLayout.TopBar]: a horizontal header typically used in portrait layouts
+ * - [MonthHeaderLayout.SideBar]: a vertical header with rotated text typically used in landscape layouts
+ *
+ * The title shows the year only when it differs from the device's current year.
+ *
+ * @param currentMonth The month currently displayed.
+ * @param onPreviousMonth Callback invoked when the user taps the "previous month" button.
+ * @param onNextMonth Callback invoked when the user taps the "next month" button.
+ * @param calendarStyle Style configuration for colors and typography.
+ * @param layout Header layout variant.
+ */
 @Composable
 fun MonthHeader(
     currentMonth: YearMonth,
@@ -103,6 +118,13 @@ fun MonthHeader(
     }
 }
 
+/**
+ * A navigation icon button used by [MonthHeader] to move between months.
+ *
+ * @param isPrevious If true, shows the "previous" icon and accessibility label; otherwise "next".
+ * @param onClick Callback invoked when the button is tapped.
+ * @param calendarStyle Style configuration for icon tint.
+ */
 @Composable
 private fun MonthNavButton(
     isPrevious: Boolean,
@@ -118,6 +140,14 @@ private fun MonthNavButton(
     }
 }
 
+/**
+ * Renders the month title text used by [MonthHeader].
+ *
+ * @param title The formatted title to display.
+ * @param calendarStyle Style configuration for typography and text color.
+ * @param modifier Modifier applied to the text.
+ * @param textAlign Optional text alignment (useful for the rotated sidebar title).
+ */
 @Composable
 private fun MonthTitle(
     title: String,

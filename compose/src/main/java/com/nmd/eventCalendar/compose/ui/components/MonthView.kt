@@ -29,6 +29,19 @@ import java.time.temporal.WeekFields
 
 internal val PhoneLandscapeRowHeight = 90.dp
 
+/**
+ * Renders a month grid view (6 weeks x 7 days).
+ *
+ * In phone landscape mode, each week row uses a fixed height ([PhoneLandscapeRowHeight]) so the
+ * whole month can extend beyond the viewport and be scrolled by a parent container.
+ *
+ * @param yearMonth The month to display.
+ * @param calendarOptions Calendar configuration options (week start, week numbers visibility, etc.).
+ * @param calendarStyle Styling configuration (colors, typography sizes, etc.).
+ * @param eventsForDate Provides the events for a given date.
+ * @param onDaySelected Callback invoked when a day is tapped.
+ * @param phoneLandscape If true, uses a fixed row height optimized for phone landscape layouts.
+ */
 @Composable
 fun MonthView(
     yearMonth: YearMonth,
@@ -123,6 +136,7 @@ private fun dayCornerFor(row: Int, col: Int, lastRow: Int): DayCornerPosition = 
 @Composable
 fun MonthViewPreview() {
     val previewToday = LocalDate.now()
+
     MonthView(
         yearMonth = YearMonth.now(),
         calendarOptions = defaultCalendarOptions().copy(calendarWeekVisible = true),

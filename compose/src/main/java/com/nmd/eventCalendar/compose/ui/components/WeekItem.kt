@@ -18,6 +18,17 @@ import com.nmd.eventCalendar.compose.ui.shapes.WeekItemShapes
 
 private val sharedWeekItemShapes = WeekItemShapes()
 
+/**
+ * Displays a single calendar week number cell (KW).
+ *
+ * The shape can change depending on its position within the column (top/middle/bottom)
+ * to create a continuous rounded background for the week-number column.
+ *
+ * @param modifier Modifier applied to the container.
+ * @param weekNumber Week number to display.
+ * @param position Position of the item within the week-number column (top/middle/bottom).
+ * @param calendarStyle Styling configuration (colors, typography sizes, etc.).
+ */
 @Composable
 fun WeekItem(
     modifier: Modifier = Modifier,
@@ -26,6 +37,7 @@ fun WeekItem(
     calendarStyle: CalendarStyle
 ) {
     val shape = remember(position) { sharedWeekItemShapes.forPosition(position) }
+
     Box(
         modifier = modifier
             .fillMaxSize()

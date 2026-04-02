@@ -90,7 +90,6 @@ fun CalendarScreen(
     val phoneLandscape = isPhoneLandscapeWindow()
 
     if (phoneLandscape) {
-        // Phone + Landscape: Sidebar-Header links
         Row(modifier = modifier.fillMaxSize()) {
             if (calendarOptions.headerVisible) {
                 Column(
@@ -129,7 +128,6 @@ fun CalendarScreen(
             }
         }
     } else {
-        // Alle anderen: TopBar-Header
         Column(modifier = modifier.fillMaxSize()) {
             if (calendarOptions.headerVisible) {
                 MonthHeader(
@@ -181,6 +179,7 @@ private fun CalendarPagerSection(
         )
 
         val scrollState = rememberScrollState()
+
         val bodyModifier = Modifier
             .fillMaxWidth()
             .weight(1f)
@@ -247,6 +246,7 @@ private fun MonthPager(
         key = { page -> calendarController.pageToMonth(page) }
     ) { page ->
         val month = calendarController.pageToMonth(page)
+
         MonthView(
             yearMonth = month,
             calendarOptions = calendarOptions,

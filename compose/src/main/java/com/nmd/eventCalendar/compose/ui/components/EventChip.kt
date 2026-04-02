@@ -14,6 +14,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+/**
+ * Displays a compact, single-line event label (chip) with a colored background.
+ *
+ * The chip truncates text to a single line and disables soft wrapping to keep the layout stable
+ * inside calendar day cells.
+ *
+ * @param text The chip label.
+ * @param shapeColor Background color of the chip.
+ * @param textColor Text color of the chip label.
+ * @param modifier Modifier applied to the chip.
+ */
 @Composable
 internal fun EventChip(
     text: String,
@@ -22,13 +33,14 @@ internal fun EventChip(
     modifier: Modifier = Modifier,
 ) {
     val shape = remember { RoundedCornerShape(6.dp) }
+
     Text(
         text = text,
         color = textColor,
         fontSize = 10.sp,
+        lineHeight = 10.sp,
         maxLines = 1,
         softWrap = false,
-        lineHeight = 10.sp,
         modifier = modifier
             .fillMaxWidth()
             .clip(shape)

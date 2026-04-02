@@ -33,6 +33,23 @@ import java.time.YearMonth
 internal val today: LocalDate = LocalDate.now()
 private val TodayBadgeShape = RoundedCornerShape(50)
 
+/**
+ * Renders a single calendar day cell.
+ *
+ * The cell shows:
+ * - The day-of-month number (with a "today" badge when applicable)
+ * - A list of events for the given date (as chips)
+ *
+ * If there are more than 3 events, the event list becomes vertically scrollable.
+ *
+ * @param modifier Modifier applied to the outer container.
+ * @param calendarDay The day to render.
+ * @param events Events belonging to [calendarDay.date].
+ * @param shape Background/clip shape for the day cell.
+ * @param visibleMonth The month currently displayed by the calendar (used to determine "today").
+ * @param calendarStyle Styling configuration (colors, typography sizes, etc.).
+ * @param onDaySelected Callback invoked when the day cell is tapped.
+ */
 @Composable
 fun DayItem(
     modifier: Modifier = Modifier,
@@ -72,17 +89,19 @@ fun DayItem(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Box(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.TopCenter
             ) {
                 Text(
                     modifier = Modifier
                         .then(
-                            if (isToday) Modifier
-                                .clip(TodayBadgeShape)
-                                .background(calendarStyle.currentDayBackgroundColor)
-                            else Modifier
+                            if (isToday) {
+                                Modifier
+                                    .clip(TodayBadgeShape)
+                                    .background(calendarStyle.currentDayBackgroundColor)
+                            } else {
+                                Modifier
+                            }
                         )
                         .padding(horizontal = 8.dp, vertical = 2.dp),
                     text = calendarDay.date.dayOfMonth.toString(),

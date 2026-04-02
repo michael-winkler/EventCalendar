@@ -22,6 +22,19 @@ import com.nmd.eventcalendar.compose.R
 import java.time.YearMonth
 import java.time.format.TextStyle
 
+/**
+ * Displays the weekday header row for the calendar grid.
+ *
+ * Optionally renders a leading "calendar week" (KW) label cell when
+ * [CalendarOptions.calendarWeekVisible] is enabled.
+ *
+ * The current weekday (if the visible month is the device's current month) is highlighted.
+ *
+ * @param currentMonth The month currently displayed.
+ * @param itemHeight Height of each header cell.
+ * @param calendarOptions Calendar configuration options (week start, week number visibility).
+ * @param calendarStyle Styling configuration (colors, typography sizes, etc.).
+ */
 @Composable
 fun WeekHeader(
     currentMonth: YearMonth,
@@ -52,8 +65,10 @@ fun WeekHeader(
                 )
             }
         }
+
         daysOfWeek.forEach { day ->
             val isToday = isCurrentMonth && (day == today.dayOfWeek)
+
             Box(
                 modifier = Modifier
                     .height(itemHeight)
@@ -65,8 +80,11 @@ fun WeekHeader(
                         TextStyle.SHORT_STANDALONE,
                         LocalLocale.current.platformLocale
                     ),
-                    color = if (isToday) calendarStyle.currentWeekDayTextColor
-                    else calendarStyle.defaultWeekDayTextColor,
+                    color = if (isToday) {
+                        calendarStyle.currentWeekDayTextColor
+                    } else {
+                        calendarStyle.defaultWeekDayTextColor
+                    },
                     fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal,
                     fontSize = calendarStyle.textUnit
                 )
