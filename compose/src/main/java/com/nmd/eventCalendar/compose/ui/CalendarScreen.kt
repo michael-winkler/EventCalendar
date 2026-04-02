@@ -23,7 +23,6 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nmd.eventCalendar.compose.model.CalendarDay
@@ -47,9 +46,34 @@ import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 import java.time.YearMonth
 
-private val WeekHeaderHeight = 32.dp
 private val MonthHeaderWidthLandscape = 48.dp
 
+/**
+ * Root composable that renders the full calendar UI.
+ *
+ * This composable adapts its layout based on the current window size:
+ * - In **portrait** mode a vertical layout is used with the month header at the top.
+ * - In **phone landscape** mode a horizontal layout is used with the month header rendered as a
+ *   side bar on the leading edge.
+ *
+ * Internally, [CalendarScreen] wires together:
+ * - [MonthHeader] for month title and previous/next navigation.
+ * - [WeekHeader] for the weekday label row (Mon–Sun).
+ * - [WeekNumberColumn] for the optional ISO week-number column.
+ * - A [HorizontalPager] backed by [CalendarController] for month-to-month swiping.
+ * - [MonthView] for the actual 6×7 day grid inside each pager page.
+ *
+ * Event data is consumed from [calendarEventsStore] via its [CalendarEventsStore.eventsByDateFlow]
+ * and resolved per date on each composition.
+ *
+ * @param modifier Modifier applied to the root layout container.
+ * @param calendarController Controller that owns the [PagerState] and provides navigation helpers.
+ * @param calendarEventsStore Store that exposes events grouped by date as a [kotlinx.coroutines.flow.StateFlow].
+ * @param calendarOptions Configuration options (week start, header/week-number visibility, date bounds).
+ * @param calendarStyle Styling configuration (colors, typography sizes).
+ * @param onDaySelected Callback invoked when the user taps a day cell.
+ * @param onMonthChange Callback invoked whenever the visible month changes (paging or programmatic navigation).
+ */
 @Composable
 fun CalendarScreen(
     modifier: Modifier,
@@ -120,7 +144,6 @@ fun CalendarScreen(
                     calendarOptions = calendarOptions,
                     calendarStyle = calendarStyle,
                     currentMonth = currentMonth,
-                    weekHeaderHeight = WeekHeaderHeight,
                     eventsForDate = eventsForDate,
                     onDaySelected = { day -> onDaySelectedState.value(day) },
                     phoneLandscape = true
@@ -148,7 +171,6 @@ fun CalendarScreen(
                 calendarOptions = calendarOptions,
                 calendarStyle = calendarStyle,
                 currentMonth = currentMonth,
-                weekHeaderHeight = WeekHeaderHeight,
                 eventsForDate = eventsForDate,
                 onDaySelected = { day -> onDaySelectedState.value(day) },
                 phoneLandscape = false
@@ -165,7 +187,6 @@ private fun CalendarPagerSection(
     calendarOptions: CalendarOptions,
     calendarStyle: CalendarStyle,
     currentMonth: YearMonth,
-    weekHeaderHeight: Dp,
     eventsForDate: (LocalDate) -> List<Event>,
     onDaySelected: (CalendarDay) -> Unit,
     phoneLandscape: Boolean
@@ -173,7 +194,6 @@ private fun CalendarPagerSection(
     Column(modifier = modifier) {
         WeekHeader(
             currentMonth = currentMonth,
-            itemHeight = weekHeaderHeight,
             calendarOptions = calendarOptions,
             calendarStyle = calendarStyle
         )

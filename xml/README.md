@@ -1,267 +1,142 @@
-# EventCalendar
+# EventCalendar (XML/View System)
 
-[![](https://jitpack.io/v/michael-winkler/EventCalendar.svg)](https://jitpack.io/#michael-winkler/EventCalendar)
-[![Last commit](https://img.shields.io/github/last-commit/michael-winkler/EventCalendar?style=flat)](https://github.com/michael-winkler/EventCalendar/commits)
-![GitHub all releases](https://img.shields.io/github/downloads/michael-winkler/EventCalendar/total)
-[![API](https://img.shields.io/badge/API-21%2B-orange.svg?style=flat)](https://android-arsenal.com/api?level=21)
-[![License Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=true)](http://www.apache.org/licenses/LICENSE-2.0)
+A highly customizable **Month Calendar View** for the Android View System (XML), featuring event support, Material 3 design, and smooth navigation.
 
+---
 
-## Screenshots
-Default style:    
-<img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot-Default1.png" height=400px> <img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot-Default0.png" height=400px> <img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot-Default2.png" height=400px>
+## 📸 Screenshot
 
-Expressive style:    
-<img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot-Expressive1.png" height=400px> <img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot-Expressive2.png" height=400px> <img src="https://github.com/michael-winkler/EventCalendar/blob/main/images/Screenshot-Expressive3.png" height=400px>
+<p align="center">
+  <img src="../images/Screenshot_xml.png" height="500px">
+</p>
 
-## Style
-Since version 1.8.0, a new style called **“expressive”** is available.  
-It is inspired by Google’s **Material 3 expressive design** and reinterpreted in a unique way.  
+---
 
-You can enable the style in XML:  
+## 🚀 Installation
+
+### 1) Add JitPack repository
+In your `settings.gradle.kts` or root `build.gradle.kts`:
+
 ```kotlin
-app:ecv_expressive_ui="true"
-```
-Or programmatically in code:
-```kotlin
-eventCalendarView.expressiveUi = true
-```
-
-<hr>
-
-Since version 1.12.0 you can also set the week start day.
-
-You can set the week start day in XML:
-```kotlin
-app:ecv_week_start_day="monday"
-```
-Or programmatically in code:
-```kotlin
-eventCalendarView.weekStartDay = java.util.Calendar.SUNDAY
-eventCalendarSingleWeekView.weekStartDay = java.util.Calendar.SUNDAY
-```
-
-## Sample app
-https://github.com/michael-winkler/EventCalendar/releases/download/1.13.3/app-release-unsigned.apk
-
-
-## Usage
-Add a dependency to your build.gradle file:
-```kotlin
-allprojects {
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
-        ...
-        maven { url 'https://jitpack.io' }
+        google()
+        mavenCentral()
+        maven { url = uri("https://jitpack.io") }
     }
 }
+```
 
+### 2) Add the dependency
+In your app's `build.gradle.kts`:
+
+```kotlin
 dependencies {
-    implementation 'com.github.michael-winkler:EventCalendar:1.13.3'
+    implementation("com.github.michael-winkler.EventCalendar:xml:1.13.3")
 }
 ```
 
-```kotlin
-import com.nmd.eventCalendar.EventCalendarView
-```
+---
 
-## Exampe code
-You can create a new `EventCalendarView` inside your XML-Layout like this:
-```kotlin
+## 🛠 Features
+
+- **Paging:** Horizontal month-to-month paging using ViewPager2.
+- **Expressive UI:** Modern Material 3 look and feel.
+- **Single Week View:** `EventCalendarSingleWeekView` for space-saving layouts.
+- **Customizable:** Extensive XML attributes for colors, visibility, and behavior.
+- **Edge-to-Edge:** Native support for edge-to-edge drawing.
+- **Event Handling:** Easy-to-use API for adding and managing events.
+
+---
+
+## 📖 Usage
+
+### XML Layout
+Add the `EventCalendarView` to your layout:
+
+```xml
 <com.nmd.eventCalendar.EventCalendarView
     android:id="@+id/eventCalendarView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:ecv_calendar_week_visible="true"
-    app:ecv_count_background_text_color="@android:color/white"
-    app:ecv_count_background_tint_color="@android:color/holo_blue_light"
-    app:ecv_count_visible="true"
-    app:ecv_current_day_background_tint_color="@android:color/holo_red_dark"
-    app:ecv_current_day_text_color="@android:color/white"
-    app:ecv_current_weekday_text_color="@android:color/holo_red_dark"
-    app:ecv_disallow_intercept="false"
-    app:ecv_edge_to_edge_enabled="true"
-    app:ecv_event_item_automatic_text_color="true"
-    app:ecv_event_item_dark_text_color="@color/ecv_black"
-    app:ecv_event_item_text_color="@color/ecv_black"
-    app:ecv_expressive_cw_background_tint_color="@color/ecv_expressive_cw_background_color"
-    app:ecv_expressive_day_background_tint_color="@color/ecv_expressive_day_background_color"
     app:ecv_expressive_ui="true"
     app:ecv_header_visible="true"
     app:ecv_week_start_day="monday" />
 ```
 
-Or if you just want the current calendar week you can use this one:
+### Programmatic Setup
+Initialize events and listeners in your Activity or Fragment:
+
 ```kotlin
-<com.nmd.eventCalendar.EventCalendarSingleWeekView
-    android:id="@+id/eventCalendarView"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:ecv_calendar_week_visible="true"
-    app:ecv_count_background_text_color="@android:color/white"
-    app:ecv_count_background_tint_color="@android:color/holo_blue_light"
-    app:ecv_count_visible="true"
-    app:ecv_current_day_background_tint_color="@android:color/holo_red_dark"
-    app:ecv_current_day_text_color="@android:color/white"
-    app:ecv_current_weekday_text_color="@android:color/holo_red_dark"
-    app:ecv_event_item_automatic_text_color="true"
-    app:ecv_event_item_text_color="@color/ecv_black"
-    app:ecv_expressive_cw_background_tint_color="@color/ecv_expressive_cw_background_color"
-    app:ecv_expressive_day_background_tint_color="@color/ecv_expressive_day_background_color"
-    app:ecv_expressive_ui="true"
-    app:ecv_header_visible="true"
-    app:ecv_week_start_day="monday" />
-```
+val calendarView = binding.eventCalendarView
 
-Here you can see all custom `app` parameters which you can use:    
-https://github.com/michael-winkler/EventCalendar/blob/main/library/src/main/res/values/attr.xml
+// Add Events
+calendarView.events = arrayListOf(
+    Event(date = "24.12.2025", name = "Christmas", backgroundHexColor = "#FF0000"),
+    Event(date = "01.01.2026", name = "New Year", backgroundHexColor = "#00FF00")
+)
 
-The `EventCalendarSingleWeekView` can use all `app:evc` too except `ecv_disallow_intercept` and `ecv_edge_to_edge_enabled`.
-Also the `EventCalendarSingleWeekView` displays only `Events` where the date is in range of the current calendar week.
-You don't need anything to do by yourself. The library will filter automatically the events for the
-week view by itself.
-
-Now in your class you can get a reference to it like this:
-```kotlin
-binding.eventCalendarView.addOnDayClickListener(object :
-    EventCalendarDayClickListener {
+// Listen for Clicks
+calendarView.addOnDayClickListener(object : EventCalendarDayClickListener {
     override fun onClick(day: Day) {
-        // val eventList = binding.eventCalendarView.events.filter { it.date == day.date }
-        // You can use this to get the events for the selected day
-        Log.i("ECV", "TEST 1: " + day.date)
+        Log.d("Calendar", "Clicked on: ${day.date}")
     }
 })
-```
-The `EventCalendarDayClickListener` listener works also for the `EventCalendarSingleWeekView`.
 
-The `Day` object structure is following:
-```kotlin
-data class Day(
-    /**
-     * eg: 31
-     */
-    val value: String,
-    /**
-     * eg: true | false
-     */
-    val isCurrentMonth: Boolean,
-    /**
-     * eg: true | false
-     */
-    var isCurrentDay: Boolean,
-    /**
-     * eg: 31.12.2024
-     */
-    var date: String
-)
-```
-
-<hr>
-
-You can also watch to calendar scroll changes.
-
-```kotlin
-binding.eventCalendarView.addOnCalendarScrollListener(object : EventCalendarScrollListener {
+// Listen for Scroll/Month Changes
+calendarView.addOnCalendarScrollListener(object : EventCalendarScrollListener {
     override fun onScrolled(month: Int, year: Int) {
-        Log.i("ECV", "Scrolled to: $month $year")
+        Log.d("Calendar", "Visible month: $month/$year")
     }
 })
 ```
-If you scroll for example to january 2023, the `month` value will be `1` and the year `2023`.
 
-<hr>
+---
 
-It is really to easy to add events to the calendar.
-Here is an example code:
-```kotlin
-binding.eventCalendarView.events = arrayListOf(
-    Event(date = "15.04.2023", name = "Vacation", backgroundHexColor = "#4badeb"),
-    Event(date = "16.04.2023", name = "Home office", backgroundHexColor = "#e012ad"),
-    Event(date = "17.04.2023", name = "Meeting", backgroundHexColor = "#e07912"),
-    Event(date = "18.04.2023", name = "Vacation", backgroundHexColor = "#4badeb", data = "Let's go!")
-)
-```
-The date format have to be in format "dd.MM.yyyy".
+## ⚙️ Configuration
 
-The `Event` object structure is as follows:
-```kotlin
-@Parcelize
-data class Event(
-    val date: String,
-    val name: String,
-    val backgroundHexColor: String,
-    val data: @RawValue Any? = null,
-    val timeRange: EventTimeRange? = null
-) : Parcelable
-```
-The event text color is automatically determined. If the background color is dark, the text color is white. Otherwise, the text color is gray.
-You can change this behaviour with `app:ecv_event_item_automatic_text_color="false"`. And then with `app:ecv_event_item_text_color="@android:color/black"` you can set the event item text color.
+### Important XML Attributes
+| Attribute | Description |
+|-----------|-------------|
+| `app:ecv_expressive_ui` | Enables modern Material 3 design |
+| `app:ecv_week_start_day` | `monday` or `sunday` |
+| `app:ecv_calendar_week_visible` | Show/Hide ISO week numbers |
+| `app:ecv_header_visible` | Toggle visibility of the month header |
+| `app:ecv_edge_to_edge_enabled` | Enable edge-to-edge support |
 
-The `EventTimeRange` object structure is as follows:
-```kotlin
-@Parcelize
-data class EventTimeRange(
-    val startHour: Int,
-    val startMinute: Int,
-    val endHour: Int,
-    val endMinute: Int
-) : Parcelable
-```
-It allows you to store and manage the start and end times of an event for your own use cases.
-This class also includes several built-in utility functions, such as time formatting, duration calculation, validation, and overlap detection.
+### Customizing Colors
+You can override the default styles in your `themes.xml`:
 
-## Javadoc
-Each function has also a javadoc documentation.
-
-## Edge to edge support
-The `EventCalendarView` does also support edge to edge.
-```kotlin
-app:ecv_edge_to_edge_enabled="true"
-```
-You can enable or disable the edge to edge handling inside your xml configuration.
-The default value is `false`.
-
-## More color control
-If you want to change the tint of the forward and back arrows or the text color
-of the month/weekdays/calendar week, you can simply override the style in "values/themes".
-```
+```xml
 <style name="ECV_TEXT_ICON_COLOR">
-    <item name="android:textColor">#FF5733</item> <!-- Text color -->
-    <item name="tint">#FF5733</item> <!-- Icon tint -->
+    <item name="android:textColor">#FF5733</item>
+    <item name="tint">#FF5733</item>
 </style>
 ```
 
-## More text control
-If you want to change the short text for the days, then you can override the
-strings eg. in "values-en/strings".
+---
 
+## 📦 Data Models
+
+### Event
+```kotlin
+data class Event(
+    val date: String, // Format: dd.MM.yyyy
+    val name: String,
+    val backgroundHexColor: String,
+    val data: Any? = null,
+    val timeRange: EventTimeRange? = null
+)
 ```
-<string name="ecv_day_name_kw">CW</string>
-<string name="ecv_day_name_monday">M</string>
-<string name="ecv_day_name_tuesday">T</string>
-<string name="ecv_day_name_wednesday">W</string>
-<string name="ecv_day_name_thursday">T</string>
-<string name="ecv_day_name_friday">F</string>
-<string name="ecv_day_name_saturday">S</string>
-<string name="ecv_day_name_sunday">S</string>
+
+### Day
+```kotlin
+data class Day(
+    val value: String,        // Day of month (e.g. "31")
+    val isCurrentMonth: Boolean,
+    var isCurrentDay: Boolean,
+    var date: String          // Format: dd.MM.yyyy
+)
 ```
-
-
-## License
-```
-Copyright Author @NMD [Next Mobile Development - Michael Winkler]
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-```
-## Last words
-If you like this library feel free to "star" it:<br>
-![star](https://github.com/michael-winkler/Screenshot/blob/master/Images/star.png)

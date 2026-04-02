@@ -4,6 +4,14 @@ A simple, highly customizable **month calendar** for **Jetpack Compose** with pe
 
 ---
 
+## 📸 Screenshot
+
+<p align="center">
+  <img src="../images/Screenshot_compose.png" height="500px">
+</p>
+
+---
+
 ## Installation (JitPack)
 
 ### 1) Add JitPack repository
@@ -117,11 +125,3 @@ Customize colors, text sizes, and shapes:
 - **Dynamic Events:** Cells automatically handle multiple events; if more than 3 exist, the cell becomes scrollable.
 - **Theming:** Full support for Material 3 and Dark Mode.
 - **Lightweight:** Minimal dependencies, focused on performance.
-
----
-
-## License
-
-```text
-Apache License 2.0
-```

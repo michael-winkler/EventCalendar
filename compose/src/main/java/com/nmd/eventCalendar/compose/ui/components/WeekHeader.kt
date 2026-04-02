@@ -3,7 +3,7 @@ package com.nmd.eventCalendar.compose.ui.components
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -13,7 +13,7 @@ import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.nmd.eventCalendar.compose.ui.config.CalendarOptions
 import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
 import com.nmd.eventCalendar.compose.ui.config.defaultCalendarOptions
@@ -31,14 +31,12 @@ import java.time.format.TextStyle
  * The current weekday (if the visible month is the device's current month) is highlighted.
  *
  * @param currentMonth The month currently displayed.
- * @param itemHeight Height of each header cell.
  * @param calendarOptions Calendar configuration options (week start, week number visibility).
  * @param calendarStyle Styling configuration (colors, typography sizes, etc.).
  */
 @Composable
 fun WeekHeader(
     currentMonth: YearMonth,
-    itemHeight: Dp,
     calendarOptions: CalendarOptions,
     calendarStyle: CalendarStyle
 ) {
@@ -54,14 +52,15 @@ fun WeekHeader(
         if (calendarOptions.calendarWeekVisible) {
             Box(
                 modifier = Modifier
-                    .height(itemHeight)
                     .weight(1f),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
+                    modifier = Modifier.padding(vertical = 2.dp),
                     text = stringResource(R.string.calendar_week_label),
                     color = calendarStyle.defaultWeekDayTextColor,
-                    fontSize = calendarStyle.textUnit
+                    fontSize = calendarStyle.textUnit,
+                    lineHeight = calendarStyle.textUnit
                 )
             }
         }
@@ -71,11 +70,11 @@ fun WeekHeader(
 
             Box(
                 modifier = Modifier
-                    .height(itemHeight)
                     .weight(1f),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
+                    modifier = Modifier.padding(vertical = 2.dp),
                     text = day.getDisplayName(
                         TextStyle.SHORT_STANDALONE,
                         LocalLocale.current.platformLocale
@@ -86,7 +85,8 @@ fun WeekHeader(
                         calendarStyle.defaultWeekDayTextColor
                     },
                     fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal,
-                    fontSize = calendarStyle.textUnit
+                    fontSize = calendarStyle.textUnit,
+                    lineHeight = calendarStyle.textUnit
                 )
             }
         }
@@ -98,7 +98,6 @@ fun WeekHeader(
 fun WeekHeaderPreview() {
     WeekHeader(
         currentMonth = YearMonth.now(),
-        itemHeight = Dp.Unspecified,
         calendarOptions = defaultCalendarOptions(),
         calendarStyle = defaultCalendarStyle()
     )
