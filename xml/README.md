@@ -29,11 +29,11 @@ dependencyResolutionManagement {
 ```
 
 ### 2) Add the dependency
-In your app's `build.gradle.kts`:
+Replace `LATEST_VERSION` with [![](https://jitpack.io/v/michael-winkler/EventCalendar.svg)](https://jitpack.io/#michael-winkler/EventCalendar)
 
 ```kotlin
 dependencies {
-    implementation("com.github.michael-winkler.EventCalendar:xml:1.13.3")
+    implementation("com.github.michael-winkler.EventCalendar:xml:LATEST_VERSION")
 }
 ```
 
