@@ -39,7 +39,7 @@ import com.nmd.eventCalendar.compose.ui.controller.CalendarController
 import com.nmd.eventCalendar.compose.ui.controller.rememberCalendarController
 import com.nmd.eventCalendar.compose.ui.events.CalendarEventsStore
 import com.nmd.eventCalendar.compose.ui.events.PreviewCalendarEventsStore
-import com.nmd.eventCalendar.compose.util.isLandscape
+import com.nmd.eventCalendar.compose.util.isPhoneLandscapeWindow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
@@ -86,7 +86,7 @@ fun CalendarScreen(
     val onNextMonth: () -> Unit =
         remember(calendarController) { { calendarController.goToNextMonth() } }
 
-    if (isLandscape()) {
+    if (isPhoneLandscapeWindow()) {
         Row(modifier = modifier.fillMaxSize()) {
             if (calendarOptions.headerVisible) {
                 Column(

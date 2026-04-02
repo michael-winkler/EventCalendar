@@ -30,14 +30,25 @@ internal fun generateMonthDays(
 }
 
 @Composable
-internal fun isPortrait(): Boolean {
+internal fun isTabletWindow(): Boolean {
     val windowInfo = LocalWindowInfo.current
     val density = LocalDensity.current
     val widthDp = with(density) { windowInfo.containerSize.width.toDp() }
-    return widthDp < 600.dp
+    val heightDp = with(density) { windowInfo.containerSize.height.toDp() }
+    return minOf(widthDp, heightDp) >= 600.dp
 }
 
 @Composable
-internal fun isLandscape(): Boolean {
-    return !isPortrait()
+internal fun isPhoneWindow(): Boolean = !isTabletWindow()
+
+@Composable
+internal fun isLandscapeWindow(): Boolean {
+    val windowInfo = LocalWindowInfo.current
+    return windowInfo.containerSize.width >= windowInfo.containerSize.height
 }
+
+@Composable
+internal fun isPortraitWindow(): Boolean = !isLandscapeWindow()
+
+@Composable
+internal fun isPhoneLandscapeWindow(): Boolean = isPhoneWindow() && isLandscapeWindow()
