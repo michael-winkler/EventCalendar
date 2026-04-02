@@ -202,7 +202,7 @@ fun Screen(
                 start = paddingValues.calculateStartPadding(layoutDirection),
                 end = paddingValues.calculateEndPadding(layoutDirection),
                 top = paddingValues.calculateTopPadding(),
-                bottom = paddingValues.calculateBottomPadding() + 16.dp
+                bottom = paddingValues.calculateBottomPadding() + 8.dp
             ),
             calendarStyle = calendarStyle,
             calendarOptions = calendarOptions,

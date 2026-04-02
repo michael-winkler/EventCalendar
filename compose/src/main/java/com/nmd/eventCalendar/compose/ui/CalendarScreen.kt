@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -76,7 +78,6 @@ fun CalendarScreen(
     }
 
     val eventsByDate = calendarEventsStore.eventsByDateFlow.collectAsStateWithLifecycle().value
-
     val eventsForDate: (LocalDate) -> List<Event> = remember(eventsByDate) {
         { date -> eventsByDate[date].orEmpty() }
     }
@@ -86,7 +87,10 @@ fun CalendarScreen(
     val onNextMonth: () -> Unit =
         remember(calendarController) { { calendarController.goToNextMonth() } }
 
-    if (isPhoneLandscapeWindow()) {
+    val phoneLandscape = isPhoneLandscapeWindow()
+
+    if (phoneLandscape) {
+        // Phone + Landscape: Sidebar-Header links
         Row(modifier = modifier.fillMaxSize()) {
             if (calendarOptions.headerVisible) {
                 Column(
@@ -119,11 +123,13 @@ fun CalendarScreen(
                     currentMonth = currentMonth,
                     weekHeaderHeight = WeekHeaderHeight,
                     eventsForDate = eventsForDate,
-                    onDaySelected = { day -> onDaySelectedState.value(day) }
+                    onDaySelected = { day -> onDaySelectedState.value(day) },
+                    phoneLandscape = true
                 )
             }
         }
     } else {
+        // Alle anderen: TopBar-Header
         Column(modifier = modifier.fillMaxSize()) {
             if (calendarOptions.headerVisible) {
                 MonthHeader(
@@ -146,7 +152,8 @@ fun CalendarScreen(
                 currentMonth = currentMonth,
                 weekHeaderHeight = WeekHeaderHeight,
                 eventsForDate = eventsForDate,
-                onDaySelected = { day -> onDaySelectedState.value(day) }
+                onDaySelected = { day -> onDaySelectedState.value(day) },
+                phoneLandscape = false
             )
         }
     }
@@ -162,7 +169,8 @@ private fun CalendarPagerSection(
     currentMonth: YearMonth,
     weekHeaderHeight: Dp,
     eventsForDate: (LocalDate) -> List<Event>,
-    onDaySelected: (CalendarDay) -> Unit
+    onDaySelected: (CalendarDay) -> Unit,
+    phoneLandscape: Boolean
 ) {
     Column(modifier = modifier) {
         WeekHeader(
@@ -172,49 +180,50 @@ private fun CalendarPagerSection(
             calendarStyle = calendarStyle
         )
 
-        if (calendarOptions.calendarWeekVisible) {
-            val monthOptionsNoWeek = remember(calendarOptions) {
-                calendarOptions.copy(calendarWeekVisible = false)
-            }
+        val scrollState = rememberScrollState()
+        val bodyModifier = Modifier
+            .fillMaxWidth()
+            .weight(1f)
+            .then(if (phoneLandscape) Modifier.verticalScroll(scrollState) else Modifier)
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-            ) {
-                WeekNumberColumn(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .weight(1f),
-                    yearMonth = currentMonth,
-                    weekStart = calendarOptions.weekStart,
-                    calendarStyle = calendarStyle
-                )
+        Column(modifier = bodyModifier) {
+            if (calendarOptions.calendarWeekVisible) {
+                val monthOptionsNoWeek = remember(calendarOptions) {
+                    calendarOptions.copy(calendarWeekVisible = false)
+                }
 
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    WeekNumberColumn(
+                        modifier = Modifier.weight(1f),
+                        yearMonth = currentMonth,
+                        weekStart = calendarOptions.weekStart,
+                        calendarStyle = calendarStyle,
+                        phoneLandscape = phoneLandscape
+                    )
+
+                    MonthPager(
+                        modifier = Modifier.weight(7f),
+                        pagerState = pagerState,
+                        calendarController = calendarController,
+                        calendarOptions = monthOptionsNoWeek,
+                        calendarStyle = calendarStyle,
+                        eventsForDate = eventsForDate,
+                        onDaySelected = onDaySelected,
+                        phoneLandscape = phoneLandscape
+                    )
+                }
+            } else {
                 MonthPager(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .weight(7f),
+                    modifier = Modifier.fillMaxWidth(),
                     pagerState = pagerState,
                     calendarController = calendarController,
-                    calendarOptions = monthOptionsNoWeek,
+                    calendarOptions = calendarOptions,
                     calendarStyle = calendarStyle,
                     eventsForDate = eventsForDate,
-                    onDaySelected = onDaySelected
+                    onDaySelected = onDaySelected,
+                    phoneLandscape = phoneLandscape
                 )
             }
-        } else {
-            MonthPager(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                pagerState = pagerState,
-                calendarController = calendarController,
-                calendarOptions = calendarOptions,
-                calendarStyle = calendarStyle,
-                eventsForDate = eventsForDate,
-                onDaySelected = onDaySelected
-            )
         }
     }
 }
@@ -227,7 +236,8 @@ private fun MonthPager(
     calendarOptions: CalendarOptions,
     calendarStyle: CalendarStyle,
     eventsForDate: (LocalDate) -> List<Event>,
-    onDaySelected: (CalendarDay) -> Unit
+    onDaySelected: (CalendarDay) -> Unit,
+    phoneLandscape: Boolean
 ) {
     HorizontalPager(
         modifier = modifier,
@@ -242,7 +252,8 @@ private fun MonthPager(
             calendarOptions = calendarOptions,
             calendarStyle = calendarStyle,
             eventsForDate = eventsForDate,
-            onDaySelected = onDaySelected
+            onDaySelected = onDaySelected,
+            phoneLandscape = phoneLandscape
         )
     }
 }

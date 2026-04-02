@@ -2,14 +2,16 @@ package com.nmd.eventCalendar.compose.ui.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.nmd.eventCalendar.compose.model.WeekItemPosition
+import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
 import com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle
 import com.nmd.eventCalendar.compose.util.generateMonthDays
 import java.time.DayOfWeek
@@ -21,7 +23,8 @@ fun WeekNumberColumn(
     modifier: Modifier = Modifier,
     yearMonth: YearMonth,
     weekStart: DayOfWeek,
-    calendarStyle: com.nmd.eventCalendar.compose.ui.config.CalendarStyle
+    calendarStyle: CalendarStyle,
+    phoneLandscape: Boolean = false
 ) {
     val weekNumbers = remember(yearMonth, weekStart) {
         val days = generateMonthDays(
@@ -33,10 +36,7 @@ fun WeekNumberColumn(
         weeks.map { week -> week.first().date.get(WeekFields.ISO.weekOfWeekBasedYear()) }
     }
 
-    Column(
-        modifier = modifier
-            .fillMaxHeight()
-    ) {
+    Column(modifier = modifier) {
         weekNumbers.forEachIndexed { index, weekNumber ->
             val position = when (index) {
                 0 -> WeekItemPosition.Top
@@ -45,7 +45,12 @@ fun WeekNumberColumn(
             }
 
             Box(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .then(
+                        if (phoneLandscape) Modifier.height(PhoneLandscapeRowHeight)
+                        else Modifier.weight(1f)
+                    ),
                 contentAlignment = Alignment.Center
             ) {
                 WeekItem(
@@ -59,13 +64,14 @@ fun WeekNumberColumn(
     }
 }
 
-@Preview(showBackground = true, widthDp = 80, heightDp = 320)
+@Preview(showBackground = true, widthDp = 80, heightDp = 520)
 @Composable
 fun WeekNumberColumnPreview() {
     WeekNumberColumn(
-        modifier = Modifier.fillMaxHeight(),
+        modifier = Modifier,
         yearMonth = YearMonth.now(),
         weekStart = DayOfWeek.MONDAY,
-        calendarStyle = defaultCalendarStyle()
+        calendarStyle = defaultCalendarStyle(),
+        phoneLandscape = true
     )
 }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -26,13 +27,16 @@ import java.time.LocalDate
 import java.time.YearMonth
 import java.time.temporal.WeekFields
 
+internal val PhoneLandscapeRowHeight = 90.dp
+
 @Composable
 fun MonthView(
     yearMonth: YearMonth,
     calendarOptions: CalendarOptions,
     calendarStyle: CalendarStyle,
     eventsForDate: (LocalDate) -> List<Event>,
-    onDaySelected: (calendarDay: CalendarDay) -> Unit
+    onDaySelected: (calendarDay: CalendarDay) -> Unit,
+    phoneLandscape: Boolean = false
 ) {
     val baseDays = remember(yearMonth, calendarOptions.weekStart) {
         generateMonthDays(
@@ -59,7 +63,10 @@ fun MonthView(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
+                    .then(
+                        if (phoneLandscape) Modifier.height(PhoneLandscapeRowHeight)
+                        else Modifier.weight(1f)
+                    ),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (calendarOptions.calendarWeekVisible) {
@@ -116,7 +123,6 @@ private fun dayCornerFor(row: Int, col: Int, lastRow: Int): DayCornerPosition = 
 @Composable
 fun MonthViewPreview() {
     val previewToday = LocalDate.now()
-
     MonthView(
         yearMonth = YearMonth.now(),
         calendarOptions = defaultCalendarOptions().copy(calendarWeekVisible = true),
@@ -157,6 +163,7 @@ fun MonthViewPreview() {
                 )
             } else emptyList()
         },
-        onDaySelected = {}
+        onDaySelected = {},
+        phoneLandscape = true
     )
 }
