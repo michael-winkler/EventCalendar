@@ -20,7 +20,6 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -40,6 +39,7 @@ import com.nmd.eventCalendar.compose.ui.controller.CalendarController
 import com.nmd.eventCalendar.compose.ui.controller.rememberCalendarController
 import com.nmd.eventCalendar.compose.ui.events.CalendarEventsStore
 import com.nmd.eventCalendar.compose.ui.events.PreviewCalendarEventsStore
+import com.nmd.eventCalendar.compose.util.isLandscape
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
@@ -86,11 +86,7 @@ fun CalendarScreen(
     val onNextMonth: () -> Unit =
         remember(calendarController) { { calendarController.goToNextMonth() } }
 
-    val configuration = LocalConfiguration.current
-    val isLandscape =
-        configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
-
-    if (isLandscape) {
+    if (isLandscape()) {
         Row(modifier = modifier.fillMaxSize()) {
             if (calendarOptions.headerVisible) {
                 Column(
