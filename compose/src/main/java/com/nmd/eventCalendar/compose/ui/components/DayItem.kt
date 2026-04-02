@@ -53,8 +53,8 @@ fun DayItem(
     val defaultFontStyle =
         if (calendarDay.isCurrentMonth) FontStyle.Normal else FontStyle.Italic
 
-    val dayNumberLineHeight =
-        remember(calendarStyle.textUnit) { (calendarStyle.textUnit.value + 2f).sp }
+    val textColor = if (isToday) calendarStyle.currentDayTextColor else defaultTextColor
+    val style = if (isToday) FontStyle.Normal else defaultFontStyle
 
     Box(
         modifier = modifier
@@ -76,30 +76,21 @@ fun DayItem(
                     .fillMaxWidth(),
                 contentAlignment = Alignment.TopCenter
             ) {
-                if (isToday) {
-                    Box(
-                        modifier = Modifier
-                            .clip(TodayBadgeShape)
-                            .background(calendarStyle.currentDayBackgroundColor)
-                            .padding(horizontal = 8.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = calendarDay.date.dayOfMonth.toString(),
-                            color = calendarStyle.currentDayTextColor,
-                            fontSize = calendarStyle.textUnit,
-                            lineHeight = dayNumberLineHeight
+                Text(
+                    modifier = Modifier
+                        .then(
+                            if (isToday) Modifier
+                                .clip(TodayBadgeShape)
+                                .background(calendarStyle.currentDayBackgroundColor)
+                            else Modifier
                         )
-                    }
-                } else {
-                    Text(
-                        text = calendarDay.date.dayOfMonth.toString(),
-                        color = defaultTextColor,
-                        fontStyle = defaultFontStyle,
-                        fontSize = calendarStyle.textUnit,
-                        lineHeight = dayNumberLineHeight
-                    )
-                }
+                        .padding(horizontal = 8.dp, vertical = 2.dp),
+                    text = calendarDay.date.dayOfMonth.toString(),
+                    color = textColor,
+                    fontStyle = style,
+                    fontSize = calendarStyle.textUnit,
+                    lineHeight = calendarStyle.textUnit
+                )
             }
 
             val listModifier = Modifier
