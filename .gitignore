@@ -19,3 +19,4 @@ local.properties
 .idea/misc.xml
 *.salive
 .idea/inspectionProfiles/Project_Default.xml
+/.kotlin
