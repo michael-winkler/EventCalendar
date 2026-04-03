@@ -3,10 +3,12 @@ package com.nmd.eventCalendar.compose.ui.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -46,6 +48,7 @@ private val nowMonth: YearMonth = YearMonth.now()
  * @param onNextMonth Callback invoked when the user taps the "next month" button.
  * @param calendarStyle Style configuration for colors and typography.
  * @param layout Header layout variant.
+ * @param showNavigation Whether to show the previous/next navigation buttons.
  */
 @Composable
 fun MonthHeader(
@@ -53,7 +56,8 @@ fun MonthHeader(
     onPreviousMonth: () -> Unit,
     onNextMonth: () -> Unit,
     calendarStyle: CalendarStyle,
-    layout: MonthHeaderLayout = MonthHeaderLayout.TopBar
+    layout: MonthHeaderLayout = MonthHeaderLayout.TopBar,
+    showNavigation: Boolean = true
 ) {
     val title = remember(currentMonth) {
         val showYear = currentMonth.year != nowMonth.year
@@ -70,21 +74,31 @@ fun MonthHeader(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                MonthNavButton(
-                    isPrevious = true,
-                    onClick = onPreviousMonth,
-                    calendarStyle = calendarStyle
-                )
+                if (showNavigation) {
+                    MonthNavButton(
+                        isPrevious = true,
+                        onClick = onPreviousMonth,
+                        calendarStyle = calendarStyle
+                    )
+                } else {
+                    Spacer(modifier = Modifier.size(48.dp))
+                }
+
                 MonthTitle(
                     title = title,
                     calendarStyle = calendarStyle,
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
-                MonthNavButton(
-                    isPrevious = false,
-                    onClick = onNextMonth,
-                    calendarStyle = calendarStyle
-                )
+
+                if (showNavigation) {
+                    MonthNavButton(
+                        isPrevious = false,
+                        onClick = onNextMonth,
+                        calendarStyle = calendarStyle
+                    )
+                } else {
+                    Spacer(modifier = Modifier.size(48.dp))
+                }
             }
         }
 
@@ -94,11 +108,16 @@ fun MonthHeader(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                MonthNavButton(
-                    isPrevious = true,
-                    onClick = onPreviousMonth,
-                    calendarStyle = calendarStyle
-                )
+                if (showNavigation) {
+                    MonthNavButton(
+                        isPrevious = true,
+                        onClick = onPreviousMonth,
+                        calendarStyle = calendarStyle
+                    )
+                } else {
+                    Spacer(modifier = Modifier.size(48.dp))
+                }
+
                 MonthTitle(
                     title = title,
                     calendarStyle = calendarStyle,
@@ -108,11 +127,16 @@ fun MonthHeader(
                         .padding(vertical = 8.dp),
                     textAlign = TextAlign.Center
                 )
-                MonthNavButton(
-                    isPrevious = false,
-                    onClick = onNextMonth,
-                    calendarStyle = calendarStyle
-                )
+
+                if (showNavigation) {
+                    MonthNavButton(
+                        isPrevious = false,
+                        onClick = onNextMonth,
+                        calendarStyle = calendarStyle
+                    )
+                } else {
+                    Spacer(modifier = Modifier.size(48.dp))
+                }
             }
         }
     }

@@ -9,12 +9,29 @@ import com.nmd.eventCalendar.compose.model.Event
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
+import java.time.temporal.TemporalAdjusters
 
 internal fun generateMonthDays(
     yearMonth: YearMonth,
     weekStart: DayOfWeek = DayOfWeek.MONDAY,
-    eventsByDate: Map<LocalDate, List<Event>> = emptyMap()
+    eventsByDate: Map<LocalDate, List<Event>> = emptyMap(),
+    isCurrentWeekOnly: Boolean = false
 ): List<CalendarDay> {
+    if (isCurrentWeekOnly) {
+        val today = LocalDate.now()
+        // Find the start of the current week
+        val startOfWeek = today.with(TemporalAdjusters.previousOrSame(weekStart))
+
+        return (0 until 7).map { index ->
+            val date = startOfWeek.plusDays(index.toLong())
+            CalendarDay(
+                date = date,
+                isCurrentMonth = (date.year == yearMonth.year && date.month == yearMonth.month),
+                events = eventsByDate[date].orEmpty()
+            )
+        }
+    }
+
     val firstDayOfMonth = yearMonth.atDay(1)
     val startOffset = (7 + (firstDayOfMonth.dayOfWeek.value - weekStart.value)) % 7
     val startDate = firstDayOfMonth.minusDays(startOffset.toLong())

@@ -28,15 +28,18 @@ private val sharedWeekItemShapes = WeekItemShapes()
  * @param weekNumber Week number to display.
  * @param position Position of the item within the week-number column (top/middle/bottom).
  * @param calendarStyle Styling configuration (colors, typography sizes, etc.).
+ * @param isSingle If true, all corners are rounded (used for single-week view).
  */
 @Composable
 fun WeekItem(
     modifier: Modifier = Modifier,
     weekNumber: Int,
     position: WeekItemPosition,
-    calendarStyle: CalendarStyle
+    calendarStyle: CalendarStyle,
+    isSingle: Boolean = false
 ) {
-    val shape = remember(position) { sharedWeekItemShapes.forPosition(position) }
+    val shape =
+        remember(position, isSingle) { sharedWeekItemShapes.forPosition(position, isSingle) }
 
     Box(
         modifier = modifier

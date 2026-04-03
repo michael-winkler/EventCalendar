@@ -14,6 +14,7 @@ import kotlin.math.max
  * The pager range is derived from [CalendarOptions.minDate], [CalendarOptions.maxDate], and
  * [CalendarOptions.openEndedWindowMonths]:
  *
+ * - If [CalendarOptions.isCurrentWeekOnly] is true, the pager has exactly 1 page (the current month).
  * - If both min and max are provided, the pager covers the exact inclusive range
  *   from `minMonth` to `maxMonth`.
  * - If only min is provided, the pager covers the inclusive range
@@ -49,10 +50,13 @@ fun rememberCalendarController(
 ): CalendarController {
     val nowMonth = remember { YearMonth.now() }
 
-    val minMonth = calendarOptions.minDate?.let(YearMonth::from)
-    val maxMonth = calendarOptions.maxDate?.let(YearMonth::from)
+    val minMonth =
+        if (calendarOptions.isCurrentWeekOnly) null else calendarOptions.minDate?.let(YearMonth::from)
+    val maxMonth =
+        if (calendarOptions.isCurrentWeekOnly) null else calendarOptions.maxDate?.let(YearMonth::from)
 
-    val window = max(1, calendarOptions.openEndedWindowMonths)
+    val window =
+        if (calendarOptions.isCurrentWeekOnly) 1 else max(1, calendarOptions.openEndedWindowMonths)
 
     fun monthsBetween(start: YearMonth, end: YearMonth): Int =
         (end.year - start.year) * 12 + (end.monthValue - start.monthValue)
@@ -65,8 +69,16 @@ fun rememberCalendarController(
         start to end
     }
 
-    val rangeStart = remember(nowMonth, minMonth, maxMonth, window, centeredRangeStartEnd) {
+    val rangeStart = remember(
+        nowMonth,
+        minMonth,
+        maxMonth,
+        window,
+        centeredRangeStartEnd,
+        calendarOptions.isCurrentWeekOnly
+    ) {
         when {
+            calendarOptions.isCurrentWeekOnly -> nowMonth
             minMonth != null && maxMonth != null -> minMonth
             minMonth != null -> minMonth
             maxMonth != null -> maxMonth.minusMonths((window - 1).toLong())
@@ -74,8 +86,16 @@ fun rememberCalendarController(
         }
     }
 
-    val rangeEnd = remember(nowMonth, minMonth, maxMonth, window, centeredRangeStartEnd) {
+    val rangeEnd = remember(
+        nowMonth,
+        minMonth,
+        maxMonth,
+        window,
+        centeredRangeStartEnd,
+        calendarOptions.isCurrentWeekOnly
+    ) {
         when {
+            calendarOptions.isCurrentWeekOnly -> nowMonth
             minMonth != null && maxMonth != null -> maxMonth
             maxMonth != null -> maxMonth
             minMonth != null -> minMonth.plusMonths((window - 1).toLong())

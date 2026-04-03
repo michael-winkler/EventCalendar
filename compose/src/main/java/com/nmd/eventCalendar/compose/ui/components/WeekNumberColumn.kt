@@ -10,6 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.nmd.eventCalendar.compose.model.WeekItemPosition
 import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
 import com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle
@@ -29,6 +30,7 @@ import java.time.temporal.WeekFields
  * @param weekStart First day of week (e.g., Monday).
  * @param calendarStyle Styling configuration (colors, typography sizes, etc.).
  * @param phoneLandscape If true, uses fixed row heights optimized for phone landscape layouts.
+ * @param isCurrentWeekOnly If true, only the current week number is displayed.
  */
 @Composable
 fun WeekNumberColumn(
@@ -36,13 +38,15 @@ fun WeekNumberColumn(
     yearMonth: YearMonth,
     weekStart: DayOfWeek,
     calendarStyle: CalendarStyle,
-    phoneLandscape: Boolean = false
+    phoneLandscape: Boolean = false,
+    isCurrentWeekOnly: Boolean = false
 ) {
-    val weekNumbers = remember(yearMonth, weekStart) {
+    val weekNumbers = remember(yearMonth, weekStart, isCurrentWeekOnly) {
         val days = generateMonthDays(
             yearMonth = yearMonth,
             weekStart = weekStart,
-            eventsByDate = emptyMap()
+            eventsByDate = emptyMap(),
+            isCurrentWeekOnly = isCurrentWeekOnly
         )
         val weeks = days.chunked(7)
         weeks.map { week -> week.first().date.get(WeekFields.ISO.weekOfWeekBasedYear()) }
@@ -50,9 +54,10 @@ fun WeekNumberColumn(
 
     Column(modifier = modifier) {
         weekNumbers.forEachIndexed { index, weekNumber ->
-            val position = when (index) {
-                0 -> WeekItemPosition.Top
-                weekNumbers.lastIndex -> WeekItemPosition.Bottom
+            val position = when {
+                weekNumbers.size == 1 -> WeekItemPosition.Middle
+                index == 0 -> WeekItemPosition.Top
+                index == weekNumbers.lastIndex -> WeekItemPosition.Bottom
                 else -> WeekItemPosition.Middle
             }
 
@@ -60,8 +65,11 @@ fun WeekNumberColumn(
                 modifier = Modifier
                     .fillMaxWidth()
                     .then(
-                        if (phoneLandscape) Modifier.height(PhoneLandscapeRowHeight)
-                        else Modifier.weight(1f)
+                        when {
+                            isCurrentWeekOnly -> Modifier.height(90.dp)
+                            phoneLandscape -> Modifier.height(PhoneLandscapeRowHeight)
+                            else -> Modifier.weight(1f)
+                        }
                     ),
                 contentAlignment = Alignment.Center
             ) {
@@ -69,7 +77,8 @@ fun WeekNumberColumn(
                     modifier = Modifier.fillMaxSize(),
                     weekNumber = weekNumber,
                     position = position,
-                    calendarStyle = calendarStyle
+                    calendarStyle = calendarStyle,
+                    isSingle = isCurrentWeekOnly
                 )
             }
         }

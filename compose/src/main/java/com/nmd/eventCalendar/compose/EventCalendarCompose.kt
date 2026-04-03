@@ -1,6 +1,5 @@
 package com.nmd.eventCalendar.compose
 
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -31,7 +30,7 @@ fun EventCalendarCompose(
     onMonthChange: (YearMonth) -> Unit
 ) {
     CalendarScreen(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier,
         calendarStyle = calendarStyle,
         calendarOptions = calendarOptions,
         calendarController = calendarController,

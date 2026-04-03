@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -30,7 +31,7 @@ import java.time.temporal.WeekFields
 internal val PhoneLandscapeRowHeight = 90.dp
 
 /**
- * Renders a month grid view (6 weeks x 7 days).
+ * Renders a month grid view (6 weeks x 7 days) or a single week if restricted.
  *
  * In phone landscape mode, each week row uses a fixed height ([PhoneLandscapeRowHeight]) so the
  * whole month can extend beyond the viewport and be scrolled by a parent container.
@@ -51,13 +52,15 @@ fun MonthView(
     onDaySelected: (calendarDay: CalendarDay) -> Unit,
     phoneLandscape: Boolean = false
 ) {
-    val baseDays = remember(yearMonth, calendarOptions.weekStart) {
-        generateMonthDays(
-            yearMonth = yearMonth,
-            weekStart = calendarOptions.weekStart,
-            eventsByDate = emptyMap()
-        )
-    }
+    val baseDays =
+        remember(yearMonth, calendarOptions.weekStart, calendarOptions.isCurrentWeekOnly) {
+            generateMonthDays(
+                yearMonth = yearMonth,
+                weekStart = calendarOptions.weekStart,
+                eventsByDate = emptyMap(),
+                isCurrentWeekOnly = calendarOptions.isCurrentWeekOnly
+            )
+        }
 
     val weeks: List<List<CalendarDay>> = remember(baseDays) { baseDays.chunked(7) }
 
@@ -71,22 +74,34 @@ fun MonthView(
         innerRadius = 4.dp
     )
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    val columnModifier = if (calendarOptions.isCurrentWeekOnly) {
+        Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+    } else {
+        Modifier.fillMaxSize()
+    }
+
+    Column(modifier = columnModifier) {
         weeks.forEachIndexed { weekIndex, week ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .then(
-                        if (phoneLandscape) Modifier.height(PhoneLandscapeRowHeight)
-                        else Modifier.weight(1f)
+                        when {
+                            calendarOptions.isCurrentWeekOnly -> Modifier.height(90.dp)
+                            phoneLandscape -> Modifier.height(PhoneLandscapeRowHeight)
+                            else -> Modifier.weight(1f)
+                        }
                     ),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (calendarOptions.calendarWeekVisible) {
                     val weekNumber = weekNumbers[weekIndex]
-                    val position = when (weekIndex) {
-                        0 -> WeekItemPosition.Top
-                        weeks.lastIndex -> WeekItemPosition.Bottom
+                    val position = when {
+                        weeks.size == 1 -> WeekItemPosition.Middle
+                        weekIndex == 0 -> WeekItemPosition.Top
+                        weekIndex == weeks.lastIndex -> WeekItemPosition.Bottom
                         else -> WeekItemPosition.Middle
                     }
 
@@ -96,7 +111,8 @@ fun MonthView(
                             .weight(1f),
                         weekNumber = weekNumber,
                         position = position,
-                        calendarStyle = calendarStyle
+                        calendarStyle = calendarStyle,
+                        isSingle = calendarOptions.isCurrentWeekOnly
                     )
                 }
 
@@ -113,7 +129,11 @@ fun MonthView(
                             .weight(1f),
                         calendarDay = day,
                         events = eventsForDate(day.date),
-                        shape = cornerShapes.forPosition(corner),
+                        shape = cornerShapes.forPosition(
+                            position = corner,
+                            isFirstInSingleWeek = calendarOptions.isCurrentWeekOnly && dayIndex == 0,
+                            isLastInSingleWeek = calendarOptions.isCurrentWeekOnly && dayIndex == 6
+                        ),
                         visibleMonth = yearMonth,
                         calendarStyle = calendarStyle,
                         onDaySelected = onDaySelected
@@ -124,11 +144,11 @@ fun MonthView(
     }
 }
 
-private fun dayCornerFor(row: Int, col: Int, lastRow: Int): DayCornerPosition = when (row) {
-    0 if col == 0 -> DayCornerPosition.TopLeft
-    0 if col == 6 -> DayCornerPosition.TopRight
-    lastRow if col == 0 -> DayCornerPosition.BottomLeft
-    lastRow if col == 6 -> DayCornerPosition.BottomRight
+private fun dayCornerFor(row: Int, col: Int, lastRow: Int): DayCornerPosition = when {
+    row == 0 && col == 0 -> DayCornerPosition.TopLeft
+    row == 0 && col == 6 -> DayCornerPosition.TopRight
+    row == lastRow && col == 0 -> DayCornerPosition.BottomLeft
+    row == lastRow && col == 6 -> DayCornerPosition.BottomRight
     else -> DayCornerPosition.Default
 }
 

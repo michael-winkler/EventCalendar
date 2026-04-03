@@ -28,12 +28,16 @@ data class WeekItemShapes(
         topEnd = CornerSize(innerRadius),
         bottomStart = CornerSize(outerRadius),
         bottomEnd = CornerSize(outerRadius)
-    )
+    ),
+    val single: RoundedCornerShape = RoundedCornerShape(outerRadius)
 ) {
-    fun forPosition(position: WeekItemPosition): RoundedCornerShape = when (position) {
-        WeekItemPosition.Top -> top
-        WeekItemPosition.Middle -> middle
-        WeekItemPosition.Bottom -> bottom
+    fun forPosition(position: WeekItemPosition, isSingle: Boolean = false): RoundedCornerShape {
+        if (isSingle) return single
+        return when (position) {
+            WeekItemPosition.Top -> top
+            WeekItemPosition.Middle -> middle
+            WeekItemPosition.Bottom -> bottom
+        }
     }
 }
 

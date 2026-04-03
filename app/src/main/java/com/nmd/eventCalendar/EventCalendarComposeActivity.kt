@@ -9,19 +9,28 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -29,11 +38,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,14 +53,18 @@ import com.nmd.eventCalendar.compose.EventCalendarCompose
 import com.nmd.eventCalendar.compose.model.CalendarDay
 import com.nmd.eventCalendar.compose.model.Event
 import com.nmd.eventCalendar.compose.ui.config.CalendarOptions
+import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
 import com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle
 import com.nmd.eventCalendar.compose.ui.controller.rememberCalendarController
+import com.nmd.eventCalendar.compose.ui.events.CalendarEventsStore
 import com.nmd.eventCalendar.compose.ui.events.rememberCalendarEventsStore
 import com.nmd.eventCalendar.theme.AppTheme
 import com.nmd.eventCalendarSample.R
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
+import java.time.format.TextStyle
+import java.util.Locale
 import kotlin.random.Random
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -72,6 +88,7 @@ fun Screen(
     var weekStartValue by rememberSaveable { mutableIntStateOf(DayOfWeek.MONDAY.value) }
     var headerVisible by rememberSaveable { mutableStateOf(true) }
     var showCalendarWeek by rememberSaveable { mutableStateOf(true) }
+    var showCurrentWeekSheet by rememberSaveable { mutableStateOf(false) }
 
     val calendarOptions = remember(weekStartValue, headerVisible, showCalendarWeek) {
         CalendarOptions(
@@ -137,6 +154,10 @@ fun Screen(
         }
     }
 
+    val onShowCurrentWeek: () -> Unit = remember {
+        { showCurrentWeekSheet = true }
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -157,6 +178,13 @@ fun Screen(
                     }
                 },
                 actions = {
+                    IconButton(onClick = onShowCurrentWeek) {
+                        Icon(
+                            painter = painterResource(R.drawable.icon_calendar_week_begin_outline),
+                            contentDescription = "Show current week",
+                            tint = iconTint
+                        )
+                    }
                     IconButton(onClick = onWeekStartClick) {
                         Icon(
                             painter = painterResource(R.drawable.icon_calendar_start),
@@ -210,6 +238,108 @@ fun Screen(
             calendarEventsStore = calendarEventsStore,
             onDaySelected = onDaySelected,
             onMonthChange = onMonthChange
+        )
+
+        if (showCurrentWeekSheet) {
+            ModalBottomSheetWrapper(
+                onDismiss = { showCurrentWeekSheet = false },
+                containerColor = containerColor,
+                weekStartValue = weekStartValue,
+                calendarEventsStore = calendarEventsStore,
+                calendarStyle = calendarStyle
+            )
+        }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+private fun ModalBottomSheetWrapper(
+    onDismiss: () -> Unit,
+    containerColor: Color,
+    weekStartValue: Int,
+    calendarEventsStore: CalendarEventsStore,
+    calendarStyle: CalendarStyle
+) {
+    val sheetState = rememberModalBottomSheetState()
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+        containerColor = containerColor
+    ) {
+        CurrentWeekSheetContent(
+            weekStartValue = weekStartValue,
+            calendarEventsStore = calendarEventsStore,
+            calendarStyle = calendarStyle
+        )
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+private fun CurrentWeekSheetContent(
+    weekStartValue: Int,
+    calendarEventsStore: CalendarEventsStore,
+    calendarStyle: CalendarStyle
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = stringResource(R.string.event_calendar_current_week),
+            fontSize = 22.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
+            color = calendarStyle.dayItemTextColor
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        val now = LocalDate.now()
+        val monthTitle = remember(now) {
+            val monthName = now.month.getDisplayName(TextStyle.FULL, Locale.getDefault())
+            "$monthName ${now.year}"
+        }
+
+        Text(
+            text = monthTitle,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth(),
+            color = calendarStyle.dayItemTextColor
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        val weekOptions = remember(weekStartValue) {
+            CalendarOptions(
+                weekStart = DayOfWeek.of(weekStartValue),
+                headerVisible = false,
+                calendarWeekVisible = true,
+                openEndedWindowMonths = 1,
+                isCurrentWeekOnly = true
+            )
+        }
+
+        val weekController = rememberCalendarController(weekOptions)
+
+        EventCalendarCompose(
+            modifier = Modifier
+                .wrapContentHeight()
+                .padding(bottom = 8.dp, end = 8.dp),
+            calendarStyle = calendarStyle,
+            calendarOptions = weekOptions,
+            calendarController = weekController,
+            calendarEventsStore = calendarEventsStore,
+            onDaySelected = { day ->
+                Log.i("EventCalendarCompose", "Selected week day: ${day.date}")
+            },
+            onMonthChange = {}
         )
     }
 }
@@ -333,6 +463,23 @@ private val eventTemplates: List<Pair<String, Color>> = listOf(
 fun EventCalendarComposePreview() {
     AppTheme {
         Screen(callback = {})
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview(showBackground = true)
+@Composable
+fun CurrentWeekSheetPreview() {
+    AppTheme {
+        val store = com.nmd.eventCalendar.compose.ui.events.rememberCalendarEventsStore(emptyList())
+        val style = com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle()
+        Box(modifier = Modifier.background(Color.White)) {
+            CurrentWeekSheetContent(
+                weekStartValue = DayOfWeek.MONDAY.value,
+                calendarEventsStore = store,
+                calendarStyle = style
+            )
+        }
     }
 }
 
