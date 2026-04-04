@@ -22,7 +22,9 @@ import java.time.LocalDate
  * Example: {@code openEndedWindowMonths = 5 * 12} creates a 60-month window in total (not 5 years into the past AND
  *  * 5 years into the future).
  *
- * @property isCurrentWeekOnly If true, only the current week is displayed. minDate, maxDate and openEndedWindowMonths will be ignored.
+ * @property isCurrentWeekOnly If true, only the current calendar week is displayed.
+ * minDate, maxDate and openEndedWindowMonths will be ignored in this mode.
+ * The calendar will automatically filter the events provided by the [CalendarEventsStore] to only show those that fall within the current week.
  */
 @Immutable
 data class CalendarOptions(

@@ -52,8 +52,8 @@ dependencies {
 
 ## 📖 Usage
 
-### XML Layout
-Add the `EventCalendarView` to your layout:
+### XML Layout (Full Month)
+Add the `EventCalendarView` to your layout with all available attributes:
 
 ```xml
 <com.nmd.eventCalendar.EventCalendarView
@@ -61,16 +61,43 @@ Add the `EventCalendarView` to your layout:
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:ecv_calendar_week_visible="true"
-    app:ecv_expressive_ui="true"
     app:ecv_header_visible="true"
+    app:ecv_week_start_day="monday"
+    app:ecv_expressive_ui="true"
+    app:ecv_edge_to_edge_enabled="false"
+    app:ecv_disallow_intercept="false"
+    app:ecv_count_visible="true"
+    app:ecv_event_item_automatic_text_color="true"
+    app:ecv_current_weekday_text_color="@color/primary"
+    app:ecv_current_day_background_tint_color="@color/primary"
+    app:ecv_current_day_text_color="@color/white"
+    app:ecv_count_background_tint_color="@color/secondary"
+    app:ecv_count_background_text_color="@color/white"
+    app:ecv_event_item_text_color="@color/white"
+    app:ecv_event_item_dark_text_color="@color/black"
+    app:ecv_expressive_cw_background_tint_color="#F0F0F0"
+    app:ecv_expressive_day_background_tint_color="#FFFFFF" />
+```
+
+### XML Layout (Single Week)
+For a more compact layout, use the `EventCalendarSingleWeekView`. It supports most attributes of the full view:
+
+```xml
+<com.nmd.eventCalendar.EventCalendarSingleWeekView
+    android:id="@+id/eventCalendarSingleWeekView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:ecv_calendar_week_visible="true"
+    app:ecv_expressive_ui="true"
+    app:ecv_header_visible="false"
     app:ecv_week_start_day="monday" />
 ```
 
 ### Programmatic Setup
-Initialize events and listeners in your Activity or Fragment:
+Initialize events and listeners in your Activity or Fragment (works for both View types):
 
 ```kotlin
-val calendarView = binding.eventCalendarView
+val calendarView = binding.eventCalendarView // or eventCalendarSingleWeekView
 
 // Add Events
 calendarView.events = arrayListOf(
@@ -85,7 +112,7 @@ calendarView.addOnDayClickListener(object : EventCalendarDayClickListener {
     }
 })
 
-// Listen for Scroll/Month Changes
+// Listen for Scroll/Month Changes (Full Month View only)
 calendarView.addOnCalendarScrollListener(object : EventCalendarScrollListener {
     override fun onScrolled(month: Int, year: Int) {
         Log.d("Calendar", "Visible month: $month/$year")
@@ -97,17 +124,8 @@ calendarView.addOnCalendarScrollListener(object : EventCalendarScrollListener {
 
 ## ⚙️ Configuration
 
-### Important XML Attributes
-| Attribute | Description |
-|-----------|-------------|
-| `app:ecv_expressive_ui` | Enables modern Material 3 design |
-| `app:ecv_week_start_day` | `monday` or `sunday` |
-| `app:ecv_calendar_week_visible` | Show/Hide ISO week numbers |
-| `app:ecv_header_visible` | Toggle visibility of the month header |
-| `app:ecv_edge_to_edge_enabled` | Enable edge-to-edge support |
-
-### Customizing Colors
-You can override the default styles in your `themes.xml`:
+### Customizing Colors via Theme
+You can also override the default styles in your `themes.xml`:
 
 ```xml
 <style name="ECV_TEXT_ICON_COLOR">

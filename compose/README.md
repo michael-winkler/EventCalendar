@@ -108,6 +108,7 @@ Configure the behavior of the calendar:
 - `weekStart`: Set starting day (e.g., `DayOfWeek.MONDAY`).
 - `calendarWeekVisible`: Show/hide ISO week numbers.
 - `minDate` / `maxDate`: Restrict navigation range.
+- `isCurrentWeekOnly`: If true, only the current calendar week is displayed. `minDate`, `maxDate` and `openEndedWindowMonths` will be ignored. The calendar will automatically filter and show only events that fall within the current week.
 
 ### 🎨 CalendarStyle
 Customize colors, text sizes, and shapes:
