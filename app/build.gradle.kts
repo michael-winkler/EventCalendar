@@ -1,6 +1,6 @@
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.plugin.compose")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -24,15 +24,15 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(
-                    getDefaultProguardFile("proguard-android-optimize.txt"),
-                    "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
             )
         }
         debug {
             isMinifyEnabled = false
             proguardFiles(
-                    getDefaultProguardFile("proguard-android-optimize.txt"),
-                    "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
             )
         }
     }
@@ -44,26 +44,22 @@ android {
 }
 
 dependencies {
-    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-
     // AndroidX
-    implementation("androidx.activity:activity-ktx:1.13.0")
-    implementation("androidx.activity:activity-compose:1.13.0")
-    implementation("androidx.appcompat:appcompat:1.7.1")
-    implementation("androidx.constraintlayout:constraintlayout:2.2.1")
-    implementation("androidx.fragment:fragment-ktx:1.8.9")
+    implementation(libs.androidx.activity.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.fragment.ktx)
 
     // Google Material Design
-    implementation("com.google.android.material:material:1.14.0-alpha10")
+    implementation(libs.material)
 
     // Compose
-    implementation(platform("androidx.compose:compose-bom:2026.03.01"))
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.material3:material3")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0")
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    implementation("androidx.compose.material3:material3:1.4.0")
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    debugImplementation(libs.androidx.compose.ui.tooling)
 
     // Libraries
     implementation(project(":xml"))

@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Kalendář událostí</string>
-    <string name="app_name_compose">Compose</string>
+    <string name="app_variant_xml">XML</string>
+    <string name="app_variant_compose">Compose</string>
     <string name="event_calendar_no_events">Pro tento den nebyly nalezeny žádné události!</string>
     <string name="event_calendar_current_week">Aktuální týden</string>
 </resources>

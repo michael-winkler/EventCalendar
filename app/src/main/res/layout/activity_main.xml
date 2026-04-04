@@ -17,7 +17,7 @@
             android:id="@+id/activityMainMaterialToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:title="@string/app_name">
+            app:title="@string/app_variant_xml">
 
             <LinearLayout
                 android:layout_width="wrap_content"

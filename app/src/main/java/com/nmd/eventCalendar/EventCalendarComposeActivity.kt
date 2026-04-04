@@ -164,7 +164,7 @@ fun Screen(
             TopAppBar(
                 title = {
                     Text(
-                        text = stringResource(R.string.app_name_compose),
+                        text = stringResource(R.string.app_variant_compose),
                         color = iconTint
                     )
                 },

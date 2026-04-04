@@ -1,6 +1,6 @@
 plugins {
-    id 'com.android.library'
-    id 'org.jetbrains.kotlin.plugin.parcelize'
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.parcelize)
     id 'maven-publish'
 }
 
@@ -39,21 +39,19 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: "libs", include: ["*.jar"])
-
     // Android X
-    implementation 'androidx.activity:activity-ktx:1.13.0'
-    implementation 'androidx.appcompat:appcompat:1.7.1'
-    implementation 'androidx.core:core-ktx:1.18.0'
-    implementation('androidx.fragment:fragment-ktx:1.8.9')
-    implementation 'androidx.viewpager2:viewpager2:1.1.0'
-    implementation 'androidx.recyclerview:recyclerview:1.4.0'
+    implementation libs.androidx.activity.ktx
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.core.ktx
+    implementation libs.androidx.fragment.ktx
+    implementation libs.androidx.viewpager2
+    implementation libs.androidx.recyclerview
 
     // Gson
-    implementation('com.google.code.gson:gson:2.13.2')
+    implementation libs.google.gson
 
     // Google Material Design
-    implementation 'com.google.android.material:material:1.14.0-alpha10'
+    implementation libs.material
 }
 
 publishing {
@@ -65,7 +63,7 @@ publishing {
 
             pom {
                 name.set(artifactId)
-                description.set("An Android event calendar library written in Kotlin, offering customizable views and event handling, supporting calendar week display and edge-to-edge functionality.")
+                description.set("A powerful and highly customizable Event Calendar Library for Android, supporting both Jetpack Compose and the classic XML/View System with Material 3 design, customizable views, event handling, calendar week display, and edge-to-edge functionality.")
                 url.set("https://github.com/michael-winkler/EventCalendar")
 
                 licenses {

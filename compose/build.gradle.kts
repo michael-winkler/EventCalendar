@@ -1,6 +1,6 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.plugin.compose")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.compose)
     id("maven-publish")
 }
 
@@ -45,14 +45,14 @@ android {
 }
 
 dependencies {
-    api("androidx.compose.ui:ui:1.10.6")
-    api("androidx.compose.material3:material3:1.4.0")
-    api("androidx.compose.ui:ui-tooling-preview:1.10.6")
-    api("androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0")
-    api("androidx.compose.foundation:foundation:1.11.0-beta02")
-    api("androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0")
+    api(libs.androidx.compose.ui)
+    api(libs.androidx.compose.material3)
+    api(libs.androidx.compose.ui.tooling.preview)
+    api(libs.androidx.lifecycle.viewmodel.ktx)
+    api(libs.androidx.compose.foundation)
+    api(libs.androidx.lifecycle.viewmodel.compose)
 
-    debugImplementation("androidx.compose.ui:ui-tooling:1.10.6")
+    debugImplementation(libs.androidx.compose.ui.tooling)
 }
 
 publishing {
@@ -68,7 +68,7 @@ publishing {
 
             pom {
                 name.set("eventcalendar-compose")
-                description.set("An Android event calendar library written in Kotlin, offering customizable views and event handling, supporting calendar week display and edge-to-edge functionality.")
+                description.set("A powerful and highly customizable Event Calendar Library for Android, supporting both Jetpack Compose and the classic XML/View System with Material 3 design, customizable views, event handling, calendar week display, and edge-to-edge functionality.")
                 url.set("https://github.com/michael-winkler/EventCalendar")
 
                 licenses {
