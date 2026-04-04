@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.PagerState
@@ -115,12 +116,18 @@ fun CalendarScreen(
     val phoneLandscape = isPhoneLandscapeWindow()
 
     if (phoneLandscape) {
-        Row(modifier = modifier.fillMaxSize()) {
+        val rootModifier = if (calendarOptions.isCurrentWeekOnly) {
+            modifier.fillMaxWidth().wrapContentHeight()
+        } else {
+            modifier.fillMaxSize()
+        }
+
+        Row(modifier = rootModifier) {
             if (calendarOptions.headerVisible) {
                 Column(
                     modifier = Modifier
                         .width(MonthHeaderWidthLandscape)
-                        .fillMaxHeight(),
+                        .then(if (calendarOptions.isCurrentWeekOnly) Modifier.wrapContentHeight() else Modifier.fillMaxHeight()),
                     verticalArrangement = Arrangement.Top
                 ) {
                     MonthHeader(
@@ -136,11 +143,10 @@ fun CalendarScreen(
 
             Column(
                 modifier = Modifier
-                    .fillMaxHeight()
-                    .weight(1f)
+                    .then(if (calendarOptions.isCurrentWeekOnly) Modifier.fillMaxWidth().wrapContentHeight() else Modifier.fillMaxHeight().weight(1f))
             ) {
                 CalendarPagerSection(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = if (calendarOptions.isCurrentWeekOnly) Modifier.fillMaxWidth().wrapContentHeight() else Modifier.fillMaxSize(),
                     pagerState = pagerState,
                     calendarController = calendarController,
                     calendarOptions = calendarOptions,
@@ -200,7 +206,13 @@ private fun CalendarPagerSection(
     onDaySelected: (CalendarDay) -> Unit,
     phoneLandscape: Boolean
 ) {
-    Column(modifier = modifier) {
+    Column(
+        modifier = modifier.then(
+            if (calendarOptions.isCurrentWeekOnly) Modifier.wrapContentHeight()
+            else if (phoneLandscape) Modifier.fillMaxHeight()
+            else Modifier.fillMaxSize()
+        )
+    ) {
         WeekHeader(
             currentMonth = currentMonth,
             calendarOptions = calendarOptions,
@@ -216,7 +228,7 @@ private fun CalendarPagerSection(
         } else {
             Modifier
                 .fillMaxWidth()
-                .weight(1f)
+                .then(if (phoneLandscape) Modifier.fillMaxHeight() else Modifier.weight(1f))
                 .then(if (phoneLandscape) Modifier.verticalScroll(scrollState) else Modifier)
         }
 
@@ -242,8 +254,7 @@ private fun CalendarPagerSection(
 
                     MonthPager(
                         modifier = Modifier
-                            .weight(7f)
-                            .then(if (calendarOptions.isCurrentWeekOnly) Modifier.wrapContentHeight() else Modifier),
+                            .then(if (calendarOptions.isCurrentWeekOnly) Modifier.wrapContentHeight().weight(7f) else Modifier.weight(7f)),
                         pagerState = pagerState,
                         calendarController = calendarController,
                         calendarOptions = monthOptionsNoWeek,

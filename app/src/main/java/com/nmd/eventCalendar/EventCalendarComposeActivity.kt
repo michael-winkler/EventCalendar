@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -49,6 +50,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nmd.eventCalendar.compose.EventCalendarCompose
 import com.nmd.eventCalendar.compose.model.CalendarDay
 import com.nmd.eventCalendar.compose.model.Event
@@ -85,10 +87,32 @@ class EventCalendarComposeActivity : ComponentActivity() {
 fun Screen(
     callback: () -> Unit
 ) {
+    val initialSeed = rememberSaveable { System.currentTimeMillis() }
+    val calendarEventsStore = rememberCalendarEventsStore(
+        initialEvents = shuffleEventsForCurrentYear(
+            templates = eventTemplates,
+            eventCount = 250,
+            seed = initialSeed
+        )
+    )
+
     var weekStartValue by rememberSaveable { mutableIntStateOf(DayOfWeek.MONDAY.value) }
     var headerVisible by rememberSaveable { mutableStateOf(true) }
     var showCalendarWeek by rememberSaveable { mutableStateOf(true) }
     var showCurrentWeekSheet by rememberSaveable { mutableStateOf(false) }
+    var selectedDateForSheet by rememberSaveable { mutableStateOf<String?>(null) }
+    val eventsByDate by calendarEventsStore.eventsByDateFlow.collectAsStateWithLifecycle()
+
+    val selectedDayForSheet = remember(selectedDateForSheet, eventsByDate) {
+        selectedDateForSheet?.let { dateString ->
+            val date = LocalDate.parse(dateString)
+            CalendarDay(
+                date = date,
+                isCurrentMonth = true,
+                events = eventsByDate[date].orEmpty()
+            )
+        }
+    }
 
     val calendarOptions = remember(weekStartValue, headerVisible, showCalendarWeek) {
         CalendarOptions(
@@ -106,15 +130,6 @@ fun Screen(
     val baseStyle = defaultCalendarStyle()
     val calendarStyle = remember(baseStyle) { baseStyle.copy(textUnit = 12.sp) }
 
-    val initialSeed = rememberSaveable { System.currentTimeMillis() }
-    val calendarEventsStore = rememberCalendarEventsStore(
-        initialEvents = shuffleEventsForCurrentYear(
-            templates = eventTemplates,
-            eventCount = 250,
-            seed = initialSeed
-        )
-    )
-
     val isDark = isSystemInDarkTheme()
     val topBarColor = remember(isDark) { if (isDark) Color(0xFF1B1B1F) else Color.White }
     val iconTint = remember(isDark) { if (isDark) Color.White else Color.Black }
@@ -124,6 +139,7 @@ fun Screen(
         {
             Log.i("EventCalendarCompose", "Selected day: ${it.date}")
             Log.i("EventCalendarCompose", "Selected events: ${it.events}")
+            selectedDateForSheet = it.date.toString()
         }
     }
 
@@ -249,6 +265,20 @@ fun Screen(
                 calendarStyle = calendarStyle
             )
         }
+
+        if (selectedDayForSheet != null) {
+            val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+            ModalBottomSheet(
+                onDismissRequest = { selectedDateForSheet = null },
+                sheetState = sheetState,
+                containerColor = containerColor
+            ) {
+                DayEventsSheetContent(
+                    calendarDay = selectedDayForSheet,
+                    calendarStyle = calendarStyle
+                )
+            }
+        }
     }
 }
 
@@ -261,7 +291,7 @@ private fun ModalBottomSheetWrapper(
     calendarEventsStore: CalendarEventsStore,
     calendarStyle: CalendarStyle
 ) {
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,

@@ -53,13 +53,15 @@ fun MonthView(
     phoneLandscape: Boolean = false
 ) {
     val baseDays =
-        remember(yearMonth, calendarOptions.weekStart, calendarOptions.isCurrentWeekOnly) {
+        remember(yearMonth, calendarOptions.weekStart, calendarOptions.isCurrentWeekOnly, eventsForDate) {
             generateMonthDays(
                 yearMonth = yearMonth,
                 weekStart = calendarOptions.weekStart,
                 eventsByDate = emptyMap(),
                 isCurrentWeekOnly = calendarOptions.isCurrentWeekOnly
-            )
+            ).map { day ->
+                day.copy(events = eventsForDate(day.date))
+            }
         }
 
     val weeks: List<List<CalendarDay>> = remember(baseDays) { baseDays.chunked(7) }
@@ -79,7 +81,7 @@ fun MonthView(
             .fillMaxWidth()
             .wrapContentHeight()
     } else {
-        Modifier.fillMaxSize()
+        if (phoneLandscape) Modifier.fillMaxWidth().wrapContentHeight() else Modifier.fillMaxSize()
     }
 
     Column(modifier = columnModifier) {
