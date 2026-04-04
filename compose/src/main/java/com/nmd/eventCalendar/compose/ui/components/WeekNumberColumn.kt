@@ -4,15 +4,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.nmd.eventCalendar.compose.model.WeekItemPosition
+import com.nmd.eventCalendar.compose.ui.config.CalendarOptions
 import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
+import com.nmd.eventCalendar.compose.ui.config.calendarRow
+import com.nmd.eventCalendar.compose.ui.config.defaultCalendarOptions
 import com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle
 import com.nmd.eventCalendar.compose.util.generateMonthDays
 import java.time.DayOfWeek
@@ -29,8 +30,8 @@ import java.time.temporal.WeekFields
  * @param yearMonth The month used to calculate week numbers for the displayed 6-week grid.
  * @param weekStart First day of week (e.g., Monday).
  * @param calendarStyle Styling configuration (colors, typography sizes, etc.).
+ * @param calendarOptions Configuration options for the calendar.
  * @param phoneLandscape If true, uses fixed row heights optimized for phone landscape layouts.
- * @param isCurrentWeekOnly If true, only the current week number is displayed.
  */
 @Composable
 fun WeekNumberColumn(
@@ -38,9 +39,10 @@ fun WeekNumberColumn(
     yearMonth: YearMonth,
     weekStart: DayOfWeek,
     calendarStyle: CalendarStyle,
-    phoneLandscape: Boolean = false,
-    isCurrentWeekOnly: Boolean = false
+    calendarOptions: CalendarOptions,
+    phoneLandscape: Boolean = false
 ) {
+    val isCurrentWeekOnly = calendarOptions.isCurrentWeekOnly
     val weekNumbers = remember(yearMonth, weekStart, isCurrentWeekOnly) {
         val days = generateMonthDays(
             yearMonth = yearMonth,
@@ -64,12 +66,10 @@ fun WeekNumberColumn(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .then(
-                        when {
-                            isCurrentWeekOnly -> Modifier.height(90.dp)
-                            phoneLandscape -> Modifier.height(PhoneLandscapeRowHeight)
-                            else -> Modifier.weight(1f)
-                        }
+                    .calendarRow(
+                        columnScope = this,
+                        options = calendarOptions,
+                        isPhoneLandscape = phoneLandscape
                     ),
                 contentAlignment = Alignment.Center
             ) {
@@ -93,6 +93,7 @@ fun WeekNumberColumnPreview() {
         yearMonth = YearMonth.now(),
         weekStart = DayOfWeek.MONDAY,
         calendarStyle = defaultCalendarStyle(),
+        calendarOptions = defaultCalendarOptions(),
         phoneLandscape = true
     )
 }

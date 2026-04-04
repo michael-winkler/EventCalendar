@@ -3,10 +3,6 @@ package com.nmd.eventCalendar.compose.ui.components
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -20,6 +16,8 @@ import com.nmd.eventCalendar.compose.model.Event
 import com.nmd.eventCalendar.compose.model.WeekItemPosition
 import com.nmd.eventCalendar.compose.ui.config.CalendarOptions
 import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
+import com.nmd.eventCalendar.compose.ui.config.calendarMonthGrid
+import com.nmd.eventCalendar.compose.ui.config.calendarRow
 import com.nmd.eventCalendar.compose.ui.config.defaultCalendarOptions
 import com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle
 import com.nmd.eventCalendar.compose.ui.shapes.rememberDayCornerShapes
@@ -53,7 +51,12 @@ fun MonthView(
     phoneLandscape: Boolean = false
 ) {
     val baseDays =
-        remember(yearMonth, calendarOptions.weekStart, calendarOptions.isCurrentWeekOnly, eventsForDate) {
+        remember(
+            yearMonth,
+            calendarOptions.weekStart,
+            calendarOptions.isCurrentWeekOnly,
+            eventsForDate
+        ) {
             generateMonthDays(
                 yearMonth = yearMonth,
                 weekStart = calendarOptions.weekStart,
@@ -76,26 +79,19 @@ fun MonthView(
         innerRadius = 4.dp
     )
 
-    val columnModifier = if (calendarOptions.isCurrentWeekOnly) {
-        Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-    } else {
-        if (phoneLandscape) Modifier.fillMaxWidth().wrapContentHeight() else Modifier.fillMaxSize()
-    }
-
-    Column(modifier = columnModifier) {
+    Column(
+        modifier = Modifier.calendarMonthGrid(
+            options = calendarOptions,
+            isPhoneLandscape = phoneLandscape
+        )
+    ) {
         weeks.forEachIndexed { weekIndex, week ->
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .then(
-                        when {
-                            calendarOptions.isCurrentWeekOnly -> Modifier.height(90.dp)
-                            phoneLandscape -> Modifier.height(PhoneLandscapeRowHeight)
-                            else -> Modifier.weight(1f)
-                        }
-                    ),
+                modifier = Modifier.calendarRow(
+                    columnScope = this,
+                    options = calendarOptions,
+                    isPhoneLandscape = phoneLandscape
+                ),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (calendarOptions.calendarWeekVisible) {
