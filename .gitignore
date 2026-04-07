@@ -17,6 +17,5 @@ local.properties
 .idea/deploymentTargetDropDown.xml
 .idea/appInsightsSettings.xml
 .idea/misc.xml
-*.salive
 .idea/inspectionProfiles/Project_Default.xml
-/.kotlin
+/.kotlin/sessions
