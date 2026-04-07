@@ -13,7 +13,7 @@ import com.nmd.eventCalendar.compose.model.DayCornerPosition
  * Prebuilt shapes for day cells to avoid allocating new shapes on every recomposition.
  */
 @Stable
-data class DayCornerShapes(
+internal data class DayCornerShapes(
     val outerRadius: Dp = 16.dp,
     val innerRadius: Dp = 4.dp,
     val topLeft: RoundedCornerShape = RoundedCornerShape(
@@ -75,7 +75,7 @@ data class DayCornerShapes(
 }
 
 @Composable
-fun rememberDayCornerShapes(
+internal fun rememberDayCornerShapes(
     outerRadius: Dp = 16.dp,
     innerRadius: Dp = 4.dp
 ): DayCornerShapes {

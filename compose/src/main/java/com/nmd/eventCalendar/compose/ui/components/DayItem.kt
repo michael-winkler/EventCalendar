@@ -51,7 +51,7 @@ private val TodayBadgeShape = RoundedCornerShape(50)
  * @param onDaySelected Callback invoked when the day cell is tapped.
  */
 @Composable
-fun DayItem(
+internal fun DayItem(
     modifier: Modifier = Modifier,
     calendarDay: CalendarDay,
     events: List<Event>,

@@ -6,7 +6,7 @@ package com.nmd.eventCalendar.compose.model
  * This is typically used for drawing/background shapes or decorations differently for
  * the first, middle, and last rows of a month grid.
  */
-enum class WeekItemPosition {
+internal enum class WeekItemPosition {
 
     /** Item is located in the first (top) week row of the grid. */
     Top,

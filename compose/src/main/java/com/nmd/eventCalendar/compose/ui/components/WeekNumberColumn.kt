@@ -23,18 +23,20 @@ import java.time.temporal.WeekFields
 /**
  * Displays the calendar week numbers (KW) as a vertical column aligned with the month grid.
  *
- * In phone landscape mode, each row uses a fixed height ([PhoneLandscapeRowHeight]) so the column
+ * In phone landscape mode, each row uses a fixed height ([com.nmd.eventCalendar.compose.ui.config.CalendarRowHeight]) so the column
  * can participate in a shared, parent-driven vertical scroll together with the month grid.
  *
+ * If [CalendarOptions.isCurrentWeekOnly] is enabled, only a single week number is displayed.
+ *
  * @param modifier Modifier applied to the column container.
- * @param yearMonth The month used to calculate week numbers for the displayed 6-week grid.
+ * @param yearMonth The month used to calculate week numbers (ignored if [calendarOptions.isCurrentWeekOnly] is true).
  * @param weekStart First day of week (e.g., Monday).
  * @param calendarStyle Styling configuration (colors, typography sizes, etc.).
  * @param calendarOptions Configuration options for the calendar.
  * @param phoneLandscape If true, uses fixed row heights optimized for phone landscape layouts.
  */
 @Composable
-fun WeekNumberColumn(
+internal fun WeekNumberColumn(
     modifier: Modifier = Modifier,
     yearMonth: YearMonth,
     weekStart: DayOfWeek,

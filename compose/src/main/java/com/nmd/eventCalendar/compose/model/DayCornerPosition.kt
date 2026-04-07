@@ -7,7 +7,7 @@ package com.nmd.eventCalendar.compose.model
  * Implementations typically use these values to decide where to apply a corner radius or
  * a marker shape.
  */
-enum class DayCornerPosition {
+internal enum class DayCornerPosition {
     /** Top-left corner of the day cell. */
     TopLeft,
 

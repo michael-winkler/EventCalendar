@@ -3,6 +3,7 @@ package com.nmd.eventCalendar.compose.ui.components
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -16,6 +17,7 @@ import com.nmd.eventCalendar.compose.model.Event
 import com.nmd.eventCalendar.compose.model.WeekItemPosition
 import com.nmd.eventCalendar.compose.ui.config.CalendarOptions
 import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
+import com.nmd.eventCalendar.compose.ui.config.CalendarWeekColumnWidth
 import com.nmd.eventCalendar.compose.ui.config.calendarMonthGrid
 import com.nmd.eventCalendar.compose.ui.config.calendarRow
 import com.nmd.eventCalendar.compose.ui.config.defaultCalendarOptions
@@ -26,23 +28,21 @@ import java.time.LocalDate
 import java.time.YearMonth
 import java.time.temporal.WeekFields
 
-internal val PhoneLandscapeRowHeight = 90.dp
-
 /**
  * Renders a month grid view (6 weeks x 7 days) or a single week if restricted.
  *
- * In phone landscape mode, each week row uses a fixed height ([PhoneLandscapeRowHeight]) so the
+ * In phone landscape mode, each week row uses a fixed height ([com.nmd.eventCalendar.compose.ui.config.CalendarRowHeight]) so the
  * whole month can extend beyond the viewport and be scrolled by a parent container.
  *
  * @param yearMonth The month to display.
- * @param calendarOptions Calendar configuration options (week start, week numbers visibility, etc.).
+ * @param calendarOptions Calendar configuration options (week start, week numbers visibility, single week mode, etc.).
  * @param calendarStyle Styling configuration (colors, typography sizes, etc.).
  * @param eventsForDate Provides the events for a given date.
  * @param onDaySelected Callback invoked when a day is tapped.
  * @param phoneLandscape If true, uses a fixed row height optimized for phone landscape layouts.
  */
 @Composable
-fun MonthView(
+internal fun MonthView(
     yearMonth: YearMonth,
     calendarOptions: CalendarOptions,
     calendarStyle: CalendarStyle,
@@ -106,7 +106,10 @@ fun MonthView(
                     WeekItem(
                         modifier = Modifier
                             .fillMaxHeight()
-                            .weight(1f),
+                            .then(
+                                if (phoneLandscape) Modifier.width(CalendarWeekColumnWidth)
+                                else Modifier.weight(1f)
+                            ),
                         weekNumber = weekNumber,
                         position = position,
                         calendarStyle = calendarStyle,
@@ -153,6 +156,60 @@ private fun dayCornerFor(row: Int, col: Int, lastRow: Int): DayCornerPosition = 
 @Preview(showBackground = true)
 @Composable
 fun MonthViewPreview() {
+    val previewToday = LocalDate.now()
+
+    MonthView(
+        yearMonth = YearMonth.now(),
+        calendarOptions = defaultCalendarOptions().copy(calendarWeekVisible = true),
+        calendarStyle = defaultCalendarStyle(),
+        eventsForDate = { date ->
+            if (date == previewToday) {
+                listOf(
+                    Event(
+                        previewToday,
+                        "Cooking",
+                        shapeColor = Color(0xFFEF6C00),
+                        textColor = Color.White
+                    ),
+                    Event(
+                        previewToday,
+                        "Board Games",
+                        shapeColor = Color(0xFF43A047),
+                        textColor = Color.White
+                    ),
+                    Event(
+                        previewToday,
+                        "Volunteer",
+                        shapeColor = Color(0xFF3949AB),
+                        textColor = Color.White
+                    ),
+                    Event(
+                        previewToday,
+                        "Movie Night",
+                        shapeColor = Color(0xFFFDD835),
+                        textColor = Color.Black
+                    ),
+                    Event(
+                        previewToday,
+                        "Vacation",
+                        shapeColor = Color(0xFF039BE5),
+                        textColor = Color.White
+                    ),
+                )
+            } else emptyList()
+        },
+        onDaySelected = {},
+        phoneLandscape = false
+    )
+}
+
+@Preview(
+    showBackground = true,
+    widthDp = 740,
+    heightDp = 360
+)
+@Composable
+fun MonthViewPreviewLandscape() {
     val previewToday = LocalDate.now()
 
     MonthView(

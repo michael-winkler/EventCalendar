@@ -23,12 +23,12 @@ import androidx.compose.ui.unit.sp
  * @property monthNavigationIconColor Tint color for month navigation icons (previous/next).
  * @property monthNameTextColor Text color for the month title.
  *
- * @property currentWeekDayTextColor Text color used to highlight the current weekday label.
- * @property defaultWeekDayTextColor Default text color for weekday labels.
- * @property weekDayTextColor Text color for weekday labels representing days of the current month.
- * @property weekDayInactiveTextColor Text color for labels that belong to the previous/next month.
+ * @property currentWeekDayTextColor Text color used to highlight the current weekday label in the header.
+ * @property defaultWeekDayTextColor Default text color for weekday labels in the header.
+ * @property weekDayTextColor Text color for weekday labels (Mon - Sun) representing days of the current month.
+ * @property weekDayInactiveTextColor Text color for day numbers that belong to the previous/next month.
  *
- * @property dayItemTextColor Default text color for day numbers.
+ * @property dayItemTextColor Text color for day numbers belonging to the currently displayed month.
  * @property dayItemBackgroundColor Background color for day cells.
  * @property currentDayTextColor Text color used for the "today" indicator/badge.
  * @property currentDayBackgroundColor Background color used for the "today" indicator/badge.

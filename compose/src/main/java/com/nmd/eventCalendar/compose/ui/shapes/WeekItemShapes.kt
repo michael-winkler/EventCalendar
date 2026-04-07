@@ -13,7 +13,7 @@ import com.nmd.eventCalendar.compose.model.WeekItemPosition
  * Prebuilt shapes for week number items to avoid allocating new shapes on every recomposition.
  */
 @Stable
-data class WeekItemShapes(
+internal data class WeekItemShapes(
     val outerRadius: Dp = 50.dp,
     val innerRadius: Dp = 4.dp,
     val top: RoundedCornerShape = RoundedCornerShape(
@@ -42,7 +42,7 @@ data class WeekItemShapes(
 }
 
 @Composable
-fun rememberWeekItemShapes(
+internal fun rememberWeekItemShapes(
     outerRadius: Dp = 50.dp,
     innerRadius: Dp = 4.dp
 ): WeekItemShapes {

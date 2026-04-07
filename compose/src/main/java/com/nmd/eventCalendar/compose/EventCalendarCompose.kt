@@ -19,6 +19,21 @@ import com.nmd.eventCalendar.compose.ui.events.PreviewCalendarEventsStore
 import java.time.LocalDate
 import java.time.YearMonth
 
+/**
+ * The main entry point for the Event Calendar Compose library.
+ *
+ * This composable initializes the calendar UI, including the month navigation,
+ * weekday headers, and the day grid. It manages the internal state via a [CalendarController]
+ * and observes events from a [CalendarEventsStore].
+ *
+ * @param modifier Modifier applied to the root layout of the calendar.
+ * @param calendarStyle Custom styling for colors and typography. Defaults to [defaultCalendarStyle].
+ * @param calendarOptions Functional configuration (e.g., week start, bounds). Defaults to [defaultCalendarOptions].
+ * @param calendarController Controller for programmatic navigation and state management.
+ * @param calendarEventsStore Store providing the events to be displayed on the calendar.
+ * @param onDaySelected Callback triggered when a user clicks on a specific day.
+ * @param onMonthChange Callback triggered when the displayed month changes (via swiping or navigation).
+ */
 @Composable
 fun EventCalendarCompose(
     modifier: Modifier = Modifier,

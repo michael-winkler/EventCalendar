@@ -51,7 +51,7 @@ private val nowMonth: YearMonth = YearMonth.now()
  * @param showNavigation Whether to show the previous/next navigation buttons.
  */
 @Composable
-fun MonthHeader(
+internal fun MonthHeader(
     currentMonth: YearMonth,
     onPreviousMonth: () -> Unit,
     onNextMonth: () -> Unit,

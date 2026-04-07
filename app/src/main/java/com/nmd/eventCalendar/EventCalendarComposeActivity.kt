@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -501,8 +500,8 @@ fun EventCalendarComposePreview() {
 @Composable
 fun CurrentWeekSheetPreview() {
     AppTheme {
-        val store = com.nmd.eventCalendar.compose.ui.events.rememberCalendarEventsStore(emptyList())
-        val style = com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle()
+        val store = rememberCalendarEventsStore(emptyList())
+        val style = defaultCalendarStyle()
         Box(modifier = Modifier.background(Color.White)) {
             CurrentWeekSheetContent(
                 weekStartValue = DayOfWeek.MONDAY.value,

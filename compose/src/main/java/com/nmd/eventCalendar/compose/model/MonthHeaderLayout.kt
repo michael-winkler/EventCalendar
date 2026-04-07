@@ -3,7 +3,7 @@ package com.nmd.eventCalendar.compose.model
 /**
  * Defines how the month navigation header is laid out in the calendar UI.
  */
-enum class MonthHeaderLayout {
+internal enum class MonthHeaderLayout {
 
     /** A horizontal header shown at the top of the calendar (portrait-friendly). */
     TopBar,

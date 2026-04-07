@@ -15,7 +15,12 @@ import androidx.compose.ui.unit.dp
  * Standard height for a calendar week row when in a fixed-height mode
  * (e.g., phone landscape or single week view).
  */
-val CalendarRowHeight = 90.dp
+internal val CalendarRowHeight = 90.dp
+
+/**
+ * Standard width for the week number column in landscape mode.
+ */
+internal val CalendarWeekColumnWidth = 48.dp
 
 /**
  * Determines the root modifier for the calendar screen based on the display mode.
@@ -23,7 +28,7 @@ val CalendarRowHeight = 90.dp
  * @param options Calendar configuration options.
  * @param isPhoneLandscape Whether the device is in phone landscape mode.
  */
-fun Modifier.calendarRoot(options: CalendarOptions, isPhoneLandscape: Boolean): Modifier =
+internal fun Modifier.calendarRoot(options: CalendarOptions, isPhoneLandscape: Boolean): Modifier =
     if (options.isCurrentWeekOnly) {
         if (isPhoneLandscape) this
             .fillMaxWidth()
@@ -39,7 +44,10 @@ fun Modifier.calendarRoot(options: CalendarOptions, isPhoneLandscape: Boolean): 
  * @param options Calendar configuration options.
  * @param isPhoneLandscape Whether the device is in phone landscape mode.
  */
-fun Modifier.calendarMonthGrid(options: CalendarOptions, isPhoneLandscape: Boolean): Modifier =
+internal fun Modifier.calendarMonthGrid(
+    options: CalendarOptions,
+    isPhoneLandscape: Boolean
+): Modifier =
     if (options.isCurrentWeekOnly || isPhoneLandscape) {
         this
             .fillMaxWidth()
@@ -56,7 +64,7 @@ fun Modifier.calendarMonthGrid(options: CalendarOptions, isPhoneLandscape: Boole
  * @param options Calendar configuration options.
  * @param isPhoneLandscape Whether the device is in phone landscape mode.
  */
-fun Modifier.calendarRow(
+internal fun Modifier.calendarRow(
     columnScope: ColumnScope,
     options: CalendarOptions,
     isPhoneLandscape: Boolean
@@ -81,7 +89,7 @@ fun Modifier.calendarRow(
  * @param isPhoneLandscape Whether the device is in phone landscape mode.
  * @param scrollState The scroll state used for vertical scrolling in landscape mode.
  */
-fun Modifier.calendarBody(
+internal fun Modifier.calendarBody(
     columnScope: ColumnScope,
     options: CalendarOptions,
     isPhoneLandscape: Boolean,

@@ -35,6 +35,7 @@ import com.nmd.eventCalendar.compose.ui.components.WeekHeader
 import com.nmd.eventCalendar.compose.ui.components.WeekNumberColumn
 import com.nmd.eventCalendar.compose.ui.config.CalendarOptions
 import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
+import com.nmd.eventCalendar.compose.ui.config.CalendarWeekColumnWidth
 import com.nmd.eventCalendar.compose.ui.config.calendarBody
 import com.nmd.eventCalendar.compose.ui.config.calendarMonthGrid
 import com.nmd.eventCalendar.compose.ui.config.calendarRoot
@@ -79,7 +80,7 @@ private val MonthHeaderWidthLandscape = 48.dp
  * @param onMonthChange Callback invoked whenever the visible month changes (paging or programmatic navigation).
  */
 @Composable
-fun CalendarScreen(
+internal fun CalendarScreen(
     modifier: Modifier,
     calendarController: CalendarController,
     calendarEventsStore: CalendarEventsStore,
@@ -259,7 +260,9 @@ private fun ColumnScope.CalendarPagerSection(
                     )
                 ) {
                     WeekNumberColumn(
-                        modifier = Modifier.weight(1f),
+                        modifier = if (phoneLandscape) Modifier.width(CalendarWeekColumnWidth) else Modifier.weight(
+                            1f
+                        ),
                         yearMonth = currentMonth,
                         weekStart = calendarOptions.weekStart,
                         calendarStyle = calendarStyle,
@@ -272,7 +275,7 @@ private fun ColumnScope.CalendarPagerSection(
                             .then(
                                 if (calendarOptions.isCurrentWeekOnly) Modifier
                                     .wrapContentHeight()
-                                    .weight(7f) else Modifier.weight(7f)
+                                    .weight(if (phoneLandscape) 1f else 7f) else Modifier.weight(if (phoneLandscape) 1f else 7f)
                             ),
                         pagerState = pagerState,
                         calendarController = calendarController,

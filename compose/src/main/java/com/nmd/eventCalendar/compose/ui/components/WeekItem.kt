@@ -31,7 +31,7 @@ private val sharedWeekItemShapes = WeekItemShapes()
  * @param isSingle If true, all corners are rounded (used for single-week view).
  */
 @Composable
-fun WeekItem(
+internal fun WeekItem(
     modifier: Modifier = Modifier,
     weekNumber: Int,
     position: WeekItemPosition,

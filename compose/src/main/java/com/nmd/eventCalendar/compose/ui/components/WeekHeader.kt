@@ -35,7 +35,7 @@ import java.time.format.TextStyle
  * @param calendarStyle Styling configuration (colors, typography sizes, etc.).
  */
 @Composable
-fun WeekHeader(
+internal fun WeekHeader(
     currentMonth: YearMonth,
     calendarOptions: CalendarOptions,
     calendarStyle: CalendarStyle
