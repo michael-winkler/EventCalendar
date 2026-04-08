@@ -1,6 +1,8 @@
 package com.nmd.eventCalendar.compose.model
 
+import android.os.Parcelable
 import androidx.annotation.Keep
+import kotlinx.parcelize.Parcelize
 
 /**
  * Represents a time interval within a single day.
@@ -22,12 +24,13 @@ import androidx.annotation.Keep
  */
 @Suppress("unused")
 @Keep
+@Parcelize
 data class EventTimeRange(
     val startHour: Int,
     val startMinute: Int,
     val endHour: Int,
     val endMinute: Int
-) {
+) : Parcelable {
 
     /**
      * Returns the formatted start time as `HH:mm`.
