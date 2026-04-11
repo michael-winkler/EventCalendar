@@ -11,6 +11,20 @@ import java.time.LocalDate
 import java.time.YearMonth
 import java.time.temporal.TemporalAdjusters
 
+/**
+ * Generates a list of [CalendarDay] objects for a given month or the current week.
+ *
+ * If [isCurrentWeekOnly] is true, it returns exactly 7 days starting from the beginning
+ * of the current week (based on [weekStart]).
+ * Otherwise, it returns 42 days (6 weeks) to fill a standard month grid, starting from
+ * the appropriate offset to align with [weekStart].
+ *
+ * @param yearMonth The month to generate days for.
+ * @param weekStart The first day of the week (e.g., Monday).
+ * @param eventsByDate A map of events keyed by their date.
+ * @param isCurrentWeekOnly If true, only the 7 days of the current week are returned.
+ * @return A list of [CalendarDay] objects.
+ */
 internal fun generateMonthDays(
     yearMonth: YearMonth,
     weekStart: DayOfWeek = DayOfWeek.MONDAY,
@@ -46,6 +60,10 @@ internal fun generateMonthDays(
     }
 }
 
+/**
+ * Returns true if the current window is considered a tablet based on its smallest dimension.
+ * A window is a tablet if its minimum dimension is at least 600dp.
+ */
 @Composable
 internal fun isTabletWindow(): Boolean {
     val windowInfo = LocalWindowInfo.current
@@ -55,17 +73,23 @@ internal fun isTabletWindow(): Boolean {
     return minOf(widthDp, heightDp) >= 600.dp
 }
 
+/**
+ * Returns true if the current window is considered a phone (not a tablet).
+ */
 @Composable
 internal fun isPhoneWindow(): Boolean = !isTabletWindow()
 
+/**
+ * Returns true if the current window is in landscape orientation (width >= height).
+ */
 @Composable
 internal fun isLandscapeWindow(): Boolean {
     val windowInfo = LocalWindowInfo.current
     return windowInfo.containerSize.width >= windowInfo.containerSize.height
 }
 
-@Composable
-internal fun isPortraitWindow(): Boolean = !isLandscapeWindow()
-
+/**
+ * Returns true if the current window is a phone in landscape orientation.
+ */
 @Composable
 internal fun isPhoneLandscapeWindow(): Boolean = isPhoneWindow() && isLandscapeWindow()

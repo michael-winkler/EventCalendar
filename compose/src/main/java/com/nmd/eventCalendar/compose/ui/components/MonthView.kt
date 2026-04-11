@@ -155,7 +155,7 @@ private fun dayCornerFor(row: Int, col: Int, lastRow: Int): DayCornerPosition = 
 
 @Preview(showBackground = true)
 @Composable
-fun MonthViewPreview() {
+internal fun MonthViewPreview() {
     val previewToday = LocalDate.now()
 
     MonthView(
@@ -209,7 +209,7 @@ fun MonthViewPreview() {
     heightDp = 360
 )
 @Composable
-fun MonthViewPreviewLandscape() {
+internal fun MonthViewPreviewLandscape() {
     val previewToday = LocalDate.now()
 
     MonthView(

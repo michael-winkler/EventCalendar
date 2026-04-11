@@ -58,7 +58,7 @@ internal fun WeekItem(
 
 @Preview(showBackground = true)
 @Composable
-fun WeekItemPreview() {
+internal fun WeekItemPreview() {
     WeekItem(
         modifier = Modifier,
         weekNumber = 1,

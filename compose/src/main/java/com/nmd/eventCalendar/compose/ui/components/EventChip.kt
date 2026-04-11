@@ -51,7 +51,7 @@ internal fun EventChip(
 
 @Preview(showBackground = true)
 @Composable
-fun EventChipPreview() {
+internal fun EventChipPreview() {
     EventChip(
         text = "Cooking",
         shapeColor = Color(0xFF673AB7),

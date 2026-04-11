@@ -89,7 +89,7 @@ internal fun WeekNumberColumn(
 
 @Preview(showBackground = true, widthDp = 80, heightDp = 520)
 @Composable
-fun WeekNumberColumnPreview() {
+internal fun WeekNumberColumnPreview() {
     WeekNumberColumn(
         modifier = Modifier,
         yearMonth = YearMonth.now(),

@@ -194,7 +194,7 @@ private fun MonthTitle(
 
 @Preview(showBackground = true)
 @Composable
-fun MonthHeaderPreview() {
+internal fun MonthHeaderPreview() {
     MonthHeader(
         currentMonth = YearMonth.now(),
         onPreviousMonth = {},
@@ -205,7 +205,7 @@ fun MonthHeaderPreview() {
 
 @Preview(name = "MonthHeader - SideBar", showBackground = true, widthDp = 96, heightDp = 430)
 @Composable
-fun MonthHeaderSideBarPreview() {
+internal fun MonthHeaderSideBarPreview() {
     MonthHeader(
         currentMonth = YearMonth.now(),
         onPreviousMonth = {},

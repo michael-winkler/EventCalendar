@@ -350,7 +350,7 @@ private fun MonthPager(
 
 @Preview(showBackground = true)
 @Composable
-fun CalendarScreenPreview() {
+internal fun CalendarScreenPreview() {
     val today = LocalDate.now()
     val store = remember {
         PreviewCalendarEventsStore(

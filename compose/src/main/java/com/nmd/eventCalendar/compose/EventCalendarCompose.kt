@@ -57,7 +57,7 @@ fun EventCalendarCompose(
 
 @Preview(showBackground = true)
 @Composable
-fun EventCalendarComposePreview() {
+internal fun EventCalendarComposePreview() {
     val today = LocalDate.now()
 
     val store = remember {
