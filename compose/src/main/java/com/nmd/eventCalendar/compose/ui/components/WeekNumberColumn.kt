@@ -29,8 +29,8 @@ import java.time.temporal.WeekFields
  * If [CalendarOptions.isCurrentWeekOnly] is enabled, only a single week number is displayed.
  *
  * @param modifier Modifier applied to the column container.
- * @param yearMonth The month used to calculate week numbers (ignored if [calendarOptions.isCurrentWeekOnly] is true).
- * @param weekStart First day of week (e.g., Monday).
+ * @param yearMonth The month used to calculate week numbers (ignored if [CalendarOptions.isCurrentWeekOnly] is true).
+ * @param weekStart First day of the week (e.g., Monday).
  * @param calendarStyle Styling configuration (colors, typography sizes, etc.).
  * @param calendarOptions Configuration options for the calendar.
  * @param phoneLandscape If true, uses fixed row heights optimized for phone landscape layouts.

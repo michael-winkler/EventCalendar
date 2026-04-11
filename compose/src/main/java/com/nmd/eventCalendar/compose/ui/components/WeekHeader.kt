@@ -95,7 +95,7 @@ internal fun WeekHeader(
 
 @Preview(showBackground = true)
 @Composable
-fun WeekHeaderPreview() {
+internal fun WeekHeaderPreview() {
     WeekHeader(
         currentMonth = YearMonth.now(),
         calendarOptions = defaultCalendarOptions(),

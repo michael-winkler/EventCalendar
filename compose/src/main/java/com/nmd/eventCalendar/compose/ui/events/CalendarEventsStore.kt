@@ -12,18 +12,18 @@ import java.time.LocalDate
  *
  * ## Grouped events
  * Events are exposed grouped by their [LocalDate] so the calendar UI can render each day with a
- * fast lookup (e.g. `eventsByDate[date].orEmpty()`), avoiding repeated filtering of a flat list.
+ * fast lookup (e.g., `eventsByDate[date].orEmpty()`), avoiding repeated filtering of a flat list.
  *
  * ## Reactive updates
- * [eventsByDateFlow] is a hot [StateFlow]. Consumers (Compose UI) should collect it (e.g. via
- * `collectAsStateWithLifecycle()`) to automatically recompose when the event data changes.
+ * [eventsByDateFlow] is a hot [StateFlow]. Consumers (Compose UI) should collect it (e.g., via
+ * [androidx.lifecycle.compose.collectAsStateWithLifecycle]) to automatically recompose when the event data changes.
  *
  * ## Updating events
  * Implementations should ensure that [setEvents] updates the underlying state so that
  * [eventsByDateFlow] emits a new value when the content changes.
  *
- * Threading note: Implementations may choose how and where grouping/sorting is performed
- * (e.g. on a background dispatcher), but updates must ultimately be published through the flow.
+ * Threading note: Implementations may choose how and where grouping or sorting is performed
+ * (e.g., on a background dispatcher), but updates must ultimately be published through the flow.
  */
 interface CalendarEventsStore {
 

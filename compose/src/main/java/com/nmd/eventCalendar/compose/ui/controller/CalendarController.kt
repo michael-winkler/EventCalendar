@@ -10,22 +10,22 @@ import kotlin.math.max
  * Controller for a month-based pager calendar.
  *
  * The controller provides:
- * - Mapping between pager pages and {@link YearMonth} instances.
+ * - Mapping between pager pages and [YearMonth] instances.
  * - Navigation helpers (previous/next/current month, jump to a specific month).
  * - Optional clamping to a min/max month.
  *
  * Important:
- * This controller assumes that the pager provides a FINITE range (finite {@code pageCount}),
- * so it can clamp target pages to {@code [0, pageCount - 1]} and use
- * {@link #canGoToPreviousMonth()} / {@link #canGoToNextMonth()} safely.
+ * This controller assumes that the pager provides a FINITE range (finite `pageCount`),
+ * so it can clamp target pages to `[0, pageCount - 1]` and use
+ * [canGoToPreviousMonth] / [canGoToNextMonth] safely.
  *
  * @param pagerState The pager state used by the underlying HorizontalPager.
  * @param scope Coroutine scope used to run scroll animations.
- * @param basePage The page index that corresponds to {@code baseMonth}.
+ * @param basePage The page index that corresponds to `baseMonth`.
  *                 Common setups:
- *                 - finite range: {@code basePage = 0} and {@code baseMonth = rangeStart}
- *                 - (pseudo-)infinite range: {@code basePage = Int.MAX_VALUE/2} and {@code baseMonth = YearMonth.now()}
- * @param baseMonth The month that corresponds to {@code basePage}.
+ *                 - finite range: `basePage = 0` and `baseMonth = rangeStart`
+ *                 - (pseudo-)infinite range: `basePage = Int.MAX_VALUE/2` and `baseMonth = YearMonth.now()`
+ * @param baseMonth The month that corresponds to `basePage`.
  * @param minMonth Optional minimum allowed month (inclusive).
  * @param maxMonth Optional maximum allowed month (inclusive).
  */
@@ -39,20 +39,20 @@ class CalendarController internal constructor(
 ) {
 
     /**
-     * Converts a pager page index into the corresponding {@link YearMonth}.
+     * Converts a pager page index into the corresponding [YearMonth].
      *
      * Formula:
-     * {@code month = baseMonth + (page - basePage) months}
+     * `month = baseMonth + (page - basePage) months`
      */
     fun pageToMonth(page: Int): YearMonth {
         return baseMonth.plusMonths((page - basePage).toLong())
     }
 
     /**
-     * Converts a {@link YearMonth} into the corresponding pager page index.
+     * Converts a [YearMonth] into the corresponding pager page index.
      *
      * Formula:
-     * {@code page = basePage + monthsBetween(baseMonth, month)}
+     * `page = basePage + monthsBetween(baseMonth, month)`
      */
     fun monthToPage(month: YearMonth): Int {
         val offset = (month.year - baseMonth.year) * 12 + (month.monthValue - baseMonth.monthValue)
