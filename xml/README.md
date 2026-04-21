@@ -1,6 +1,7 @@
 # EventCalendar (XML/View System)
 
-A highly customizable **Month Calendar View** for the Android View System (XML), featuring event support, Material 3 design, and smooth navigation.
+A highly customizable **Month Calendar View** for the Android View System (XML), featuring event
+support, Material 3 design, and smooth navigation.
 
 ---
 
@@ -15,6 +16,7 @@ A highly customizable **Month Calendar View** for the Android View System (XML),
 ## 🚀 Installation
 
 ### 1) Add JitPack repository
+
 In your `settings.gradle.kts` or root `build.gradle.kts`:
 
 ```kotlin
@@ -29,7 +31,9 @@ dependencyResolutionManagement {
 ```
 
 ### 2) Add the dependency
-Replace `LATEST_VERSION` with [![](https://jitpack.io/v/michael-winkler/EventCalendar.svg)](https://jitpack.io/#michael-winkler/EventCalendar)
+
+Replace `LATEST_VERSION`
+with [![](https://jitpack.io/v/michael-winkler/EventCalendar.svg)](https://jitpack.io/#michael-winkler/EventCalendar)
 
 ```kotlin
 dependencies {
@@ -53,6 +57,7 @@ dependencies {
 ## 📖 Usage
 
 ### XML Layout (Full Month)
+
 Add the `EventCalendarView` to your layout with all available attributes:
 
 ```xml
@@ -80,7 +85,9 @@ Add the `EventCalendarView` to your layout with all available attributes:
 ```
 
 ### XML Layout (Single Week)
-For a more compact layout, use the `EventCalendarSingleWeekView`. It supports most attributes of the full view:
+
+For a more compact layout, use the `EventCalendarSingleWeekView`. It supports most attributes of the
+full view:
 
 ```xml
 <com.nmd.eventCalendar.EventCalendarSingleWeekView
@@ -94,6 +101,7 @@ For a more compact layout, use the `EventCalendarSingleWeekView`. It supports mo
 ```
 
 ### Programmatic Setup
+
 Initialize events and listeners in your Activity or Fragment (works for both View types):
 
 ```kotlin
@@ -125,6 +133,7 @@ calendarView.addOnCalendarScrollListener(object : EventCalendarScrollListener {
 ## ⚙️ Configuration
 
 ### Customizing Colors via Theme
+
 You can also override the default styles in your `themes.xml`:
 
 ```xml
@@ -139,6 +148,7 @@ You can also override the default styles in your `themes.xml`:
 ## 📦 Data Models
 
 ### Event
+
 ```kotlin
 data class Event(
     val date: String, // Format: dd.MM.yyyy
@@ -150,6 +160,7 @@ data class Event(
 ```
 
 ### Day
+
 ```kotlin
 data class Day(
     val value: String,        // Day of month (e.g. "31")
