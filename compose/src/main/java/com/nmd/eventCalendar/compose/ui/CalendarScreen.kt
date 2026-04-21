@@ -29,6 +29,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nmd.eventCalendar.compose.model.CalendarDay
 import com.nmd.eventCalendar.compose.model.Event
 import com.nmd.eventCalendar.compose.model.MonthHeaderLayout
+import com.nmd.eventCalendar.compose.model.YearMonth
 import com.nmd.eventCalendar.compose.ui.components.MonthHeader
 import com.nmd.eventCalendar.compose.ui.components.MonthView
 import com.nmd.eventCalendar.compose.ui.components.WeekHeader
@@ -48,8 +49,9 @@ import com.nmd.eventCalendar.compose.ui.events.PreviewCalendarEventsStore
 import com.nmd.eventCalendar.compose.util.isPhoneLandscapeWindow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import java.time.LocalDate
-import java.time.YearMonth
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
 
 private val MonthHeaderWidthLandscape = 48.dp
 
@@ -333,7 +335,7 @@ private fun MonthPager(
         state = pagerState,
         pageSize = PageSize.Fill,
         beyondViewportPageCount = 0,
-        key = { page -> calendarController.pageToMonth(page) }
+        key = { page -> calendarController.pageToMonth(page).let { "${it.year}-${it.monthValue}" } }
     ) { page ->
         val month = calendarController.pageToMonth(page)
 
@@ -351,7 +353,7 @@ private fun MonthPager(
 @Preview(showBackground = true)
 @Composable
 internal fun CalendarScreenPreview() {
-    val today = LocalDate.now()
+    val today = kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault())
     val store = remember {
         PreviewCalendarEventsStore(
             initialEvents = listOf(

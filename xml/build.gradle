@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.kotlin.serialization)
     id 'maven-publish'
 }
 
@@ -52,6 +52,10 @@ dependencies {
 
     // Google Material Design
     implementation libs.material
+
+    // Kotlinx Datetime
+    implementation libs.kotlinx.datetime
+    implementation libs.kotlinx.serialization.json
 }
 
 publishing {

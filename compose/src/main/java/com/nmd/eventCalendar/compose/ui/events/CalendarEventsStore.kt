@@ -2,7 +2,7 @@ package com.nmd.eventCalendar.compose.ui.events
 
 import com.nmd.eventCalendar.compose.model.Event
 import kotlinx.coroutines.flow.StateFlow
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 
 /**
  * Store abstraction for calendar events.

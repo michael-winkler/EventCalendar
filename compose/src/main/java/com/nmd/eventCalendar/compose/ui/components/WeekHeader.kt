@@ -9,18 +9,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.nmd.eventCalendar.compose.model.YearMonth
 import com.nmd.eventCalendar.compose.ui.config.CalendarOptions
 import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
 import com.nmd.eventCalendar.compose.ui.config.defaultCalendarOptions
 import com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle
+import com.nmd.eventCalendar.compose.util.plus
 import com.nmd.eventcalendar.compose.R
-import java.time.YearMonth
-import java.time.format.TextStyle
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
+import kotlin.time.Clock
 
 /**
  * Displays the weekday header row for the calendar grid.
@@ -40,6 +42,8 @@ internal fun WeekHeader(
     calendarOptions: CalendarOptions,
     calendarStyle: CalendarStyle
 ) {
+    val today = remember { Clock.System.todayIn(TimeZone.currentSystemDefault()) }
+
     val daysOfWeek = remember(calendarOptions.weekStart) {
         (0 until 7).map { calendarOptions.weekStart.plus(it.toLong()) }
     }
@@ -75,10 +79,7 @@ internal fun WeekHeader(
             ) {
                 Text(
                     modifier = Modifier.padding(vertical = 2.dp),
-                    text = day.getDisplayName(
-                        TextStyle.SHORT_STANDALONE,
-                        LocalLocale.current.platformLocale
-                    ),
+                    text = day.name.take(3), // TODO: Localize properly in KMP
                     color = if (isToday) {
                         calendarStyle.currentWeekDayTextColor
                     } else {

@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.nmd.eventCalendar.compose.model.CalendarDay
 import com.nmd.eventCalendar.compose.model.Event
+import com.nmd.eventCalendar.compose.model.YearMonth
 import com.nmd.eventCalendar.compose.ui.CalendarScreen
 import com.nmd.eventCalendar.compose.ui.config.CalendarOptions
 import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
@@ -16,8 +17,8 @@ import com.nmd.eventCalendar.compose.ui.controller.CalendarController
 import com.nmd.eventCalendar.compose.ui.controller.rememberCalendarController
 import com.nmd.eventCalendar.compose.ui.events.CalendarEventsStore
 import com.nmd.eventCalendar.compose.ui.events.PreviewCalendarEventsStore
-import java.time.LocalDate
-import java.time.YearMonth
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
 
 /**
  * The main entry point for the Event Calendar Compose library.
@@ -58,7 +59,7 @@ fun EventCalendarCompose(
 @Preview(showBackground = true)
 @Composable
 internal fun EventCalendarComposePreview() {
-    val today = LocalDate.now()
+    val today = kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault())
 
     val store = remember {
         PreviewCalendarEventsStore(

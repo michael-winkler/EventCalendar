@@ -25,10 +25,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nmd.eventCalendar.compose.model.MonthHeaderLayout
+import com.nmd.eventCalendar.compose.model.YearMonth
 import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
 import com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle
 import com.nmd.eventcalendar.compose.R
-import java.time.YearMonth
+import kotlinx.datetime.number
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -61,7 +62,8 @@ internal fun MonthHeader(
 ) {
     val title = remember(currentMonth) {
         val showYear = currentMonth.year != nowMonth.year
-        val monthName = currentMonth.month.getDisplayName(TextStyle.FULL, Locale.getDefault())
+        val monthName = java.time.Month.of(currentMonth.month.number)
+            .getDisplayName(TextStyle.FULL, Locale.getDefault())
         if (showYear) "$monthName ${currentMonth.year}" else monthName
     }
 

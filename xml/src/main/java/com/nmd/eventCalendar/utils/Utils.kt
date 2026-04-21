@@ -5,9 +5,7 @@ import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.Typeface
 import android.graphics.drawable.RippleDrawable
-import android.os.Build
 import android.widget.FrameLayout
-import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
@@ -16,10 +14,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.nmd.eventCalendar.R
 import com.nmd.eventCalendar.model.Day
 import com.nmd.eventCalendar.model.Event
+import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.minus
+import kotlinx.datetime.number
+import kotlinx.datetime.plus
+import kotlinx.datetime.todayIn
 import java.text.SimpleDateFormat
-import java.time.DayOfWeek
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -123,75 +124,31 @@ internal class Utils {
         }
 
         internal fun getDaysForCurrentWeek(weekStartDay: Int): List<Day> {
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                getDaysForCurrentWeekApi26Impl(weekStartDay = weekStartDay)
-            } else {
-                val calendar = Calendar.getInstance()
-                val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-                val currentDate = dateFormat.format(calendar.time)
-
-                // Calculate the start day of the week backwards
-                while (calendar.get(Calendar.DAY_OF_WEEK) != weekStartDay) {
-                    calendar.add(Calendar.DAY_OF_MONTH, -1)
-                }
-
-                List(7) {
-                    val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
-                    val date = dateFormat.format(calendar.time)
-                    calendar.add(Calendar.DAY_OF_MONTH, 1)
-                    Day(
-                        value = dayOfMonth.toString(),
-                        isCurrentMonth = true,
-                        isCurrentDay = currentDate == date,
-                        date = date
-                    )
-                }
-            }
-        }
-
-        @RequiresApi(Build.VERSION_CODES.O)
-        internal fun getDaysForCurrentWeekApi26Impl(weekStartDay: Int): List<Day> {
-            val today = LocalDate.now()
+            val today =
+                kotlin.time.Clock.System.todayIn(kotlinx.datetime.TimeZone.currentSystemDefault())
             val desiredStartDay = calendarDayToDayOfWeek(weekStartDay)
 
-            // Calculate the start of the week backwards
-            var startOfWeek = today
-            while (startOfWeek.dayOfWeek != desiredStartDay) {
-                startOfWeek = startOfWeek.minusDays(1)
-            }
-
-            val dateFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.getDefault())
+            val daysUntilStart = (today.dayOfWeek.ordinal - desiredStartDay.ordinal + 7) % 7
+            val actualStartOfWeek = today.minus(daysUntilStart, kotlinx.datetime.DateTimeUnit.DAY)
 
             return List(7) { index ->
-                val currentDate = startOfWeek.plusDays(index.toLong())
+                val currentDate = actualStartOfWeek.plus(index, kotlinx.datetime.DateTimeUnit.DAY)
+                val dateStr = String.format(
+                    Locale.GERMAN,
+                    "%02d.%02d.%04d",
+                    currentDate.day,
+                    currentDate.month.number,
+                    currentDate.year
+                )
                 Day(
-                    value = currentDate.dayOfMonth.toString(),
+                    value = currentDate.day.toString(),
                     isCurrentMonth = true,
                     isCurrentDay = today == currentDate,
-                    date = dateFormat.format(currentDate)
+                    date = dateStr
                 )
             }
         }
 
-        @RequiresApi(Build.VERSION_CODES.O)
-        internal fun getDaysForCurrentWeekApi26ImplOld(weekStartDay: Int): List<Day> {
-            val today = LocalDate.now()
-            val startOfWeek =
-                today.with(calendarDayToDayOfWeek(weekStartDay))
-            val dateFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.getDefault())
-
-            return List(7) { index ->
-                val currentDate = startOfWeek.plusDays(index.toLong())
-                Day(
-                    value = currentDate.dayOfMonth.toString(),
-                    isCurrentMonth = true,
-                    isCurrentDay = today == currentDate,
-                    date = dateFormat.format(currentDate)
-                )
-            }
-        }
-
-        @RequiresApi(Build.VERSION_CODES.O)
         private fun calendarDayToDayOfWeek(day: Int): DayOfWeek =
             when (day) {
                 Calendar.MONDAY -> DayOfWeek.MONDAY

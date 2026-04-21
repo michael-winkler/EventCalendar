@@ -1,7 +1,5 @@
 package com.nmd.eventCalendar
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -28,16 +26,14 @@ import com.nmd.eventCalendar.compose.model.CalendarDay
 import com.nmd.eventCalendar.compose.model.Event
 import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
 import com.nmd.eventCalendarSample.R
-import java.time.format.DateTimeFormatter
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DayEventsSheetContent(
     calendarDay: CalendarDay,
     calendarStyle: CalendarStyle
 ) {
-    val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
-    val dateText = "${calendarDay.date.format(dateFormatter)} (${calendarDay.events.size})"
+    val dateText =
+        "${calendarDay.date.dayOfMonth}.${calendarDay.date.monthNumber}.${calendarDay.date.year} (${calendarDay.events.size})"
 
     Column(
         modifier = Modifier

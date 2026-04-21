@@ -10,15 +10,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.nmd.eventCalendar.compose.model.WeekItemPosition
+import com.nmd.eventCalendar.compose.model.YearMonth
 import com.nmd.eventCalendar.compose.ui.config.CalendarOptions
 import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
 import com.nmd.eventCalendar.compose.ui.config.calendarRow
 import com.nmd.eventCalendar.compose.ui.config.defaultCalendarOptions
 import com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle
 import com.nmd.eventCalendar.compose.util.generateMonthDays
-import java.time.DayOfWeek
-import java.time.YearMonth
-import java.time.temporal.WeekFields
+import com.nmd.eventCalendar.compose.util.isoWeekNumber
+import kotlinx.datetime.DayOfWeek
 
 /**
  * Displays the calendar week numbers (KW) as a vertical column aligned with the month grid.
@@ -53,7 +53,7 @@ internal fun WeekNumberColumn(
             isCurrentWeekOnly = isCurrentWeekOnly
         )
         val weeks = days.chunked(7)
-        weeks.map { week -> week.first().date.get(WeekFields.ISO.weekOfWeekBasedYear()) }
+        weeks.map { week -> week.first().date.isoWeekNumber() }
     }
 
     Column(modifier = modifier) {

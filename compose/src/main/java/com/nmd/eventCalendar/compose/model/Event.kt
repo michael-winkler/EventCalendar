@@ -1,11 +1,11 @@
 package com.nmd.eventCalendar.compose.model
 
-import android.os.Parcelable
 import androidx.annotation.Keep
 import androidx.compose.ui.graphics.Color
-import kotlinx.parcelize.Parcelize
-import kotlinx.parcelize.RawValue
-import java.time.LocalDate
+import com.nmd.eventCalendar.compose.model.serializers.ColorSerializer
+import kotlinx.datetime.LocalDate
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.pow
 
@@ -36,31 +36,30 @@ import kotlin.math.pow
  * - Otherwise, [effectiveTextColor] remains [textColor].
  *
  * @property date The calendar date on which the event occurs.
- * Annotated with `@RawValue` because `LocalDate` is not directly supported by `Parcelize`.
  * @property name Display name/title of the event.
  * @property shapeColor Background/accent color used to render the event chip/shape.
- * Annotated with `@RawValue` because `Color` is not directly supported by `Parcelize`.
  * @property textColor Preferred text color used when rendering the event name.
- * Annotated with `@RawValue` because `Color` is not directly supported by `Parcelize`.
  * @property autoAdjustTextColorForBackground If true, [effectiveTextColor] may override [textColor]
  * to improve contrast based on [shapeColor].
  * @property data Optional user-defined payload associated with the event (e.g., your domain model).
- * Annotated with `@RawValue` to allow any type to be passed, though it must be Parcelable at runtime.
  * @property timeRange Optional start/end time information for sorting and display.
  * @property id Stable unique identifier for this event; used for stable UI keys.
  */
 @Keep
-@Parcelize
+@Serializable
 data class Event(
-    val date: @RawValue LocalDate,
+    val date: LocalDate,
     val name: String,
-    val shapeColor: @RawValue Color,
-    val textColor: @RawValue Color,
+    @Serializable(with = ColorSerializer::class)
+    val shapeColor: Color,
+    @Serializable(with = ColorSerializer::class)
+    val textColor: Color,
     val autoAdjustTextColorForBackground: Boolean = true,
-    val data: @RawValue Any? = null,
+    @Transient
+    val data: Any? = null,
     val timeRange: EventTimeRange? = null,
     val id: Int = nextEventId()
-) : Parcelable {
+) {
 
     /**
      * The text color that should actually be used by the UI.

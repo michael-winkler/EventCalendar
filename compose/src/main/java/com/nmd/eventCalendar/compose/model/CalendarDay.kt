@@ -1,6 +1,6 @@
 package com.nmd.eventCalendar.compose.model
 
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 
 /**
  * Represents a single day cell in the calendar UI.

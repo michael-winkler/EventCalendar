@@ -1,9 +1,9 @@
 package com.nmd.eventCalendar.compose.ui.controller
 
 import androidx.compose.foundation.pager.PagerState
+import com.nmd.eventCalendar.compose.model.YearMonth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import java.time.YearMonth
 import kotlin.math.max
 
 /**
@@ -55,7 +55,8 @@ class CalendarController internal constructor(
      * `page = basePage + monthsBetween(baseMonth, month)`
      */
     fun monthToPage(month: YearMonth): Int {
-        val offset = (month.year - baseMonth.year) * 12 + (month.monthValue - baseMonth.monthValue)
+        val offset =
+            (month.year - baseMonth.year) * 12 + (month.month.ordinal - baseMonth.month.ordinal)
         return basePage + offset
     }
 

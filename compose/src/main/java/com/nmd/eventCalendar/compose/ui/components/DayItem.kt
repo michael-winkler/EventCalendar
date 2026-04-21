@@ -25,12 +25,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nmd.eventCalendar.compose.model.CalendarDay
 import com.nmd.eventCalendar.compose.model.Event
+import com.nmd.eventCalendar.compose.model.YearMonth
 import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
 import com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle
-import java.time.LocalDate
-import java.time.YearMonth
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
 
-internal val today: LocalDate = LocalDate.now()
+internal val today: LocalDate = kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault())
 private val TodayBadgeShape = RoundedCornerShape(50)
 
 /**
@@ -104,7 +106,7 @@ internal fun DayItem(
                             }
                         )
                         .padding(horizontal = 8.dp, vertical = 2.dp),
-                    text = calendarDay.date.dayOfMonth.toString(),
+                    text = calendarDay.date.day.toString(),
                     color = textColor,
                     fontStyle = style,
                     fontSize = calendarStyle.textUnit,
@@ -155,7 +157,7 @@ internal fun DayItem(
 @Preview(showBackground = true)
 @Composable
 fun DayItemPreview() {
-    val previewToday = LocalDate.now()
+    val previewToday = kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault())
     val events = listOf(
         Event(previewToday, "Cooking", shapeColor = Color(0xFFEF6C00), textColor = Color.White),
         Event(previewToday, "Board Games", shapeColor = Color(0xFF43A047), textColor = Color.White),

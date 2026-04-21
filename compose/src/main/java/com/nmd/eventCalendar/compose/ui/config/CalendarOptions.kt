@@ -2,8 +2,8 @@ package com.nmd.eventCalendar.compose.ui.config
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import java.time.DayOfWeek
-import java.time.LocalDate
+import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
 
 /**
  * Configuration options for the calendar UI.

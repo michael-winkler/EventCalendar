@@ -4,8 +4,8 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import com.nmd.eventCalendar.compose.model.YearMonth
 import com.nmd.eventCalendar.compose.ui.config.CalendarOptions
-import java.time.YearMonth
 import kotlin.math.max
 
 /**
@@ -59,7 +59,7 @@ fun rememberCalendarController(
         if (calendarOptions.isCurrentWeekOnly) 1 else max(1, calendarOptions.openEndedWindowMonths)
 
     fun monthsBetween(start: YearMonth, end: YearMonth): Int =
-        (end.year - start.year) * 12 + (end.monthValue - start.monthValue)
+        (end.year - start.year) * 12 + (end.month.ordinal - start.month.ordinal)
 
     val centeredRangeStartEnd = remember(nowMonth, window) {
         val monthsBefore = (window - 1) / 2

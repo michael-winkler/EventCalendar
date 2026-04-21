@@ -2,13 +2,11 @@
 
 package com.nmd.eventCalendar
 
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -61,14 +59,15 @@ import com.nmd.eventCalendar.compose.ui.events.CalendarEventsStore
 import com.nmd.eventCalendar.compose.ui.events.rememberCalendarEventsStore
 import com.nmd.eventCalendar.theme.AppTheme
 import com.nmd.eventCalendarSample.R
-import java.time.DayOfWeek
-import java.time.LocalDate
-import java.time.YearMonth
-import java.time.format.TextStyle
-import java.util.Locale
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.isoDayNumber
+import kotlinx.datetime.plus
+import kotlinx.datetime.todayIn
 import kotlin.random.Random
 
-@RequiresApi(Build.VERSION_CODES.O)
 class EventCalendarComposeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -81,7 +80,6 @@ class EventCalendarComposeActivity : ComponentActivity() {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Screen(
     callback: () -> Unit
@@ -95,7 +93,7 @@ fun Screen(
         )
     )
 
-    var weekStartValue by rememberSaveable { mutableIntStateOf(DayOfWeek.MONDAY.value) }
+    var weekStartValue by rememberSaveable { mutableIntStateOf(DayOfWeek.MONDAY.isoDayNumber) }
     var headerVisible by rememberSaveable { mutableStateOf(true) }
     var showCalendarWeek by rememberSaveable { mutableStateOf(true) }
     var showCurrentWeekSheet by rememberSaveable { mutableStateOf(false) }
@@ -115,7 +113,7 @@ fun Screen(
 
     val calendarOptions = remember(weekStartValue, headerVisible, showCalendarWeek) {
         CalendarOptions(
-            weekStart = DayOfWeek.of(weekStartValue),
+            weekStart = DayOfWeek(weekStartValue),
             headerVisible = headerVisible,
             calendarWeekVisible = showCalendarWeek,
             minDate = null,
@@ -142,7 +140,7 @@ fun Screen(
         }
     }
 
-    val onMonthChange: (YearMonth) -> Unit = remember {
+    val onMonthChange: (com.nmd.eventCalendar.compose.model.YearMonth) -> Unit = remember {
         { Log.i("EventCalendarCompose", "Selected month: $it") }
     }
 
@@ -281,7 +279,6 @@ fun Screen(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun ModalBottomSheetWrapper(
     onDismiss: () -> Unit,
@@ -304,7 +301,6 @@ private fun ModalBottomSheetWrapper(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun CurrentWeekSheetContent(
     weekStartValue: Int,
@@ -328,11 +324,8 @@ private fun CurrentWeekSheetContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        val now = LocalDate.now()
-        val monthTitle = remember(now) {
-            val monthName = now.month.getDisplayName(TextStyle.FULL, Locale.getDefault())
-            "$monthName ${now.year}"
-        }
+        val today = kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault())
+        val monthTitle = "${today.month.name} ${today.year}"
 
         Text(
             text = monthTitle,
@@ -347,7 +340,7 @@ private fun CurrentWeekSheetContent(
 
         val weekOptions = remember(weekStartValue) {
             CalendarOptions(
-                weekStart = DayOfWeek.of(weekStartValue),
+                weekStart = DayOfWeek(weekStartValue),
                 headerVisible = false,
                 calendarWeekVisible = true,
                 openEndedWindowMonths = 1,
@@ -373,7 +366,6 @@ private fun CurrentWeekSheetContent(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 private fun shuffleEventsForCurrentYear(
     templates: List<Pair<String, Color>>,
     eventCount: Int = 250,
@@ -381,14 +373,14 @@ private fun shuffleEventsForCurrentYear(
 ): List<Event> {
     if (templates.isEmpty() || eventCount <= 0) return emptyList()
 
-    val year = LocalDate.now().year
-    val start = LocalDate.of(year, 1, 1)
-    val daysInYear = if (start.isLeapYear) 366 else 365
+    val today = kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault())
+    val year = today.year
+    val start = LocalDate(year, 1, 1)
     val rnd = Random(seed)
 
     return List(eventCount) {
         val (name, shape) = templates[rnd.nextInt(templates.size)]
-        val date = start.plusDays(rnd.nextInt(daysInYear).toLong())
+        val date = start.plus(rnd.nextInt(365), kotlinx.datetime.DateTimeUnit.DAY)
 
         Event(
             date = date,
@@ -486,7 +478,6 @@ private val eventTemplates: List<Pair<String, Color>> = listOf(
     "Cheese Making Class" to Color(0xFFFFC107),
 )
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun EventCalendarComposePreview() {
@@ -495,7 +486,6 @@ fun EventCalendarComposePreview() {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun CurrentWeekSheetPreview() {
@@ -504,7 +494,7 @@ fun CurrentWeekSheetPreview() {
         val style = defaultCalendarStyle()
         Box(modifier = Modifier.background(Color.White)) {
             CurrentWeekSheetContent(
-                weekStartValue = DayOfWeek.MONDAY.value,
+                weekStartValue = DayOfWeek.MONDAY.isoDayNumber,
                 calendarEventsStore = store,
                 calendarStyle = style
             )
@@ -512,7 +502,6 @@ fun CurrentWeekSheetPreview() {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview(
     showBackground = true,
     widthDp = 740,

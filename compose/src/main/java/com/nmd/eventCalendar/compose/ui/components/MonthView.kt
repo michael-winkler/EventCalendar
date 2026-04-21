@@ -15,6 +15,7 @@ import com.nmd.eventCalendar.compose.model.CalendarDay
 import com.nmd.eventCalendar.compose.model.DayCornerPosition
 import com.nmd.eventCalendar.compose.model.Event
 import com.nmd.eventCalendar.compose.model.WeekItemPosition
+import com.nmd.eventCalendar.compose.model.YearMonth
 import com.nmd.eventCalendar.compose.ui.config.CalendarOptions
 import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
 import com.nmd.eventCalendar.compose.ui.config.CalendarWeekColumnWidth
@@ -24,9 +25,10 @@ import com.nmd.eventCalendar.compose.ui.config.defaultCalendarOptions
 import com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle
 import com.nmd.eventCalendar.compose.ui.shapes.rememberDayCornerShapes
 import com.nmd.eventCalendar.compose.util.generateMonthDays
-import java.time.LocalDate
-import java.time.YearMonth
-import java.time.temporal.WeekFields
+import com.nmd.eventCalendar.compose.util.isoWeekNumber
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
 
 /**
  * Renders a month grid view (6 weeks x 7 days) or a single week if restricted.
@@ -71,7 +73,7 @@ internal fun MonthView(
 
     val weekNumbers = remember(weeks, calendarOptions.calendarWeekVisible) {
         if (!calendarOptions.calendarWeekVisible) emptyList()
-        else weeks.map { week -> week.first().date.get(WeekFields.ISO.weekOfWeekBasedYear()) }
+        else weeks.map { week -> week.first().date.isoWeekNumber() }
     }
 
     val cornerShapes = rememberDayCornerShapes(
@@ -156,7 +158,7 @@ private fun dayCornerFor(row: Int, col: Int, lastRow: Int): DayCornerPosition = 
 @Preview(showBackground = true)
 @Composable
 internal fun MonthViewPreview() {
-    val previewToday = LocalDate.now()
+    val previewToday = kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault())
 
     MonthView(
         yearMonth = YearMonth.now(),
@@ -210,7 +212,7 @@ internal fun MonthViewPreview() {
 )
 @Composable
 internal fun MonthViewPreviewLandscape() {
-    val previewToday = LocalDate.now()
+    val previewToday = kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault())
 
     MonthView(
         yearMonth = YearMonth.now(),

@@ -6,10 +6,14 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.dp
 import com.nmd.eventCalendar.compose.model.CalendarDay
 import com.nmd.eventCalendar.compose.model.Event
-import java.time.DayOfWeek
-import java.time.LocalDate
-import java.time.YearMonth
-import java.time.temporal.TemporalAdjusters
+import com.nmd.eventCalendar.compose.model.YearMonth
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.isoDayNumber
+import kotlinx.datetime.minus
+import kotlinx.datetime.plus
+import kotlinx.datetime.todayIn
 
 /**
  * Generates a list of [CalendarDay] objects for a given month or the current week.
@@ -31,13 +35,15 @@ internal fun generateMonthDays(
     eventsByDate: Map<LocalDate, List<Event>> = emptyMap(),
     isCurrentWeekOnly: Boolean = false
 ): List<CalendarDay> {
+    val today =
+        kotlin.time.Clock.System.todayIn(kotlinx.datetime.TimeZone.currentSystemDefault())
     if (isCurrentWeekOnly) {
-        val today = LocalDate.now()
         // Find the start of the current week
-        val startOfWeek = today.with(TemporalAdjusters.previousOrSame(weekStart))
+        val daysUntil = (today.dayOfWeek.ordinal - weekStart.ordinal + 7) % 7
+        val startOfWeek = today.minus(daysUntil, kotlinx.datetime.DateTimeUnit.DAY)
 
         return (0 until 7).map { index ->
-            val date = startOfWeek.plusDays(index.toLong())
+            val date = startOfWeek.plus(index, kotlinx.datetime.DateTimeUnit.DAY)
             CalendarDay(
                 date = date,
                 isCurrentMonth = (date.year == yearMonth.year && date.month == yearMonth.month),
@@ -47,11 +53,11 @@ internal fun generateMonthDays(
     }
 
     val firstDayOfMonth = yearMonth.atDay(1)
-    val startOffset = (7 + (firstDayOfMonth.dayOfWeek.value - weekStart.value)) % 7
-    val startDate = firstDayOfMonth.minusDays(startOffset.toLong())
+    val startOffset = (7 + (firstDayOfMonth.dayOfWeek.ordinal - weekStart.ordinal)) % 7
+    val startDate = firstDayOfMonth.minus(startOffset, kotlinx.datetime.DateTimeUnit.DAY)
 
     return (0 until 42).map { index ->
-        val date = startDate.plusDays(index.toLong())
+        val date = startDate.plus(index, kotlinx.datetime.DateTimeUnit.DAY)
         CalendarDay(
             date = date,
             isCurrentMonth = (date.year == yearMonth.year && date.month == yearMonth.month),
@@ -93,3 +99,29 @@ internal fun isLandscapeWindow(): Boolean {
  */
 @Composable
 internal fun isPhoneLandscapeWindow(): Boolean = isPhoneWindow() && isLandscapeWindow()
+
+/**
+ * Returns the day of the week that is [days] after this one.
+ */
+internal fun DayOfWeek.plus(days: Long): DayOfWeek {
+    val values = DayOfWeek.entries
+    val newOrdinal = (ordinal + (days % 7).toInt() + 7) % 7
+    return values[newOrdinal]
+}
+
+/**
+ * Returns the ISO 8601 week number for this date.
+ */
+internal fun LocalDate.isoWeekNumber(): Int {
+    // A simplified ISO week calculation
+    // See: https://en.wikipedia.org/wiki/ISO_week_date#Calculating_the_week_number_of_a_given_date
+    val thursdayThisWeek = this.plus((4 - this.dayOfWeek.isoDayNumber), DateTimeUnit.DAY)
+    val firstDayOfYear = LocalDate(thursdayThisWeek.year, 1, 1)
+    val thursdayFirstWeek = firstDayOfYear.plus(
+        (4 - firstDayOfYear.dayOfWeek.isoDayNumber).let { if (it < 0) it + 7 else it },
+        DateTimeUnit.DAY
+    )
+
+    val diffDays = (thursdayThisWeek.dayOfYear - thursdayFirstWeek.dayOfYear)
+    return (diffDays / 7) + 1
+}

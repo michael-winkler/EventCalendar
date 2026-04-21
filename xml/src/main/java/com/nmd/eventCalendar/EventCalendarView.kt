@@ -3,13 +3,11 @@ package com.nmd.eventCalendar
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
-import android.os.Build
 import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.widget.FrameLayout
-import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
 import androidx.core.content.ContextCompat
 import androidx.core.content.withStyledAttributes
@@ -24,7 +22,6 @@ import com.nmd.eventCalendar.interfaces.EventCalendarScrollListener
 import com.nmd.eventCalendar.model.Event
 import com.nmd.eventCalendar.state.InstanceState
 import com.nmd.eventCalendar.utils.Utils.Companion.smoothScrollTo
-import java.time.YearMonth
 import java.util.Calendar
 import kotlin.math.abs
 
@@ -647,10 +644,6 @@ class EventCalendarView @JvmOverloads constructor(
     private fun getMonthNameAndYear(
         position: Int,
     ): Pair<Int, Int> {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            return getYearAndMonthFromPosition(position)
-        }
-
         val adjustedPosition = position + (sYear * 12) + sMonth
         val year = adjustedPosition / 12
         val month = adjustedPosition % 12
@@ -663,21 +656,4 @@ class EventCalendarView @JvmOverloads constructor(
         }
         return Pair(first = year, second = calendar.get(Calendar.MONTH))
     }
-
-    /**
-     * Internal method.
-     */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun getYearAndMonthFromPosition(position: Int): Pair<Int, Int> {
-        val adjustedPosition = position + (startYear * 12) + startMonth
-        val year = adjustedPosition / 12
-        val month = adjustedPosition % 12
-
-        val yearMonth =
-            YearMonth.of(if (year == endYear && month > endMonth) endYear else startYear, month + 1)
-
-        return Pair(first = year, second = yearMonth.monthValue - 1)
-    }
-
 }

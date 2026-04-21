@@ -4,7 +4,7 @@ import com.nmd.eventCalendar.compose.model.Event
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 
 /**
  * Simple in-memory [CalendarEventsStore] intended for previews and tests.
