@@ -2,8 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-sdk tools:overrideLibrary="com.nmd.eventcalendar.compose" />
-
     <application
         android:name="com.nmd.eventCalendar.App"
         android:allowBackup="true"

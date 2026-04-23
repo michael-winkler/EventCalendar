@@ -7,10 +7,10 @@ plugins {
 
 android {
     namespace = "com.nmd.eventcalendar.compose"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
-        minSdk = 26
+        minSdk = 23
     }
 
     buildTypes {

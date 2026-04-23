@@ -94,15 +94,7 @@ class MainActivity : AppCompatActivity() {
         )
 
         activityMainCompose.setOnClickListener {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startActivity(Intent(this@MainActivity, EventCalendarComposeActivity::class.java))
-            } else {
-                Toast.makeText(
-                    this@MainActivity,
-                    "This feature is only available on API 26 and higher.",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
+            startActivity(Intent(this@MainActivity, EventCalendarComposeActivity::class.java))
         }
 
         var current = activityMainEventCalendarView.weekStartDay
