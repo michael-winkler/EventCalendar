@@ -241,7 +241,8 @@ private fun ColumnScope.CalendarPagerSection(
         WeekHeader(
             currentMonth = currentMonth,
             calendarOptions = calendarOptions,
-            calendarStyle = calendarStyle
+            calendarStyle = calendarStyle,
+            phoneLandscape = phoneLandscape
         )
 
         Column(

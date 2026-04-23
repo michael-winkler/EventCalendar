@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -16,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.nmd.eventCalendar.compose.model.YearMonth
 import com.nmd.eventCalendar.compose.ui.config.CalendarOptions
 import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
+import com.nmd.eventCalendar.compose.ui.config.CalendarWeekColumnWidth
 import com.nmd.eventCalendar.compose.ui.config.defaultCalendarOptions
 import com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle
 import com.nmd.eventCalendar.compose.util.plus
@@ -35,12 +37,14 @@ import kotlin.time.Clock
  * @param currentMonth The month currently displayed.
  * @param calendarOptions Calendar configuration options (week start, week number visibility).
  * @param calendarStyle Styling configuration (colors, typography sizes, etc.).
+ * @param phoneLandscape If true, uses fixed widths for the week number column to align with the grid.
  */
 @Composable
 internal fun WeekHeader(
     currentMonth: YearMonth,
     calendarOptions: CalendarOptions,
-    calendarStyle: CalendarStyle
+    calendarStyle: CalendarStyle,
+    phoneLandscape: Boolean = false
 ) {
     val today = remember { Clock.System.todayIn(TimeZone.currentSystemDefault()) }
 
@@ -56,7 +60,10 @@ internal fun WeekHeader(
         if (calendarOptions.calendarWeekVisible) {
             Box(
                 modifier = Modifier
-                    .weight(1f),
+                    .then(
+                        if (phoneLandscape) Modifier.width(CalendarWeekColumnWidth)
+                        else Modifier.weight(1f)
+                    ),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -69,26 +76,31 @@ internal fun WeekHeader(
             }
         }
 
-        daysOfWeek.forEach { day ->
-            val isToday = isCurrentMonth && (day == today.dayOfWeek)
+        Row(
+            modifier = Modifier
+                .weight(if (phoneLandscape) 1f else 7f)
+        ) {
+            daysOfWeek.forEach { day ->
+                val isToday = isCurrentMonth && (day == today.dayOfWeek)
 
-            Box(
-                modifier = Modifier
-                    .weight(1f),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    modifier = Modifier.padding(vertical = 2.dp),
-                    text = day.name.take(3), // TODO: Localize properly in KMP
-                    color = if (isToday) {
-                        calendarStyle.currentWeekDayTextColor
-                    } else {
-                        calendarStyle.defaultWeekDayTextColor
-                    },
-                    fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal,
-                    fontSize = calendarStyle.textUnit,
-                    lineHeight = calendarStyle.textUnit
-                )
+                Box(
+                    modifier = Modifier
+                        .weight(1f),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        modifier = Modifier.padding(vertical = 2.dp),
+                        text = day.name.take(3), // TODO: Localize properly in KMP
+                        color = if (isToday) {
+                            calendarStyle.currentWeekDayTextColor
+                        } else {
+                            calendarStyle.defaultWeekDayTextColor
+                        },
+                        fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal,
+                        fontSize = calendarStyle.textUnit,
+                        lineHeight = calendarStyle.textUnit
+                    )
+                }
             }
         }
     }
@@ -99,7 +111,18 @@ internal fun WeekHeader(
 internal fun WeekHeaderPreview() {
     WeekHeader(
         currentMonth = YearMonth.now(),
-        calendarOptions = defaultCalendarOptions(),
+        calendarOptions = defaultCalendarOptions().copy(calendarWeekVisible = true),
         calendarStyle = defaultCalendarStyle()
+    )
+}
+
+@Preview(showBackground = true, widthDp = 740)
+@Composable
+internal fun WeekHeaderPreviewLandscape() {
+    WeekHeader(
+        currentMonth = YearMonth.now(),
+        calendarOptions = defaultCalendarOptions().copy(calendarWeekVisible = true),
+        calendarStyle = defaultCalendarStyle(),
+        phoneLandscape = true
     )
 }
