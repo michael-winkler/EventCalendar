@@ -7,9 +7,11 @@ import androidx.compose.ui.unit.dp
 import com.nmd.eventCalendar.compose.model.CalendarDay
 import com.nmd.eventCalendar.compose.model.Event
 import com.nmd.eventCalendar.compose.model.YearMonth
+import com.nmd.eventcalendar.compose.R
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.Month
 import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
@@ -107,6 +109,37 @@ internal fun DayOfWeek.plus(days: Long): DayOfWeek {
     val values = DayOfWeek.entries
     val newOrdinal = (ordinal + (days % 7).toInt() + 7) % 7
     return values[newOrdinal]
+}
+
+/**
+ * Returns the string resource ID for the short name of this day of the week.
+ */
+fun DayOfWeek.toStringRes(): Int = when (this) {
+    DayOfWeek.MONDAY -> R.string.day_name_monday
+    DayOfWeek.TUESDAY -> R.string.day_name_tuesday
+    DayOfWeek.WEDNESDAY -> R.string.day_name_wednesday
+    DayOfWeek.THURSDAY -> R.string.day_name_thursday
+    DayOfWeek.FRIDAY -> R.string.day_name_friday
+    DayOfWeek.SATURDAY -> R.string.day_name_saturday
+    DayOfWeek.SUNDAY -> R.string.day_name_sunday
+}
+
+/**
+ * Returns the string resource ID for the full name of this month.
+ */
+fun Month.toStringRes(): Int = when (this) {
+    Month.JANUARY -> R.string.month_january
+    Month.FEBRUARY -> R.string.month_february
+    Month.MARCH -> R.string.month_march
+    Month.APRIL -> R.string.month_april
+    Month.MAY -> R.string.month_may
+    Month.JUNE -> R.string.month_june
+    Month.JULY -> R.string.month_july
+    Month.AUGUST -> R.string.month_august
+    Month.SEPTEMBER -> R.string.month_september
+    Month.OCTOBER -> R.string.month_october
+    Month.NOVEMBER -> R.string.month_november
+    Month.DECEMBER -> R.string.month_december
 }
 
 /**

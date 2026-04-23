@@ -43,6 +43,15 @@ dependencies {
 
 ---
 
+## Requirements
+
+- **Min SDK:** 23
+- **Kotlin:** 2.0+
+- **Material Components:** 1.12.0+
+- **Localization:** Supports English, German, Czech, and Polish.
+
+---
+
 ## 🛠 Features
 
 - **Paging:** Horizontal month-to-month paging using ViewPager2.

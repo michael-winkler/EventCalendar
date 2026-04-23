@@ -23,13 +23,17 @@ This skill provides specialized instructions for the `:xml` module, focusing on 
 
 ## Core Development Principles
 
-1. **Hybrid Date API**: Be aware that the module uses `java.util.Calendar` for UI logic and
-   `kotlinx-datetime` for data models.
+1. **Hybrid Date API & API 23**:
+    - **Min SDK 23**: Native support for API 23+.
+    - **Logic**: Uses a mix of `java.util.Calendar` for UI logic and `kotlinx-datetime` for data
+      models.
 2. **State Preservation**: The `InstanceState` class is crucial. Always update it when adding new
    configurable properties.
 3. **Internal Visibility**: Most implementation details (Adapters, ViewHolders, Internal Methods)
    must be `internal`.
-4. **Namespacing**: All resources (IDs, layouts, drawables) must use the `ecv_` prefix.
+4. **Namespacing & Localization**:
+    - Strictly use the `ecv_` prefix for all resources.
+    - Ensure all UI strings are localized via `strings.xml`.
 
 ## Step-by-Step Workflows
 

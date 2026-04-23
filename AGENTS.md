@@ -7,7 +7,8 @@ This repository contains an Android calendar app with two implementations:
 - **`compose/`** – Modern UI based on Jetpack Compose.
 - **`xml/`** – Classic Android UI based on XML Views.
 
-The project is intentionally structured to keep both UI approaches separate. Changes should be made in the appropriate module and should not mix the two architectures unnecessarily.
+The project is intentionally structured to keep both UI approaches separate. Changes should be made
+in the appropriate module and should not mix the two architectures unnecessarily.
 
 ## Goals for Agents
 
@@ -20,34 +21,43 @@ The project is intentionally structured to keep both UI approaches separate. Cha
 ## Working Approach
 
 ### Before Making Changes
+
 - **Analyze Boundaries**: Inspect relevant files and module boundaries.
 - **Identify Patterns**: Understand existing patterns in the affected area.
 - **Architectural Decision**: For UI changes, determine whether they belong in `compose` or `xml`.
 
 ### While Making Changes
+
 - **Minimize Impact**: Modify only the files that are actually affected.
 - **Preserve Architecture**: Maintain the existing architecture and package structure.
 - **API Stability**: Avoid changing public APIs unless absolutely necessary.
-- **Compatibility**: Consider backward compatibility if library or module boundaries are involved.
+- **Compatibility**: Ensure support for Android API level 23 and above. Avoid `java.time` in the UI
+  layer (Composables/Views) to prevent API 26 requirements. Use resource-based localization for day
+  and month names.
 
 ### After Making Changes
+
 - **Verify Consistency**: Check local consistency and alignment with project goals.
 - **Communicate Changes**: If build, API, or architecture changes were made, mention them clearly.
 - **Test Awareness**: If tests are missing, note potential impacts and manual verification steps.
 
 ## Project Structure & Modularization
 
-- **Module Independence**: Treat `compose/` and `xml/` as independent, standalone UI libraries. They must not depend on each other.
+- **Module Independence**: Treat `compose/` and `xml/` as independent, standalone UI libraries. They
+  must not depend on each other.
 - **Layered Architecture**: Both modules should follow consistent internal layering:
     - **UI Layer**: Visual components (Composables or Custom Views/Layouts).
     - **Logic Layer**: ViewModels and Controllers managing state and business rules.
     - **Domain Layer**: Models and data structures specific to the calendar logic.
-- **Resource Encapsulation**: Keep resources (drawables, strings, layouts) strictly within the module's own `res` directory. Avoid cross-module resource references to maintain portability.
-- **Encapsulated API**: Use `internal` visibility by default for all implementation details. Only expose the main entry points (e.g., the primary View or Composable) to the `:app` module.
+- **Resource Encapsulation**: Keep resources (drawables, strings, layouts) strictly within the
+  module's own `res` directory. Avoid cross-module resource references to maintain portability.
+- **Encapsulated API**: Use `internal` visibility by default for all implementation details. Only
+  expose the main entry points (e.g., the primary View or Composable) to the `:app` module.
 
 ## Best Practices
 
 ### Kotlin / Android
+
 - **Idiomatic Kotlin**: Write clean, modern, and idiomatic Kotlin code.
 - **Null Safety**: Respect and leverage Kotlin's null safety features.
 - **Pure Functions**: Minimize side effects in UI-adjacent functions.
@@ -55,20 +65,28 @@ The project is intentionally structured to keep both UI approaches separate. Cha
 - **Testability**: Move complex logic into testable units when possible.
 
 ### Jetpack Compose
+
 - **State Separation**: Keep state sources clearly separated from UI components.
 - **Reusability**: Prefer small, highly reusable composables.
 - **Stability**: Favor recomposition-friendly structures and stable data types.
 - **Decoupling**: Keep UI and logic strictly decoupled.
 - **Side Effects**: Use `LaunchedEffect`, `SideEffect`, etc., deliberately and correctly.
-- **Internal Previews**: Keep all `@Preview` composables `internal` to avoid polluting the public API.
+- **Internal Previews**: Keep all `@Preview` composables `internal` to avoid polluting the public
+  API.
 
 ### ViewModel & State Management
-- **ViewModel Logic**: Move complex logic and data processing into ViewModels to keep UI components lightweight.
-- **Reactive State**: Use `StateFlow` to expose UI state for consistent, lifecycle-aware data streams.
-- **Configuration Changes**: Ensure ViewModels retain state and ongoing tasks (e.g., API calls) during Activity recreation.
-- **Scope Management**: Launch long-running operations in `viewModelScope` to prevent interruption when the UI is destroyed.
+
+- **ViewModel Logic**: Move complex logic and data processing into ViewModels to keep UI components
+  lightweight.
+- **Reactive State**: Use `StateFlow` to expose UI state for consistent, lifecycle-aware data
+  streams.
+- **Configuration Changes**: Ensure ViewModels retain state and ongoing tasks (e.g., API calls)
+  during Activity recreation.
+- **Scope Management**: Launch long-running operations in `viewModelScope` to prevent interruption
+  when the UI is destroyed.
 
 ### XML / View-Based UI
+
 - **Encapsulation**: Encapsulate reusable components (Custom Views) appropriately.
 - **Separation of Concerns**: Keep adapters, view logic, and state management clearly separated.
 - **Resource Naming**: Use consistent and descriptive naming for resources and IDs.
@@ -83,7 +101,8 @@ The project is intentionally structured to keep both UI approaches separate. Cha
 
 - **Relevance**: Update README files only when changes are relevant to users or developers.
 - **Agent Guidance**: This file (`AGENTS.md`) serves as the source of truth for agent behavior.
-- **Maintenance**: Update `AGENTS.md` whenever the project structure or best practices change significantly.
+- **Maintenance**: Update `AGENTS.md` whenever the project structure or best practices change
+  significantly.
 
 ## Guidance for Future Changes
 

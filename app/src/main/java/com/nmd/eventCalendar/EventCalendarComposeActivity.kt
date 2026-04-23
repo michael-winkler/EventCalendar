@@ -48,12 +48,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nmd.eventCalendar.compose.EventCalendarCompose
 import com.nmd.eventCalendar.compose.model.CalendarDay
 import com.nmd.eventCalendar.compose.model.Event
+import com.nmd.eventCalendar.compose.model.YearMonth
 import com.nmd.eventCalendar.compose.ui.config.CalendarOptions
 import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
 import com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle
 import com.nmd.eventCalendar.compose.ui.controller.rememberCalendarController
 import com.nmd.eventCalendar.compose.ui.events.CalendarEventsStore
 import com.nmd.eventCalendar.compose.ui.events.rememberCalendarEventsStore
+import com.nmd.eventCalendar.compose.util.toStringRes
 import com.nmd.eventCalendar.theme.AppTheme
 import com.nmd.eventCalendarSample.R
 import kotlinx.datetime.DayOfWeek
@@ -136,7 +138,7 @@ fun Screen(
         }
     }
 
-    val onMonthChange: (com.nmd.eventCalendar.compose.model.YearMonth) -> Unit = remember {
+    val onMonthChange: (YearMonth) -> Unit = remember {
         { Log.i("EventCalendarCompose", "Selected month: $it") }
     }
 
@@ -320,8 +322,9 @@ private fun CurrentWeekSheetContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        val today = kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault())
-        val monthTitle = "${today.month.name} ${today.year}"
+        val today = remember { kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault()) }
+        val monthName = stringResource(today.month.toStringRes())
+        val monthTitle = "$monthName ${today.year}"
 
         Text(
             text = monthTitle,

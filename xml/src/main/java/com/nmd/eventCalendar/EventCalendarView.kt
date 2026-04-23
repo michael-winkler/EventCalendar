@@ -28,6 +28,13 @@ import kotlin.math.abs
 /**
  * Provides a [EventCalendarView].
  *
+ * This view provides a full-month calendar for the Android View System (XML), featuring
+ * paging navigation, expressive Material 3 design, and highly customizable attributes.
+ *
+ * ## Compatibility
+ * - **Min SDK:** Supports Android API 23 and above.
+ * - **Localization:** Fully localized via Android resources (EN, DE, CS, PL).
+ *
  * You can create a new [EventCalendarView] inside your XML-Layout like this:
  * ```
  * <com.nmd.eventCalendar.EventCalendarView

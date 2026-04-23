@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Event Kalender</string>
+    <string name="app_variant_xml">XML</string>
+    <string name="app_variant_compose">Compose</string>
+    <string name="event_calendar_no_events">Es wurden keine Events für diesen Tag gefunden!</string>
+    <string name="event_calendar_current_week">Aktuelle Woche</string>
+</resources>

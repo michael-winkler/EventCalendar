@@ -27,6 +27,11 @@ import kotlinx.datetime.todayIn
  * weekday headers, and the day grid. It manages the internal state via a [CalendarController]
  * and observes events from a [CalendarEventsStore].
  *
+ * ## Compatibility & KMP
+ * - **Min SDK:** Supports Android API 23 and above.
+ * - **Localization:** Uses resource-based localization for day and month names, supporting multiple languages (EN, DE, CS, PL).
+ * - **KMP Ready:** Internally uses `kotlinx-datetime` and multiplatform-friendly patterns to facilitate future porting.
+ *
  * @param modifier Modifier applied to the root layout of the calendar.
  * @param calendarStyle Custom styling for colors and typography. Defaults to [defaultCalendarStyle].
  * @param calendarOptions Functional configuration (e.g., week start, bounds). Defaults to [defaultCalendarOptions].

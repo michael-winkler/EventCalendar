@@ -18,15 +18,19 @@ project is designed to be KMP-ready by avoiding platform-specific date/time APIs
 
 ## General Expertise & Rules
 
-### 1. KMP Compatibility
+### 1. KMP Compatibility & Android API 23
 
 - **Date/Time**: Always use `kotlinx-datetime`. Avoid `java.time` or `java.util.Calendar` for new
   logic.
+- **Localization**: Use resource-based localization for UI strings (like day and month names) to
+  maintain KMP readiness and support **API 23+** without `java.time` dependencies.
 - **Serialization**: Use `kotlinx-serialization` for all data models that need to be serializable (
   e.g., `Event`, `EventTimeRange`). Use custom serializers for platform-specific types (like
   `Color`).
 - **JVM Dependencies**: Minimize dependencies on the JVM standard library (e.g., `java.util.*`,
   `java.time.*`).
+- **Backward Compatibility**: All library modules (`:compose`, `:xml`) must support **Android API 23
+  **.
 
 ### 2. Modular Boundaries
 

@@ -21,6 +21,7 @@ import com.nmd.eventCalendar.compose.ui.config.CalendarWeekColumnWidth
 import com.nmd.eventCalendar.compose.ui.config.defaultCalendarOptions
 import com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle
 import com.nmd.eventCalendar.compose.util.plus
+import com.nmd.eventCalendar.compose.util.toStringRes
 import com.nmd.eventcalendar.compose.R
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
@@ -90,7 +91,7 @@ internal fun WeekHeader(
                 ) {
                     Text(
                         modifier = Modifier.padding(vertical = 2.dp),
-                        text = day.name.take(3), // TODO: Localize properly in KMP
+                        text = stringResource(day.toStringRes()),
                         color = if (isToday) {
                             calendarStyle.currentWeekDayTextColor
                         } else {

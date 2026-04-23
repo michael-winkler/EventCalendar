@@ -39,6 +39,29 @@ import com.nmd.eventCalendar.utils.Utils.Companion.orEmptyArrayList
 import com.nmd.eventCalendar.utils.Utils.Companion.setItemTint
 import java.util.Calendar
 
+/**
+ * Provides a [EventCalendarSingleWeekView].
+ *
+ * This view provides a single-week calendar view for the Android View System (XML).
+ * It is a lightweight version of the [EventCalendarView], optimized for compact layouts
+ * while retaining most styling and event capabilities.
+ *
+ * ## Compatibility
+ * - **Min SDK:** Supports Android API 23 and above.
+ * - **Localization:** Fully localized via Android resources (EN, DE, CS, PL).
+ *
+ * You can create a new [EventCalendarSingleWeekView] inside your XML-Layout like this:
+ * ```xml
+ * <com.nmd.eventCalendar.EventCalendarSingleWeekView
+ *     android:id="@+id/eventCalendarSingleWeekView"
+ *     android:layout_width="match_parent"
+ *     android:layout_height="wrap_content"
+ *     app:ecv_calendar_week_visible="true"
+ *     app:ecv_expressive_ui="true"
+ *     app:ecv_header_visible="false"
+ *     app:ecv_week_start_day="monday" />
+ * ```
+ */
 @Suppress("unused")
 class EventCalendarSingleWeekView @JvmOverloads constructor(
     context: Context,

@@ -45,10 +45,12 @@ dependencies {
 
 ## Requirements
 
-- **Min SDK:** 26
-- **Java:** 8+ (uses `java.time`)
+- **Min SDK:** 23
+- **Kotlin:** 2.0+
+- **kotlinx-datetime:** 0.6.0+
 - **Jetpack Compose:** 1.7.0+
 - **Material3:** 1.2.0+
+- **Localization:** Supports English, German, Czech, and Polish.
 
 ---
 
@@ -61,10 +63,14 @@ fun MyCalendarScreen() {
         calendarWeekVisible = true
     )
     val controller = rememberCalendarController(options)
+    
+    // Using kotlinx-datetime to get current date
+    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+    
     val eventsStore = rememberCalendarEventsStore(
         initialEvents = listOf(
             Event(
-                date = LocalDate.now(),
+                date = today,
                 name = "Project Kickoff",
                 shapeColor = Color.Blue,
                 textColor = Color.White
@@ -95,7 +101,7 @@ fun MyCalendarScreen() {
 
 The `Event` class represents a calendar entry.
 
-- **`date`**: `LocalDate` of the event.
+- **`date`**: `LocalDate` (from `kotlinx.datetime`) of the event.
 - **`name`**: Title shown in the calendar.
 - **`shapeColor`**: Background color of the event chip.
 - **`textColor`**: Text color of the event chip.
@@ -108,7 +114,7 @@ Use the controller to navigate programmatically:
 - `controller.goToNextMonth()`
 - `controller.goToPreviousMonth()`
 - `controller.jumpToCurrentMonth()`
-- `controller.goToMonth(YearMonth.of(2025, 12))`
+- `controller.goToMonth(YearMonth(2025, Month.DECEMBER))`
 
 ### ⚙️ CalendarOptions
 
@@ -139,3 +145,5 @@ Customize colors, text sizes, and shapes:
   becomes scrollable.
 - **Theming:** Full support for Material 3 and Dark Mode.
 - **Lightweight:** Minimal dependencies, focused on performance.
+- **KMP Ready:** Uses `kotlinx-datetime` and resource-based localization for future multiplatform support.
+- **Backward Compatible:** Supports Android API level 23 and above without requiring Java 8+ API desugaring.
