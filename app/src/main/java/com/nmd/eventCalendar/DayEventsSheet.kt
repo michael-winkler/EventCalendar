@@ -26,6 +26,7 @@ import com.nmd.eventCalendar.compose.model.CalendarDay
 import com.nmd.eventCalendar.compose.model.Event
 import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
 import com.nmd.eventCalendarSample.R
+import kotlinx.datetime.number
 
 @Composable
 fun DayEventsSheetContent(
@@ -33,7 +34,7 @@ fun DayEventsSheetContent(
     calendarStyle: CalendarStyle
 ) {
     val dateText =
-        "${calendarDay.date.dayOfMonth}.${calendarDay.date.monthNumber}.${calendarDay.date.year} (${calendarDay.events.size})"
+        "${calendarDay.date.day}.${calendarDay.date.month.number}.${calendarDay.date.year} (${calendarDay.events.size})"
 
     Column(
         modifier = Modifier
