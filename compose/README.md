@@ -65,7 +65,7 @@ fun MyCalendarScreen() {
     val controller = rememberCalendarController(options)
 
     // Using kotlinx-datetime to get current date
-    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+    val today = kotlinx.datetime.Clock.System.todayIn(TimeZone.currentSystemDefault())
 
     val eventsStore = rememberCalendarEventsStore(
         initialEvents = listOf(

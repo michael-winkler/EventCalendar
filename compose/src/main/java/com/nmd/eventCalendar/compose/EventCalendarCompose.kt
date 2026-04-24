@@ -19,6 +19,7 @@ import com.nmd.eventCalendar.compose.ui.events.CalendarEventsStore
 import com.nmd.eventCalendar.compose.ui.events.PreviewCalendarEventsStore
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
+import kotlin.time.Clock
 
 /**
  * The main entry point for the Event Calendar Compose library.
@@ -64,7 +65,7 @@ fun EventCalendarCompose(
 @Preview(showBackground = true)
 @Composable
 internal fun EventCalendarComposePreview() {
-    val today = kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault())
+    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
 
     val store = remember {
         PreviewCalendarEventsStore(

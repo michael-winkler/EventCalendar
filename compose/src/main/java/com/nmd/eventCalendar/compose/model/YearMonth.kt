@@ -2,8 +2,10 @@ package com.nmd.eventCalendar.compose.model
 
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
+import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import kotlinx.datetime.todayIn
+import kotlin.time.Clock
 
 /**
  * A simple, KMP-friendly representation of a Year and a Month.
@@ -64,8 +66,7 @@ data class YearMonth(
          * Returns a [YearMonth] representing the current system year and month.
          */
         fun now(): YearMonth {
-            val today =
-                kotlin.time.Clock.System.todayIn(kotlinx.datetime.TimeZone.currentSystemDefault())
+            val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
             return YearMonth(today.year, today.month)
         }
 

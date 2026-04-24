@@ -12,10 +12,12 @@ import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
+import kotlinx.datetime.TimeZone
 import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
+import kotlin.time.Clock
 
 /**
  * Generates a list of [CalendarDay] objects for a given month or the current week.
@@ -37,15 +39,14 @@ internal fun generateMonthDays(
     eventsByDate: Map<LocalDate, List<Event>> = emptyMap(),
     isCurrentWeekOnly: Boolean = false
 ): List<CalendarDay> {
-    val today =
-        kotlin.time.Clock.System.todayIn(kotlinx.datetime.TimeZone.currentSystemDefault())
+    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
     if (isCurrentWeekOnly) {
         // Find the start of the current week
         val daysUntil = (today.dayOfWeek.ordinal - weekStart.ordinal + 7) % 7
-        val startOfWeek = today.minus(daysUntil, kotlinx.datetime.DateTimeUnit.DAY)
+        val startOfWeek = today.minus(daysUntil, DateTimeUnit.DAY)
 
         return (0 until 7).map { index ->
-            val date = startOfWeek.plus(index, kotlinx.datetime.DateTimeUnit.DAY)
+            val date = startOfWeek.plus(index, DateTimeUnit.DAY)
             CalendarDay(
                 date = date,
                 isCurrentMonth = (date.year == yearMonth.year && date.month == yearMonth.month),
@@ -56,10 +57,10 @@ internal fun generateMonthDays(
 
     val firstDayOfMonth = yearMonth.atDay(1)
     val startOffset = (7 + (firstDayOfMonth.dayOfWeek.ordinal - weekStart.ordinal)) % 7
-    val startDate = firstDayOfMonth.minus(startOffset, kotlinx.datetime.DateTimeUnit.DAY)
+    val startDate = firstDayOfMonth.minus(startOffset, DateTimeUnit.DAY)
 
     return (0 until 42).map { index ->
-        val date = startDate.plus(index, kotlinx.datetime.DateTimeUnit.DAY)
+        val date = startDate.plus(index, DateTimeUnit.DAY)
         CalendarDay(
             date = date,
             isCurrentMonth = (date.year == yearMonth.year && date.month == yearMonth.month),

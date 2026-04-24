@@ -14,7 +14,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.nmd.eventCalendar.R
 import com.nmd.eventCalendar.model.Day
 import com.nmd.eventCalendar.model.Event
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import kotlinx.datetime.number
 import kotlinx.datetime.plus
@@ -23,6 +25,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import kotlin.time.Clock
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 internal class Utils {
@@ -123,15 +126,14 @@ internal class Utils {
         }
 
         internal fun getDaysForCurrentWeek(weekStartDay: Int): List<Day> {
-            val today =
-                kotlin.time.Clock.System.todayIn(kotlinx.datetime.TimeZone.currentSystemDefault())
+            val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
             val desiredStartDay = calendarDayToDayOfWeek(weekStartDay)
 
             val daysUntilStart = (today.dayOfWeek.ordinal - desiredStartDay.ordinal + 7) % 7
-            val actualStartOfWeek = today.minus(daysUntilStart, kotlinx.datetime.DateTimeUnit.DAY)
+            val actualStartOfWeek = today.minus(daysUntilStart, DateTimeUnit.DAY)
 
             return List(7) { index ->
-                val currentDate = actualStartOfWeek.plus(index, kotlinx.datetime.DateTimeUnit.DAY)
+                val currentDate = actualStartOfWeek.plus(index, DateTimeUnit.DAY)
                 val dateStr = String.format(
                     Locale.GERMAN,
                     "%02d.%02d.%04d",

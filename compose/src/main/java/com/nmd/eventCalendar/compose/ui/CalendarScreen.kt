@@ -52,6 +52,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
+import kotlin.time.Clock
 
 private val MonthHeaderWidthLandscape = 48.dp
 
@@ -354,7 +355,7 @@ private fun MonthPager(
 @Preview(showBackground = true)
 @Composable
 internal fun CalendarScreenPreview() {
-    val today = kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault())
+    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
     val store = remember {
         PreviewCalendarEventsStore(
             initialEvents = listOf(

@@ -65,6 +65,7 @@ import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
 import kotlin.random.Random
+import kotlin.time.Clock
 
 class EventCalendarComposeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -322,7 +323,7 @@ private fun CurrentWeekSheetContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        val today = remember { kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault()) }
+        val today = remember { Clock.System.todayIn(TimeZone.currentSystemDefault()) }
         val monthName = stringResource(today.month.toStringRes())
         val monthTitle = "$monthName ${today.year}"
 
@@ -372,7 +373,7 @@ private fun shuffleEventsForCurrentYear(
 ): List<Event> {
     if (templates.isEmpty() || eventCount <= 0) return emptyList()
 
-    val today = kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault())
+    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
     val year = today.year
     val start = LocalDate(year, 1, 1)
     val rnd = Random(seed)

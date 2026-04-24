@@ -70,6 +70,7 @@ dependencies {
 Add the `EventCalendarView` to your layout with all available attributes:
 
 ```xml
+
 <com.nmd.eventCalendar.EventCalendarView
     android:id="@+id/eventCalendarView"
     android:layout_width="match_parent"
@@ -99,6 +100,7 @@ For a more compact layout, use the `EventCalendarSingleWeekView`. It supports mo
 full view:
 
 ```xml
+
 <com.nmd.eventCalendar.EventCalendarSingleWeekView
     android:id="@+id/eventCalendarSingleWeekView"
     android:layout_width="match_parent"
@@ -146,6 +148,7 @@ calendarView.addOnCalendarScrollListener(object : EventCalendarScrollListener {
 You can also override the default styles in your `themes.xml`:
 
 ```xml
+
 <style name="ECV_TEXT_ICON_COLOR">
     <item name="android:textColor">#FF5733</item>
     <item name="tint">#FF5733</item>

@@ -31,8 +31,9 @@ import com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
+import kotlin.time.Clock
 
-internal val today: LocalDate = kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault())
+internal val today: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
 private val TodayBadgeShape = RoundedCornerShape(50)
 
 /**
@@ -157,7 +158,7 @@ internal fun DayItem(
 @Preview(showBackground = true)
 @Composable
 fun DayItemPreview() {
-    val previewToday = kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault())
+    val previewToday = Clock.System.todayIn(TimeZone.currentSystemDefault())
     val events = listOf(
         Event(previewToday, "Cooking", shapeColor = Color(0xFFEF6C00), textColor = Color.White),
         Event(previewToday, "Board Games", shapeColor = Color(0xFF43A047), textColor = Color.White),

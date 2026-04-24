@@ -29,6 +29,7 @@ import com.nmd.eventCalendar.compose.util.isoWeekNumber
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
+import kotlin.time.Clock
 
 /**
  * Renders a month grid view (6 weeks x 7 days) or a single week if restricted.
@@ -158,7 +159,7 @@ private fun dayCornerFor(row: Int, col: Int, lastRow: Int): DayCornerPosition = 
 @Preview(showBackground = true)
 @Composable
 internal fun MonthViewPreview() {
-    val previewToday = kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault())
+    val previewToday = Clock.System.todayIn(TimeZone.currentSystemDefault())
 
     MonthView(
         yearMonth = YearMonth.now(),
@@ -212,7 +213,7 @@ internal fun MonthViewPreview() {
 )
 @Composable
 internal fun MonthViewPreviewLandscape() {
-    val previewToday = kotlin.time.Clock.System.todayIn(TimeZone.currentSystemDefault())
+    val previewToday = Clock.System.todayIn(TimeZone.currentSystemDefault())
 
     MonthView(
         yearMonth = YearMonth.now(),
