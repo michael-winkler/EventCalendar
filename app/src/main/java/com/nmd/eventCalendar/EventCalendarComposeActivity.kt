@@ -46,8 +46,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nmd.eventCalendar.compose.EventCalendarCompose
+import com.nmd.eventCalendar.compose.EventCalendarWeekTime
 import com.nmd.eventCalendar.compose.model.CalendarDay
 import com.nmd.eventCalendar.compose.model.Event
+import com.nmd.eventCalendar.compose.model.EventTimeRange
 import com.nmd.eventCalendar.compose.model.YearMonth
 import com.nmd.eventCalendar.compose.ui.config.CalendarOptions
 import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
@@ -97,6 +99,7 @@ fun Screen(
     var showCalendarWeek by rememberSaveable { mutableStateOf(true) }
     var showCurrentWeekSheet by rememberSaveable { mutableStateOf(false) }
     var selectedDateForSheet by rememberSaveable { mutableStateOf<String?>(null) }
+    var viewMode by rememberSaveable { mutableIntStateOf(0) } // 0: Month, 1: Week, 2: 3-Day, 3: Day
     val eventsByDate by calendarEventsStore.eventsByDateFlow.collectAsStateWithLifecycle()
 
     val selectedDayForSheet = remember(selectedDateForSheet, eventsByDate) {
@@ -218,6 +221,19 @@ fun Screen(
                             tint = iconTint
                         )
                     }
+                    IconButton(onClick = { viewMode = (viewMode + 1) % 4 }) {
+                        val icon = when (viewMode) {
+                            0 -> R.drawable.icon_calendar_today
+                            1 -> R.drawable.icon_calendar_week_begin_outline
+                            2 -> R.drawable.icon_calendar_start
+                            else -> R.drawable.icon_calendar_today
+                        }
+                        Icon(
+                            painter = painterResource(icon),
+                            contentDescription = "Switch View",
+                            tint = iconTint
+                        )
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = topBarColor)
             )
@@ -237,20 +253,44 @@ fun Screen(
         containerColor = containerColor
     ) { paddingValues ->
         val layoutDirection = LocalLayoutDirection.current
-        EventCalendarCompose(
-            modifier = Modifier.padding(
-                start = paddingValues.calculateStartPadding(layoutDirection),
-                end = paddingValues.calculateEndPadding(layoutDirection),
-                top = paddingValues.calculateTopPadding(),
-                bottom = paddingValues.calculateBottomPadding() + 8.dp
-            ),
-            calendarStyle = calendarStyle,
-            calendarOptions = calendarOptions,
-            calendarController = calendarController,
-            calendarEventsStore = calendarEventsStore,
-            onDaySelected = onDaySelected,
-            onMonthChange = onMonthChange
+        val contentModifier = Modifier.padding(
+            start = paddingValues.calculateStartPadding(layoutDirection),
+            end = paddingValues.calculateEndPadding(layoutDirection),
+            top = paddingValues.calculateTopPadding(),
+            bottom = paddingValues.calculateBottomPadding() + 8.dp
         )
+
+        if (viewMode == 0) {
+            EventCalendarCompose(
+                modifier = contentModifier,
+                calendarStyle = calendarStyle,
+                calendarOptions = calendarOptions,
+                calendarController = calendarController,
+                calendarEventsStore = calendarEventsStore,
+                onDaySelected = onDaySelected,
+                onMonthChange = onMonthChange
+            )
+        } else {
+            val noOfDays = when (viewMode) {
+                1 -> 7
+                2 -> 3
+                3 -> 1
+                else -> 7
+            }
+            EventCalendarWeekTime(
+                modifier = contentModifier,
+                calendarStyle = calendarStyle,
+                calendarOptions = calendarOptions.copy(noOfVisibleDays = noOfDays),
+                calendarEventsStore = calendarEventsStore,
+                onDaySelected = { date ->
+                    selectedDateForSheet = date.toString()
+                },
+                onEventSelected = { event ->
+                    Log.i("EventCalendarCompose", "Clicked on event: ${event.name}")
+                    selectedDateForSheet = event.date.toString()
+                }
+            )
+        }
 
         if (showCurrentWeekSheet) {
             ModalBottomSheetWrapper(
@@ -382,11 +422,19 @@ private fun shuffleEventsForCurrentYear(
         val (name, shape) = templates[rnd.nextInt(templates.size)]
         val date = start.plus(rnd.nextInt(365), kotlinx.datetime.DateTimeUnit.DAY)
 
+        val hasTime = rnd.nextBoolean()
+        val timeRange = if (hasTime) {
+            val startHour = rnd.nextInt(8, 20)
+            val duration = rnd.nextInt(1, 4)
+            EventTimeRange(startHour, 0, startHour + duration, 0)
+        } else null
+
         Event(
             date = date,
             name = name,
             shapeColor = shape,
-            textColor = Color.White
+            textColor = Color.White,
+            timeRange = timeRange
         )
     }
 }

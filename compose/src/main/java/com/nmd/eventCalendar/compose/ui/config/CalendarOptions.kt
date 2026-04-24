@@ -25,6 +25,7 @@ import kotlinx.datetime.LocalDate
  * @property isCurrentWeekOnly If true, only the current calendar week is displayed.
  * [minDate], [maxDate], and [openEndedWindowMonths] will be ignored in this mode.
  * The calendar will automatically filter the events provided by the [com.nmd.eventCalendar.compose.ui.events.CalendarEventsStore] to only show those that fall within the current week.
+ * @property noOfVisibleDays Number of days visible in the time grid view (1, 3, or 7).
  */
 @Immutable
 data class CalendarOptions(
@@ -35,6 +36,7 @@ data class CalendarOptions(
     val maxDate: LocalDate? = null,
     val openEndedWindowMonths: Int,
     val isCurrentWeekOnly: Boolean = false,
+    val noOfVisibleDays: Int = 7
 )
 
 /**
