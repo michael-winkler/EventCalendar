@@ -194,7 +194,7 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
     }
 
     /**
-     * Set a [EventCalendarDayClickListener] to the [EventCalendarView].
+     * Set a [EventCalendarDayClickListener] to the [EventCalendarSingleWeekView].
      * You can also insert null to remove the listener.
      * @param eventCalendarDayClickListener [EventCalendarDayClickListener]?
      */
@@ -203,7 +203,7 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
     }
 
     /**
-     * Set events to the [EventCalendarView].
+     * Set events to the [EventCalendarSingleWeekView].
      * The [Event] model looks like this:
      * ```
      * @Parcelize
@@ -215,36 +215,33 @@ class EventCalendarSingleWeekView @JvmOverloads constructor(
      * ) : Parcelable
      * ```
      *
-     * You can also insert here:
+     * You can also associate a custom payload with your event:
      * ```
      * val data: @RawValue Any? = null,
      * ```
-     * your custom model but make sure you declare it as [kotlinx.parcelize.Parcelize].
+     * Ensure your custom model implements [android.os.Parcelable] if you want to preserve state.
      *
-     * If you do not want to use a model you can also use [String] or [Int] or any else you want as data.
+     * If you do not want to use a custom model, you can also use [String], [Int], or any other
+     * type as data.
      *
-     * Also if there are more events on a single day than the user can visibly see,
-     * the last fully visible item will be automatically displayed as "+1", for example.
-     * In this case, the count text is automatically generated. If you don't want the automatic count
-     * then you can disable it in your xml-layout
-     * ```
+     * If there are more events on a single day than can be displayed, the last fully visible item
+     * will be replaced by a count indicator (e.g., "+2"). This behavior can be disabled in XML:
+     * ```xml
      * app:ecv_count_visible="false"
      * ```
-     * The [Event] item text color is set automatic to light or dark.
-     * This depends on the [Event] item "backgroundHexColor". If it is a dark background color,
-     * then the text color will be light, else dark. If you don't want the automatic text color
-     * then you can disable it in your xml-layout
-     * ```
+     *
+     * The text color for events is automatically adjusted (light or dark) based on the
+     * "backgroundHexColor" to ensure readability. This can be disabled in XML:
+     * ```xml
      * app:ecv_event_item_automatic_text_color="false"
      * ```
-     * You can set now the event item text color like this in your xml-layout
-     * ```
+     *
+     * If disabled, you can set a fixed text color:
+     * ```xml
      * app:ecv_event_item_text_color="@android:color/white"
      * ```
-     * but remember that "ecv_event_item_text_color" only works if "ecv_event_item_automatic_text_color"
-     * is set to false!
      *
-     * @return The current event list. Can not be null but empty list.
+     * @return The current list of events.
      */
     var events: ArrayList<Event>
         get() {

@@ -15,7 +15,6 @@ import com.nmd.eventCalendar.R
 import com.nmd.eventCalendar.model.Day
 import com.nmd.eventCalendar.model.Event
 import kotlinx.datetime.DayOfWeek
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.minus
 import kotlinx.datetime.number
 import kotlinx.datetime.plus

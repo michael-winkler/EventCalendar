@@ -3,22 +3,26 @@ package com.nmd.eventCalendar.interfaces
 import com.nmd.eventCalendar.model.Day
 
 /**
- * Interface for click events.
+ * Interface definition for a callback to be invoked when a day in the calendar is clicked.
  */
 interface EventCalendarDayClickListener {
     /**
-     * @param day [Day]
+     * Called when a day has been clicked.
+     *
+     * @param day The [Day] object containing information about the clicked date and its events.
      */
     fun onClick(day: Day)
 }
 
 /**
- * Interface for scroll events.
+ * Interface definition for a callback to be invoked when the calendar is scrolled to a new month.
  */
 interface EventCalendarScrollListener {
     /**
-     * @param month [Int] eg. January is 1, February...
-     * @param year [Int] eg. 2022
+     * Called when the calendar has been scrolled to a new month.
+     *
+     * @param month The new month (1 = January, 12 = December).
+     * @param year The new year (e.g., 2023).
      */
     fun onScrolled(month: Int, year: Int)
 }

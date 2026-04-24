@@ -63,10 +63,10 @@ fun MyCalendarScreen() {
         calendarWeekVisible = true
     )
     val controller = rememberCalendarController(options)
-    
+
     // Using kotlinx-datetime to get current date
     val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
-    
+
     val eventsStore = rememberCalendarEventsStore(
         initialEvents = listOf(
             Event(
@@ -83,10 +83,10 @@ fun MyCalendarScreen() {
         calendarOptions = options,
         calendarController = controller,
         calendarEventsStore = eventsStore,
-        onDaySelected = { day -> 
+        onDaySelected = { day ->
             println("Selected: ${day.date}")
         },
-        onMonthChange = { month -> 
+        onMonthChange = { month ->
             println("Changed to: $month")
         }
     )
@@ -145,5 +145,7 @@ Customize colors, text sizes, and shapes:
   becomes scrollable.
 - **Theming:** Full support for Material 3 and Dark Mode.
 - **Lightweight:** Minimal dependencies, focused on performance.
-- **KMP Ready:** Uses `kotlinx-datetime` and resource-based localization for future multiplatform support.
-- **Backward Compatible:** Supports Android API level 23 and above without requiring Java 8+ API desugaring.
+- **KMP Ready:** Uses `kotlinx-datetime` and resource-based localization for future multiplatform
+  support.
+- **Backward Compatible:** Supports Android API level 23 and above without requiring Java 8+ API
+  desugaring.

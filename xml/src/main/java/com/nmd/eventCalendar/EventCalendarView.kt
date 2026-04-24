@@ -62,8 +62,8 @@ import kotlin.math.abs
  *     }
  * })
  * ```
- * It is really to easy to add events to the calendar.
- * Here is an example code:
+ * It is really easy to add events to the calendar.
+ * Here is an example:
  * ```
  * binding.eventCalendarView.events = arrayListOf(
  *     Event(date = "15.04.2023", name = "Vacation", backgroundHexColor = "#4badeb"),
@@ -72,9 +72,8 @@ import kotlin.math.abs
  *     Event(date = "18.04.2023", name = "Vacation", backgroundHexColor = "#4badeb", data = "Let's go!")
  * )
  * ```
- * The date format have to be in format "dd.MM.yyyy".
- * For more details about how a event model should be
- * @see events
+ * The date format must be in the format "dd.MM.yyyy".
+ * For more details about how an event model should be, @see events
  *
  */
 class EventCalendarView @JvmOverloads constructor(
@@ -308,7 +307,7 @@ class EventCalendarView @JvmOverloads constructor(
      * Scrolls the calendar to the specified month and year.
      * If the given month and year are out of range, no action is taken.
      *
-     * @param month Int - The month to scroll to (e.g., 1 for January, 12 for December).
+     * @param month Int - The month to scroll to (1 = January, 12 = December).
      * @param year Int - The year to scroll to (e.g., 2023).
      * @param smoothScroll Boolean - If `true`, the scroll will be smooth. If `false`, it will be immediate. Default is `false`.
      * @param scrollToLastIfOutOfRange Boolean - If `true`, scrolls to the last existing position if the given month/year is out of range. Default is `false`.
@@ -319,10 +318,11 @@ class EventCalendarView @JvmOverloads constructor(
         year: Int,
         smoothScroll: Boolean = false,
         scrollToLastIfOutOfRange: Boolean = false,
-    ) {/*
+    ) {
+        /*
          * Checks if the given month and year are within the range of the calendar.
          * If yes, calculates the position of the month on the horizontal axis.
-         * If the month/year is not in range, no action is taken accept `scrollToLastIfOutOfRange` is
+         * If the month/year is not in range, no action is taken unless `scrollToLastIfOutOfRange` is
          * set to `true`.
          */
         val booleanIntPair1 = monthInRange(month.minus(1), year)
