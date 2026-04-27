@@ -2,6 +2,14 @@
     <string name="app_name">Event Calendar</string>
     <string name="app_variant_xml">XML</string>
     <string name="app_variant_compose">Compose</string>
-    <string name="event_calendar_no_events">No events where found for the selected day!</string>
+    <string name="event_calendar_no_events">No events were found for the selected day!</string>
     <string name="event_calendar_current_week">Current week</string>
+
+    <string name="content_description_back">Back</string>
+    <string name="content_description_show_current_week">Show current week</string>
+    <string name="content_description_change_week_start">Change week start</string>
+    <string name="content_description_jump_to_current_month">Jump to current month</string>
+    <string name="content_description_shuffle_events">Shuffle events</string>
+    <string name="content_description_switch_view">Switch view</string>
+    <string name="content_description_toggle_calendar_week">Toggle calendar week</string>
 </resources>
