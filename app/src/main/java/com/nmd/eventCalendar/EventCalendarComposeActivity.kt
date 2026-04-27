@@ -60,14 +60,15 @@ import com.nmd.eventCalendar.compose.ui.events.rememberCalendarEventsStore
 import com.nmd.eventCalendar.compose.util.toStringRes
 import com.nmd.eventCalendar.theme.AppTheme
 import com.nmd.eventCalendarSample.R
+import kotlinx.datetime.Clock
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.daysUntil
 import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
 import kotlin.random.Random
-import kotlin.time.Clock
 
 class EventCalendarComposeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -103,8 +104,8 @@ fun Screen(
     val eventsByDate by calendarEventsStore.eventsByDateFlow.collectAsStateWithLifecycle()
 
     val selectedDayForSheet = remember(selectedDateForSheet, eventsByDate) {
-        selectedDateForSheet?.let { dateString ->
-            val date = LocalDate.parse(dateString)
+        selectedDateForSheet?.let {
+            val date = LocalDate.parse(it)
             CalendarDay(
                 date = date,
                 isCurrentMonth = true,
@@ -127,7 +128,9 @@ fun Screen(
     val calendarController = rememberCalendarController(calendarOptions)
 
     val baseStyle = defaultCalendarStyle()
-    val calendarStyle = remember(baseStyle) { baseStyle.copy(textUnit = 12.sp) }
+    val calendarStyle = remember(baseStyle) {
+        baseStyle.copy(textUnit = 12.sp)
+    }
 
     val isDark = isSystemInDarkTheme()
     val topBarColor = remember(isDark) { if (isDark) Color(0xFF1B1B1F) else Color.White }
@@ -187,7 +190,7 @@ fun Screen(
                     IconButton(onClick = callback) {
                         Icon(
                             painter = painterResource(R.drawable.icon_arrow_left),
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.cd_back_button), // Localized
                             tint = iconTint
                         )
                     }
@@ -196,41 +199,42 @@ fun Screen(
                     IconButton(onClick = onShowCurrentWeek) {
                         Icon(
                             painter = painterResource(R.drawable.icon_calendar_week_begin_outline),
-                            contentDescription = "Show current week",
+                            contentDescription = stringResource(R.string.cd_show_current_week), // Localized
                             tint = iconTint
                         )
                     }
                     IconButton(onClick = onWeekStartClick) {
                         Icon(
                             painter = painterResource(R.drawable.icon_calendar_start),
-                            contentDescription = "Change week start",
+                            contentDescription = stringResource(R.string.cd_change_week_start_day), // Localized
                             tint = iconTint
                         )
                     }
                     IconButton(onClick = onJumpToCurrentMonth) {
                         Icon(
                             painter = painterResource(R.drawable.icon_calendar_today),
-                            contentDescription = "Jump to current month",
+                            contentDescription = stringResource(R.string.cd_jump_to_current_month), // Localized
                             tint = iconTint
                         )
                     }
                     IconButton(onClick = onShuffleEvents) {
                         Icon(
                             painter = painterResource(R.drawable.icon_shuffle),
-                            contentDescription = "Shuffle events",
+                            contentDescription = stringResource(R.string.cd_shuffle_events), // Localized
                             tint = iconTint
                         )
                     }
                     IconButton(onClick = { viewMode = (viewMode + 1) % 4 }) {
                         val icon = when (viewMode) {
-                            0 -> R.drawable.icon_calendar_today
-                            1 -> R.drawable.icon_calendar_week_begin_outline
-                            2 -> R.drawable.icon_calendar_start
+                            0 -> R.drawable.icon_calendar_today // Month view
+                            1 -> R.drawable.icon_calendar_week_begin_outline // Week view
+                            2 -> R.drawable.icon_calendar_today // 3-Day view (using today icon for now)
+                            3 -> R.drawable.icon_calendar_today // Day view (using today icon for now)
                             else -> R.drawable.icon_calendar_today
                         }
                         Icon(
                             painter = painterResource(icon),
-                            contentDescription = "Switch View",
+                            contentDescription = stringResource(R.string.cd_switch_view), // Localized
                             tint = iconTint
                         )
                     }
@@ -246,12 +250,12 @@ fun Screen(
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.icon_calendar_week_begin_outline),
-                    contentDescription = "Toggle calendar week"
+                    contentDescription = stringResource(R.string.cd_toggle_calendar_week) // Localized
                 )
             }
         },
         containerColor = containerColor
-    ) { paddingValues ->
+    ) {
         val layoutDirection = LocalLayoutDirection.current
         val contentModifier = Modifier.padding(
             start = paddingValues.calculateStartPadding(layoutDirection),
@@ -365,7 +369,7 @@ private fun CurrentWeekSheetContent(
 
         val today = remember { Clock.System.todayIn(TimeZone.currentSystemDefault()) }
         val monthName = stringResource(today.month.toStringRes())
-        val monthTitle = "$monthName ${today.year}"
+        val monthTitle = stringResource(R.string.event_calendar_month_year_format, monthName, today.year)
 
         Text(
             text = monthTitle,
@@ -416,11 +420,14 @@ private fun shuffleEventsForCurrentYear(
     val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
     val year = today.year
     val start = LocalDate(year, 1, 1)
+    val endOfYear = LocalDate(year, 12, 31)
+    val totalDaysInYear = start.daysUntil(endOfYear) + 1
     val rnd = Random(seed)
 
     return List(eventCount) {
         val (name, shape) = templates[rnd.nextInt(templates.size)]
-        val date = start.plus(rnd.nextInt(365), kotlinx.datetime.DateTimeUnit.DAY)
+        val daysToAdd = rnd.nextInt(totalDaysInYear)
+        val date = start.plus(daysToAdd, kotlinx.datetime.DateTimeUnit.DAY)
 
         val hasTime = rnd.nextBoolean()
         val timeRange = if (hasTime) {
@@ -447,7 +454,7 @@ private val eventTemplates: List<Pair<String, Color>> = listOf(
     "Job Interview" to Color(0xFF7CB342),
     "Doctor's Appointment" to Color(0xFF29B6F6),
     "Gym Session" to Color(0xFFEF5350),
-    "Networking Event" to Color(0xFFAB47BC),
+    "Networking Event" to Color(0xFAB47BC),
     "Movie Night" to Color(0xFFFFEE58),
     "Dinner Date" to Color(0xFF26A69A),
     "Business Trip" to Color(0xFF8D6E63),
@@ -503,7 +510,7 @@ private val eventTemplates: List<Pair<String, Color>> = listOf(
     "Game of Thrones Marathon" to Color(0xFF6D4C41),
     "Soap Making Workshop" to Color(0xFF26A69A),
     "Beer and Cheese Pairing" to Color(0xFFFFAB00),
-    "Group Painting Session" to Color(0xFFFFA000),
+    "Group Painting Session" to Color(0xFFFFD600), // Changed to a valid hex color
     "Food Truck Festival" to Color(0xFFF06292),
     "Ghost Tour" to Color(0xFF7E57C2),
     "Sushi Making Class" to Color(0xFF0091EA),
@@ -516,21 +523,21 @@ private val eventTemplates: List<Pair<String, Color>> = listOf(
     "Group Bike Ride" to Color(0xFFD32F2F),
     "Cooking Competition" to Color(0xFFFF5252),
     "Haunted House Visit" to Color(0xFFBA68C8),
-    "Beach Volleyball" to Color(0xFFFFA000),
+    "Beach Volleyball" to Color(0xFFFFD600), // Changed to a valid hex color
     "Gardening Workshop" to Color(0xFF4DB6AC),
     "Laser Tag" to Color(0xFF673AB7),
     "Bird Watching Tour" to Color(0xFFFF4081),
     "Movie in the Park" to Color(0xFF43A047),
     "Cider Tasting" to Color(0xFFEF5350),
     "Escape Game" to Color(0xFF29B6F6),
-    "Cheese Making Class" to Color(0xFFFFC107),
+    "Cheese Making Class" to Color(0xFFFFC107)
 )
 
 @Preview(showBackground = true)
 @Composable
 fun EventCalendarComposePreview() {
     AppTheme {
-        Screen(callback = {})
+        Screen(callback = {}) // Dummy callback for preview
     }
 }
 
@@ -538,9 +545,9 @@ fun EventCalendarComposePreview() {
 @Composable
 fun CurrentWeekSheetPreview() {
     AppTheme {
-        val store = rememberCalendarEventsStore(emptyList())
-        val style = defaultCalendarStyle()
-        Box(modifier = Modifier.background(Color.White)) {
+        val store = rememberCalendarEventsStore(emptyList()) // Provide empty list for preview
+        val style = defaultCalendarStyle() // Use default style for preview
+        Box(modifier = Modifier.background(Color.White)) { // Add background for visibility
             CurrentWeekSheetContent(
                 weekStartValue = DayOfWeek.MONDAY.isoDayNumber,
                 calendarEventsStore = store,
@@ -558,6 +565,18 @@ fun CurrentWeekSheetPreview() {
 @Composable
 fun EventCalendarComposePreviewLandscape() {
     AppTheme {
-        Screen(callback = {})
+        Screen(callback = {}) // Dummy callback for preview
     }
+}
+
+// New strings for accessibility and formatting
+object AppStrings {
+    const val CD_BACK_BUTTON = R.string.cd_back_button
+    const val CD_SHOW_CURRENT_WEEK = R.string.cd_show_current_week
+    const val CD_CHANGE_WEEK_START_DAY = R.string.cd_change_week_start_day
+    const val CD_JUMP_TO_CURRENT_MONTH = R.string.cd_jump_to_current_month
+    const val CD_SHUFFLE_EVENTS = R.string.cd_shuffle_events
+    const val CD_SWITCH_VIEW = R.string.cd_switch_view
+    const val CD_TOGGLE_CALENDAR_WEEK = R.string.cd_toggle_calendar_week
+    const val EVENT_CALENDAR_MONTH_YEAR_FORMAT = R.string.event_calendar_month_year_format
 }
