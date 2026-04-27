@@ -4,4 +4,12 @@
     <string name="app_variant_compose">Compose</string>
     <string name="event_calendar_no_events">Es wurden keine Events für diesen Tag gefunden!</string>
     <string name="event_calendar_current_week">Aktuelle Woche</string>
+
+    <string name="content_description_back">Zurück</string>
+    <string name="content_description_show_current_week">Aktuelle Woche anzeigen</string>
+    <string name="content_description_change_week_start">Wochenstart ändern</string>
+    <string name="content_description_jump_to_current_month">Zum aktuellen Monat springen</string>
+    <string name="content_description_shuffle_events">Events mischen</string>
+    <string name="content_description_switch_view">Ansicht wechseln</string>
+    <string name="content_description_toggle_calendar_week">Kalenderwoche umschalten</string>
 </resources>
