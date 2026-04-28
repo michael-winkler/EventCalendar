@@ -302,7 +302,7 @@ fun Screen(
             )
         }
 
-        if (selectedDayForSheet != null) {
+        if (selectedDateForSheet != null) {
             val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
             ModalBottomSheet(
                 onDismissRequest = { selectedDateForSheet = null },
@@ -418,9 +418,14 @@ private fun shuffleEventsForCurrentYear(
     val start = LocalDate(year, 1, 1)
     val rnd = Random(seed)
 
+    // Check if it's a leap year
+    val isLeap = (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)
+    val daysInYear = if (isLeap) 366 else 365
+
     return List(eventCount) {
         val (name, shape) = templates[rnd.nextInt(templates.size)]
-        val date = start.plus(rnd.nextInt(365), kotlinx.datetime.DateTimeUnit.DAY)
+        // Use daysInYear to generate a random date within the current year
+        val date = start.plus(rnd.nextInt(daysInYear), kotlinx.datetime.DateTimeUnit.DAY) // Corrected line
 
         val hasTime = rnd.nextBoolean()
         val timeRange = if (hasTime) {
