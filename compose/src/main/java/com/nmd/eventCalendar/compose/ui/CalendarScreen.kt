@@ -129,7 +129,7 @@ internal fun CalendarScreen(
                 Column(
                     modifier = Modifier
                         .width(MonthHeaderWidthLandscape)
-                        .then(if (calendarOptions.isCurrentWeekOnly) Modifier.wrapContentHeight() else Modifier.fillMaxHeight()),
+                        .fillMaxHeight(), // Always fillMaxHeight, MonthHeader will adapt internally if isCurrentWeekOnly
                     verticalArrangement = Arrangement.Top
                 ) {
                     MonthHeader(
@@ -145,13 +145,8 @@ internal fun CalendarScreen(
 
             Column(
                 modifier = Modifier
-                    .then(
-                        if (calendarOptions.isCurrentWeekOnly) Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight() else Modifier
-                            .fillMaxHeight()
-                            .weight(1f)
-                    )
+                    .weight(1f) // Always weight 1f in landscape to take remaining space
+                    .fillMaxHeight() // Fill the remaining height
             ) {
                 CalendarPagerSection(
                     modifier = Modifier.calendarMonthGrid(
@@ -336,7 +331,7 @@ private fun MonthPager(
         modifier = modifier,
         state = pagerState,
         pageSize = PageSize.Fill,
-        beyondViewportPageCount = 0,
+        beyondViewportPageCount = 1,
         key = { page -> calendarController.pageToMonth(page).let { "${it.year}-${it.monthValue}" } }
     ) { page ->
         val month = calendarController.pageToMonth(page)
