@@ -29,6 +29,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -86,11 +87,12 @@ fun Screen(
     callback: () -> Unit
 ) {
     val initialSeed = rememberSaveable { System.currentTimeMillis() }
+    var currentShuffleSeed by rememberSaveable { mutableLongStateOf(initialSeed) }
     val calendarEventsStore = rememberCalendarEventsStore(
         initialEvents = shuffleEventsForCurrentYear(
             templates = eventTemplates,
             eventCount = 250,
-            seed = initialSeed
+            seed = currentShuffleSeed
         )
     )
 
@@ -160,10 +162,12 @@ fun Screen(
 
     val onShuffleEvents: () -> Unit = remember(calendarEventsStore) {
         {
+            currentShuffleSeed = System.currentTimeMillis()
             calendarEventsStore.setEvents(
                 shuffleEventsForCurrentYear(
                     templates = eventTemplates,
-                    eventCount = 250
+                    eventCount = 250,
+                    seed = currentShuffleSeed
                 )
             )
         }
@@ -425,7 +429,7 @@ private fun shuffleEventsForCurrentYear(
     return List(eventCount) {
         val (name, shape) = templates[rnd.nextInt(templates.size)]
         // Use daysInYear to generate a random date within the current year
-        val date = start.plus(rnd.nextInt(daysInYear), kotlinx.datetime.DateTimeUnit.DAY) // Corrected line
+        val date = start.plus(rnd.nextInt(daysInYear), kotlinx.datetime.DateTimeUnit.DAY)
 
         val hasTime = rnd.nextBoolean()
         val timeRange = if (hasTime) {
@@ -466,103 +470,4 @@ private val eventTemplates: List<Pair<String, Color>> = listOf(
     "Language Exchange" to Color(0xFF4CAF50),
     "Hiking Trip" to Color(0xFFCDDC39),
     "Yoga Class" to Color(0xFF26C6DA),
-    "Baking Workshop" to Color(0xFFFFAB00),
-    "Science Fair" to Color(0xFF6A1B9A),
-    "Board Game Night" to Color(0xFF607D8B),
-    "Fashion Show" to Color(0xFFF57C00),
-    "Political Rally" to Color(0xFF009688),
-    "Writing Workshop" to Color(0xFFFF4081),
-    "Tech Conference" to Color(0xFF1565C0),
-    "Wine Tasting" to Color(0xFF8BC34A),
-    "Cooking Class" to Color(0xFFF4511E),
-    "Open Mic Night" to Color(0xFF673AB7),
-    "Karaoke Night" to Color(0xFFFF5252),
-    "Outdoor Concert" to Color(0xFF64DD17),
-    "Flea Market" to Color(0xFF9E9E9E),
-    "Art Museum Tour" to Color(0xFFFF1744),
-    "Escape Room" to Color(0xFF00BCD4),
-    "Photography Workshop" to Color(0xFFFFD600),
-    "Ballet Performance" to Color(0xFF9FA8DA),
-    "Fashion Design Course" to Color(0xFF4CAF4F),
-    "Community Service" to Color(0xFFC2185B),
-    "Trivia Night" to Color(0xFF2196F3),
-    "Chess Tournament" to Color(0xFFAFB42B),
-    "Stand-up Comedy Show" to Color(0xFF795548),
-    "Book Signing" to Color(0xFFE91E63),
-    "Potluck Party" to Color(0xFF689F38),
-    "Art Auction" to Color(0xFFBA68C8),
-    "Game Night" to Color(0xFF00897B),
-    "Beer Tasting" to Color(0xFFFFD54F),
-    "Stand-up Paddleboarding" to Color(0xFF0277BD),
-    "Charity Run" to Color(0xFFF57F17),
-    "Poetry Slam" to Color(0xFFF44336),
-    "Board Game Cafe" to Color(0xFF8BC34A),
-    "Movie Marathon" to Color(0xFFB71C1C),
-    "Bike Tour" to Color(0xFF4DB6AC),
-    "Wine and Paint Night" to Color(0xFF9C27B0),
-    "Plant Swap" to Color(0xFF388E3C),
-    "Beach Clean-up" to Color(0xFF009688),
-    "Indoor Skydiving" to Color(0xFFFF6F00),
-    "Ice Skating" to Color(0xFF0277BD),
-    "Farmers Market" to Color(0xFFCDDC39),
-    "Game of Thrones Marathon" to Color(0xFF6D4C41),
-    "Soap Making Workshop" to Color(0xFF26A69A),
-    "Beer and Cheese Pairing" to Color(0xFFFFAB00),
-    "Group Painting Session" to Color(0xFFFFA000),
-    "Food Truck Festival" to Color(0xFFF06292),
-    "Ghost Tour" to Color(0xFF7E57C2),
-    "Sushi Making Class" to Color(0xFF0091EA),
-    "Aquarium Visit" to Color(0xFFB2FF59),
-    "Murder Mystery Dinner" to Color(0xFFD500F9),
-    "Vintage Clothing Market" to Color(0xFFF57C00),
-    "Rock Climbing" to Color(0xFF6A1B9A),
-    "DIY Woodworking Class" to Color(0xFF795548),
-    "Meditation Retreat" to Color(0xFF0097A7),
-    "Group Bike Ride" to Color(0xFFD32F2F),
-    "Cooking Competition" to Color(0xFFFF5252),
-    "Haunted House Visit" to Color(0xFFBA68C8),
-    "Beach Volleyball" to Color(0xFFFFA000),
-    "Gardening Workshop" to Color(0xFF4DB6AC),
-    "Laser Tag" to Color(0xFF673AB7),
-    "Bird Watching Tour" to Color(0xFFFF4081),
-    "Movie in the Park" to Color(0xFF43A047),
-    "Cider Tasting" to Color(0xFFEF5350),
-    "Escape Game" to Color(0xFF29B6F6),
-    "Cheese Making Class" to Color(0xFFFFC107),
-)
-
-@Preview(showBackground = true)
-@Composable
-fun EventCalendarComposePreview() {
-    AppTheme {
-        Screen(callback = {})
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CurrentWeekSheetPreview() {
-    AppTheme {
-        val store = rememberCalendarEventsStore(emptyList())
-        val style = defaultCalendarStyle()
-        Box(modifier = Modifier.background(Color.White)) {
-            CurrentWeekSheetContent(
-                weekStartValue = DayOfWeek.MONDAY.isoDayNumber,
-                calendarEventsStore = store,
-                calendarStyle = style
-            )
-        }
-    }
-}
-
-@Preview(
-    showBackground = true,
-    widthDp = 740,
-    heightDp = 360
-)
-@Composable
-fun EventCalendarComposePreviewLandscape() {
-    AppTheme {
-        Screen(callback = {})
-    }
-}
+    "Baking Workshop" to Color(0xFFF
