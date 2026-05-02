@@ -302,7 +302,7 @@ fun Screen(
             )
         }
 
-        if (selectedDateForSheet != null) {
+        if (selectedDayForSheet != null) {
             val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
             ModalBottomSheet(
                 onDismissRequest = { selectedDateForSheet = null },
