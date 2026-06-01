@@ -40,13 +40,3 @@ internal data class WeekItemShapes(
         }
     }
 }
-
-@Composable
-internal fun rememberWeekItemShapes(
-    outerRadius: Dp = 50.dp,
-    innerRadius: Dp = 4.dp
-): WeekItemShapes {
-    return remember(outerRadius, innerRadius) {
-        WeekItemShapes(outerRadius = outerRadius, innerRadius = innerRadius)
-    }
-}

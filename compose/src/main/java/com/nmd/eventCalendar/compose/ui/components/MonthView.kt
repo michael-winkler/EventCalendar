@@ -148,11 +148,11 @@ internal fun MonthView(
     }
 }
 
-private fun dayCornerFor(row: Int, col: Int, lastRow: Int): DayCornerPosition = when {
-    row == 0 && col == 0 -> DayCornerPosition.TopLeft
-    row == 0 && col == 6 -> DayCornerPosition.TopRight
-    row == lastRow && col == 0 -> DayCornerPosition.BottomLeft
-    row == lastRow && col == 6 -> DayCornerPosition.BottomRight
+private fun dayCornerFor(row: Int, col: Int, lastRow: Int): DayCornerPosition = when (row) {
+    0 if col == 0 -> DayCornerPosition.TopLeft
+    0 if col == 6 -> DayCornerPosition.TopRight
+    lastRow if col == 0 -> DayCornerPosition.BottomLeft
+    lastRow if col == 6 -> DayCornerPosition.BottomRight
     else -> DayCornerPosition.Default
 }
 

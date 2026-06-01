@@ -47,9 +47,6 @@ dependencies {
     implementation libs.androidx.viewpager2
     implementation libs.androidx.recyclerview
 
-    // Gson
-    implementation libs.google.gson
-
     // Google Material Design
     implementation libs.material
 
