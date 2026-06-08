@@ -1,3 +1,23 @@
 <resources>
     <string name="calendar_week_label">Tydz.</string>
+    <string name="day_name_monday">Pon</string>
+    <string name="day_name_tuesday">Wto</string>
+    <string name="day_name_wednesday">Śro</string>
+    <string name="day_name_thursday">Czw</string>
+    <string name="day_name_friday">Pią</string>
+    <string name="day_name_saturday">Sob</string>
+    <string name="day_name_sunday">Nie</string>
+
+    <string name="month_january">Styczeń</string>
+    <string name="month_february">Luty</string>
+    <string name="month_march">Marzec</string>
+    <string name="month_april">Kwiecień</string>
+    <string name="month_may">Maj</string>
+    <string name="month_june">Czerwiec</string>
+    <string name="month_july">Lipiec</string>
+    <string name="month_august">Sierpień</string>
+    <string name="month_september">Wrzesień</string>
+    <string name="month_october">Październik</string>
+    <string name="month_november">Listopad</string>
+    <string name="month_december">Grudzień</string>
 </resources>

@@ -1,3 +1,23 @@
 <resources>
     <string name="calendar_week_label">Týd.</string>
+    <string name="day_name_monday">Po</string>
+    <string name="day_name_tuesday">Út</string>
+    <string name="day_name_wednesday">St</string>
+    <string name="day_name_thursday">Čt</string>
+    <string name="day_name_friday">Pá</string>
+    <string name="day_name_saturday">So</string>
+    <string name="day_name_sunday">Ne</string>
+
+    <string name="month_january">Leden</string>
+    <string name="month_february">Únor</string>
+    <string name="month_march">Březen</string>
+    <string name="month_april">Duben</string>
+    <string name="month_may">Květen</string>
+    <string name="month_june">Červen</string>
+    <string name="month_july">Červenec</string>
+    <string name="month_august">Srpen</string>
+    <string name="month_september">Září</string>
+    <string name="month_october">Říjen</string>
+    <string name="month_november">Listopad</string>
+    <string name="month_december">Prosinec</string>
 </resources>
