@@ -427,7 +427,14 @@ private fun shuffleEventsForCurrentYear(
         // Use daysInYear to generate a random date within the current year
         val date = start.plus(rnd.nextInt(daysInYear), kotlinx.datetime.DateTimeUnit.DAY) // Corrected line
 
-        val hasTime = rnd.nextBoolean()
+        // Roughly one in five events spans multiple days to showcase continuous multi-day bars
+        // (including week-overlapping ones).
+        val isMultiDay = rnd.nextInt(5) == 0
+        val endDate = if (isMultiDay) {
+            date.plus(rnd.nextInt(1, 7), kotlinx.datetime.DateTimeUnit.DAY)
+        } else null
+
+        val hasTime = !isMultiDay && rnd.nextBoolean()
         val timeRange = if (hasTime) {
             val startHour = rnd.nextInt(8, 20)
             val duration = rnd.nextInt(1, 4)
@@ -439,7 +446,8 @@ private fun shuffleEventsForCurrentYear(
             name = name,
             shapeColor = shape,
             textColor = Color.White,
-            timeRange = timeRange
+            timeRange = timeRange,
+            endDate = endDate
         )
     }
 }

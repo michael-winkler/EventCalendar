@@ -9,7 +9,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.plus
 
 /**
  * Holds the current list of calendar [Event]s.
@@ -40,14 +42,25 @@ class CalendarEventsViewModel : ViewModel() {
     private fun buildEventsByDate(events: List<Event>): Map<LocalDate, List<Event>> {
         if (events.isEmpty()) return emptyMap()
 
-        return events
-            .groupBy { it.date }
-            .mapValues { (_, list) ->
-                list.sortedWith(
-                    compareBy<Event> { it.timeRange?.startHour ?: Int.MAX_VALUE }
-                        .thenBy { it.timeRange?.startMinute ?: Int.MAX_VALUE }
-                        .thenBy { it.name }
-                )
+        // Multi-day events are expanded across every day they cover so that a per-date lookup
+        // (e.g. eventsByDate[date]) returns all events overlapping that day, not just the ones
+        // that start on it.
+        val grouped = LinkedHashMap<LocalDate, MutableList<Event>>()
+        for (event in events) {
+            var day = event.date
+            val last = event.lastDate
+            while (day <= last) {
+                grouped.getOrPut(day) { mutableListOf() }.add(event)
+                day = day.plus(1, DateTimeUnit.DAY)
             }
+        }
+
+        return grouped.mapValues { (_, list) ->
+            list.sortedWith(
+                compareBy<Event> { it.timeRange?.startHour ?: Int.MAX_VALUE }
+                    .thenBy { it.timeRange?.startMinute ?: Int.MAX_VALUE }
+                    .thenBy { it.name }
+            )
+        }
     }
 }
