@@ -1,8 +1,11 @@
 package com.nmd.eventCalendar.compose.util
 
+import androidx.compose.ui.graphics.Color
 import com.nmd.eventCalendar.compose.model.Event
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.daysUntil
+import kotlinx.datetime.plus
 
 /**
  * A resolved placement of an [event] inside a single calendar week.
@@ -27,6 +30,87 @@ internal data class EventSegment(
     val continuesBefore: Boolean,
     val continuesAfter: Boolean
 )
+
+/**
+ * Identity used to decide whether two separate events are "the same type" for auto-merging.
+ */
+private data class EventTypeKey(
+    val name: String,
+    val shapeColor: Color,
+    val textColor: Color,
+    val autoAdjustTextColorForBackground: Boolean
+)
+
+private fun Event.typeKey() =
+    EventTypeKey(name, shapeColor, textColor, autoAdjustTextColorForBackground)
+
+/**
+ * Combines separate single-day events of the same type on consecutive days into a single continuous
+ * multi-day span for rendering.
+ *
+ * This lets callers who model a multi-day event as several independent [Event] objects (one per day)
+ * still get a single continuous bar, without changing their data. To avoid wrongly merging genuinely
+ * independent occurrences (e.g. a daily recurring appointment), merging is deliberately conservative:
+ *
+ * - Only **all-day** events are considered (`timeRange == null`); timed events are never merged, as a
+ *   repeating time-of-day almost always signals a recurring appointment rather than a span.
+ * - Only pure single-day events participate (`endDate == null`); events that already declare an
+ *   explicit end are passed through untouched.
+ * - Events must share the exact same type ([EventTypeKey]: name + colors) and cover a strictly
+ *   consecutive, gap-free chain of days.
+ * - If a type appears more than once on the same day the situation is ambiguous, so that type is left
+ *   unmerged.
+ *
+ * The synthesized span reuses the first event's identity (via [Event.copy]) so Compose keys and lane
+ * assignment stay stable; per-day event lookups used for selection are unaffected because they are
+ * driven by the original store data, not by this function.
+ *
+ * @param events The distinct events visible in the current grid.
+ * @return A list where eligible consecutive same-type events are replaced by one spanning event; all
+ * other events are returned unchanged.
+ */
+internal fun mergeAdjacentEvents(events: List<Event>): List<Event> {
+    if (events.size < 2) return events
+
+    val result = ArrayList<Event>(events.size)
+    val mergeable = ArrayList<Event>()
+
+    for (event in events) {
+        if (event.timeRange == null && event.endDate == null) {
+            mergeable.add(event)
+        } else {
+            // Timed events or events that already declare an explicit span are never auto-merged.
+            result.add(event)
+        }
+    }
+
+    if (mergeable.isEmpty()) return events
+
+    for ((_, group) in mergeable.groupBy { it.typeKey() }) {
+        // Same type appearing multiple times on one day is ambiguous -> do not merge this type.
+        if (group.groupingBy { it.date }.eachCount().any { it.value > 1 }) {
+            result.addAll(group)
+            continue
+        }
+
+        val sorted = group.sortedBy { it.date }
+        var i = 0
+        while (i < sorted.size) {
+            var j = i
+            while (j + 1 < sorted.size &&
+                sorted[j].date.plus(1, DateTimeUnit.DAY) == sorted[j + 1].date
+            ) {
+                j++
+            }
+            result.add(
+                if (j > i) sorted[i].copy(endDate = sorted[j].date) else sorted[i]
+            )
+            i = j + 1
+        }
+    }
+
+    return result
+}
 
 /**
  * Assigns a stable lane index to each event so that no two overlapping events share a lane.

@@ -27,6 +27,7 @@ import com.nmd.eventCalendar.compose.util.EventSegment
 import com.nmd.eventCalendar.compose.util.assignEventLanes
 import com.nmd.eventCalendar.compose.util.generateMonthDays
 import com.nmd.eventCalendar.compose.util.isoWeekNumber
+import com.nmd.eventCalendar.compose.util.mergeAdjacentEvents
 import com.nmd.eventCalendar.compose.util.segmentsForWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -84,13 +85,18 @@ internal fun MonthView(
     // Distinct events across the whole visible grid get a stable lane so multi-day events keep the
     // same row across consecutive weeks and render as one continuous bar. Segments are then resolved
     // per week (a multi-day event crossing a week boundary yields one segment per week).
-    val weekSegments: List<List<EventSegment>> = remember(weeks) {
+    val weekSegments: List<List<EventSegment>> = remember(weeks, calendarOptions.mergeAdjacentEvents) {
         val distinctEvents = weeks.flatten().flatMap { it.events }.distinctBy { it.id }
-        val lanes = assignEventLanes(distinctEvents)
+        // Optionally combine separate single-day, all-day events of the same type on consecutive
+        // days into one continuous bar (see mergeAdjacentEvents for the safeguards).
+        val renderEvents =
+            if (calendarOptions.mergeAdjacentEvents) mergeAdjacentEvents(distinctEvents)
+            else distinctEvents
+        val lanes = assignEventLanes(renderEvents)
         weeks.map { week ->
             segmentsForWeek(
                 weekDates = week.map { it.date },
-                events = distinctEvents
+                events = renderEvents
             ) { event -> lanes[event.id] ?: 0 }
         }
     }

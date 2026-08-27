@@ -422,33 +422,58 @@ private fun shuffleEventsForCurrentYear(
     val isLeap = (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)
     val daysInYear = if (isLeap) 366 else 365
 
-    return List(eventCount) {
-        val (name, shape) = templates[rnd.nextInt(templates.size)]
-        // Use daysInYear to generate a random date within the current year
-        val date = start.plus(rnd.nextInt(daysInYear), kotlinx.datetime.DateTimeUnit.DAY) // Corrected line
+    return buildList {
+        repeat(eventCount) {
+            val (name, shape) = templates[rnd.nextInt(templates.size)]
+            // Use daysInYear to generate a random date within the current year
+            val date = start.plus(rnd.nextInt(daysInYear), kotlinx.datetime.DateTimeUnit.DAY)
 
-        // Roughly one in five events spans multiple days to showcase continuous multi-day bars
-        // (including week-overlapping ones).
-        val isMultiDay = rnd.nextInt(5) == 0
-        val endDate = if (isMultiDay) {
-            date.plus(rnd.nextInt(1, 7), kotlinx.datetime.DateTimeUnit.DAY)
-        } else null
+            when (rnd.nextInt(5)) {
+                // ~1/5: multi-day event modeled as a single event with an explicit end date.
+                0 -> add(
+                    Event(
+                        date = date,
+                        name = name,
+                        shapeColor = shape,
+                        textColor = Color.White,
+                        endDate = date.plus(rnd.nextInt(1, 7), kotlinx.datetime.DateTimeUnit.DAY)
+                    )
+                )
+                // ~1/5: multi-day event modeled as several SEPARATE single-day, all-day events of
+                // the same type on consecutive days. These are auto-merged into one continuous bar.
+                1 -> {
+                    val span = rnd.nextInt(2, 6)
+                    repeat(span) { offset ->
+                        add(
+                            Event(
+                                date = date.plus(offset, kotlinx.datetime.DateTimeUnit.DAY),
+                                name = name,
+                                shapeColor = shape,
+                                textColor = Color.White
+                            )
+                        )
+                    }
+                }
+                // Remaining: single-day events, some with a time range.
+                else -> {
+                    val timeRange = if (rnd.nextBoolean()) {
+                        val startHour = rnd.nextInt(8, 20)
+                        val duration = rnd.nextInt(1, 4)
+                        EventTimeRange(startHour, 0, startHour + duration, 0)
+                    } else null
 
-        val hasTime = !isMultiDay && rnd.nextBoolean()
-        val timeRange = if (hasTime) {
-            val startHour = rnd.nextInt(8, 20)
-            val duration = rnd.nextInt(1, 4)
-            EventTimeRange(startHour, 0, startHour + duration, 0)
-        } else null
-
-        Event(
-            date = date,
-            name = name,
-            shapeColor = shape,
-            textColor = Color.White,
-            timeRange = timeRange,
-            endDate = endDate
-        )
+                    add(
+                        Event(
+                            date = date,
+                            name = name,
+                            shapeColor = shape,
+                            textColor = Color.White,
+                            timeRange = timeRange
+                        )
+                    )
+                }
+            }
+        }
     }
 }
 
