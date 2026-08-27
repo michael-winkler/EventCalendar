@@ -147,15 +147,19 @@ private fun EventLanes(
 
         val neededLanes = (segments.maxOf { it.lane }) + 1
         val overflow = neededLanes > maxLanes
-        // When overflowing, reserve the last visible lane for the "+N" indicators.
-        val fullyShownLanes = if (overflow) maxLanes - 1 else neededLanes
+        // Reserve a lane for the "+N" indicators only when at least one real lane still remains
+        // visible; otherwise (a row that fits a single lane) show that top lane instead of hiding
+        // everything - which previously made a multi-day bar disappear entirely into "+N".
+        val reserveOverflowRow = overflow && maxLanes >= 2
+        val fullyShownLanes =
+            if (reserveOverflowRow) maxLanes - 1 else minOf(neededLanes, maxLanes)
 
         val segmentsByLane = remember(segments, fullyShownLanes) {
             (0 until fullyShownLanes).map { lane -> segments.filter { it.lane == lane } }
         }
 
-        val hiddenPerColumn = remember(segments, fullyShownLanes, overflow) {
-            if (!overflow) IntArray(0)
+        val hiddenPerColumn = remember(segments, fullyShownLanes, reserveOverflowRow) {
+            if (!reserveOverflowRow) IntArray(0)
             else IntArray(7) { column ->
                 segments.count { it.lane >= fullyShownLanes && column in it.startColumn..it.endColumn }
             }
@@ -165,7 +169,7 @@ private fun EventLanes(
             segmentsByLane.forEach { laneSegments ->
                 LaneRow(segments = laneSegments)
             }
-            if (overflow) {
+            if (reserveOverflowRow) {
                 OverflowRow(hiddenPerColumn = hiddenPerColumn, calendarStyle = calendarStyle)
             }
         }

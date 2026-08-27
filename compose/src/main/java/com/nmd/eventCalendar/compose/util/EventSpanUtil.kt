@@ -58,12 +58,13 @@ private fun Event.typeKey() =
  *   explicit end are passed through untouched.
  * - Events must share the exact same type ([EventTypeKey]: name + colors) and cover a strictly
  *   consecutive, gap-free chain of days.
- * - If a type appears more than once on the same day the situation is ambiguous, so that type is left
- *   unmerged.
+ * - A day may legitimately hold more than one event of the same type: exactly one representative per
+ *   day forms the span, and any additional same-type events on those days are kept as their own
+ *   single-day chips (they are neither dropped nor allowed to break the span).
  *
- * The synthesized span reuses the first event's identity (via [Event.copy]) so Compose keys and lane
- * assignment stay stable; per-day event lookups used for selection are unaffected because they are
- * driven by the original store data, not by this function.
+ * The synthesized span reuses the representative event's identity (via [Event.copy]) so Compose keys
+ * and lane assignment stay stable; per-day event lookups used for selection are unaffected because
+ * they are driven by the original store data, not by this function.
  *
  * @param events The distinct events visible in the current grid.
  * @return A list where eligible consecutive same-type events are replaced by one spanning event; all
@@ -87,24 +88,33 @@ internal fun mergeAdjacentEvents(events: List<Event>): List<Event> {
     if (mergeable.isEmpty()) return events
 
     for ((_, group) in mergeable.groupBy { it.typeKey() }) {
-        // Same type appearing multiple times on one day is ambiguous -> do not merge this type.
-        if (group.groupingBy { it.date }.eachCount().any { it.value > 1 }) {
-            result.addAll(group)
-            continue
-        }
+        val byDate = group.groupBy { it.date }
+        val dates = byDate.keys.sorted()
 
-        val sorted = group.sortedBy { it.date }
         var i = 0
-        while (i < sorted.size) {
+        while (i < dates.size) {
             var j = i
-            while (j + 1 < sorted.size &&
-                sorted[j].date.plus(1, DateTimeUnit.DAY) == sorted[j + 1].date
+            while (j + 1 < dates.size &&
+                dates[j].plus(1, DateTimeUnit.DAY) == dates[j + 1]
             ) {
                 j++
             }
+
+            // One representative per day forms the run; a run of >= 2 days becomes a single span.
+            val representative = byDate.getValue(dates[i]).first()
             result.add(
-                if (j > i) sorted[i].copy(endDate = sorted[j].date) else sorted[i]
+                if (j > i) representative.copy(endDate = dates[j]) else representative
             )
+
+            // Any additional same-type events on these days are kept as separate single-day chips
+            // instead of dropping them or letting them cancel the merge.
+            for (k in i..j) {
+                val onDay = byDate.getValue(dates[k])
+                for (extraIndex in 1 until onDay.size) {
+                    result.add(onDay[extraIndex])
+                }
+            }
+
             i = j + 1
         }
     }
