@@ -7,12 +7,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,7 +21,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nmd.eventCalendar.compose.model.CalendarDay
@@ -29,6 +33,7 @@ import com.nmd.eventCalendar.compose.model.YearMonth
 import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
 import com.nmd.eventCalendar.compose.ui.shapes.DayCornerShapes
 import com.nmd.eventCalendar.compose.util.EventSegment
+import kotlin.math.roundToInt
 
 private val LaneHeight = 16.dp
 private val LaneSpacing = 2.dp
@@ -37,6 +42,19 @@ private val EventBarShapeRadius = 6.dp
 // Inset around each day cell's background. Event bars use the same value at their real start/end so
 // a bar sits exactly inside the day cell, while continuation edges reach the grid edge to bridge.
 private val CellPadding = 2.dp
+
+private const val DaysPerWeek = 7
+
+/**
+ * Integer pixel boundaries of the 7 day columns: [x0, x1, ... x7], with x0 = 0 and x7 = full width.
+ *
+ * Both the day-cell backgrounds and the event bars are placed against these shared boundaries, so a
+ * multi-day bar spanning columns a..b lines up pixel-exactly with cells a and b. (Using Compose
+ * `weight` twice - once for the 7 equal cells, once for a wide multi-column bar - rounds the two
+ * independently and drifts by a pixel or two.)
+ */
+private fun columnBounds(totalWidthPx: Float): IntArray =
+    IntArray(DaysPerWeek + 1) { i -> (i * totalWidthPx / DaysPerWeek).roundToInt() }
 
 /**
  * Renders a full calendar week: the day-cell backgrounds, the day numbers, and the event lanes.
@@ -73,7 +91,13 @@ internal fun WeekRow(
     cornerShapes: DayCornerShapes,
     onDaySelected: (calendarDay: CalendarDay) -> Unit
 ) {
-    Box(modifier = modifier.fillMaxSize()) {
+    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+        val density = LocalDensity.current
+        val totalWidthPx = with(density) { maxWidth.toPx() }
+        val bounds = remember(totalWidthPx) { columnBounds(totalWidthPx) }
+
+        fun columnWidth(from: Int, to: Int) = with(density) { (bounds[to] - bounds[from]).toDp() }
+
         // Background + click layer: one rounded cell per day column.
         Row(modifier = Modifier.fillMaxSize()) {
             week.forEachIndexed { dayIndex, day ->
@@ -89,7 +113,7 @@ internal fun WeekRow(
                 )
                 Box(
                     modifier = Modifier
-                        .weight(1f)
+                        .width(columnWidth(dayIndex, dayIndex + 1))
                         .fillMaxHeight()
                         .padding(CellPadding)
                         .background(calendarStyle.dayItemBackgroundColor, shape)
@@ -104,14 +128,12 @@ internal fun WeekRow(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                // No horizontal padding: the day-number/lane columns must use the exact same 7-column
-                // grid as the background cells, otherwise bars drift out of their day cell.
                 .padding(vertical = 4.dp)
         ) {
             Row(modifier = Modifier.fillMaxWidth()) {
-                week.forEach { day ->
+                week.forEachIndexed { dayIndex, day ->
                     DayNumberCell(
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.width(columnWidth(dayIndex, dayIndex + 1)),
                         calendarDay = day,
                         visibleMonth = visibleMonth,
                         calendarStyle = calendarStyle
@@ -125,6 +147,8 @@ internal fun WeekRow(
                     .weight(1f)
                     .padding(top = 4.dp),
                 segments = segments,
+                bounds = bounds,
+                density = density,
                 calendarStyle = calendarStyle
             )
         }
@@ -139,6 +163,8 @@ internal fun WeekRow(
 private fun EventLanes(
     modifier: Modifier,
     segments: List<EventSegment>,
+    bounds: IntArray,
+    density: Density,
     calendarStyle: CalendarStyle
 ) {
     if (segments.isEmpty()) {
@@ -151,17 +177,13 @@ private fun EventLanes(
         val maxLanes = ((maxHeight + LaneSpacing).value / laneStride.value).toInt().coerceAtLeast(0)
         if (maxLanes == 0) return@BoxWithConstraints
 
-        // Lanes are assigned globally across the whole grid so a multi-day bar keeps the same row
-        // across weeks. For the visible-row/overflow budget we only look at the lanes actually
-        // present in THIS week and compact them (gaps removed): otherwise a bar that ended up on a
-        // high global lane could waste blank rows above it - or, on a short row, collapse into "+N"
-        // (or vanish) even in a week where it is the only event.
+        // Lanes are assigned globally (so a bar keeps its row across weeks). For the visible-row /
+        // overflow budget we only look at the lanes actually present in THIS week and compact them
+        // (gaps removed): otherwise a bar on a high global lane could waste blank rows above it or
+        // collapse into "+N" even in a week where it is the only event.
         val presentLanes = remember(segments) { segments.map { it.lane }.distinct().sorted() }
         val neededLanes = presentLanes.size
         val overflow = neededLanes > maxLanes
-        // Reserve a row for the "+N" indicators only when at least one real lane still remains
-        // visible; otherwise (a row that fits a single lane) show that top lane instead of hiding
-        // everything.
         val reserveOverflowRow = overflow && maxLanes >= 2
         val visibleRowCount =
             if (reserveOverflowRow) maxLanes - 1 else minOf(neededLanes, maxLanes)
@@ -177,7 +199,7 @@ private fun EventLanes(
             if (!reserveOverflowRow) IntArray(0)
             else {
                 val shown = visibleLanes.toHashSet()
-                IntArray(7) { column ->
+                IntArray(DaysPerWeek) { column ->
                     segments.count { it.lane !in shown && column in it.startColumn..it.endColumn }
                 }
             }
@@ -185,45 +207,49 @@ private fun EventLanes(
 
         Column(verticalArrangement = Arrangement.spacedBy(LaneSpacing)) {
             segmentsByRow.forEach { rowSegments ->
-                LaneRow(segments = rowSegments)
+                LaneRow(segments = rowSegments, bounds = bounds, density = density)
             }
             if (reserveOverflowRow) {
-                OverflowRow(hiddenPerColumn = hiddenPerColumn, calendarStyle = calendarStyle)
+                OverflowRow(
+                    hiddenPerColumn = hiddenPerColumn,
+                    bounds = bounds,
+                    density = density,
+                    calendarStyle = calendarStyle
+                )
             }
         }
     }
 }
 
 /**
- * Renders a single lane as a row of 7 equal columns, where each event segment occupies a contiguous,
- * gap-free span of columns. Uncovered columns are filled with weighted spacers so that every lane
- * stays perfectly aligned to the day grid.
+ * Renders a single lane: each event segment is placed against the shared [bounds] so it lines up
+ * exactly with the day cells; continuation edges reach the column boundary to bridge across weeks.
  */
 @Composable
 private fun LaneRow(
-    segments: List<EventSegment>
+    segments: List<EventSegment>,
+    bounds: IntArray,
+    density: Density
 ) {
-    val byStartColumn = remember(segments) { segments.associateBy { it.startColumn } }
+    val cellPadPx = remember(density) { with(density) { CellPadding.toPx() }.roundToInt() }
 
-    Row(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(LaneHeight)
     ) {
-        var column = 0
-        while (column <= 6) {
-            val segment = byStartColumn[column]
-            if (segment != null) {
-                val span = (segment.endColumn - segment.startColumn + 1).coerceAtLeast(1)
-                EventBar(
-                    modifier = Modifier.weight(span.toFloat()),
-                    segment = segment
-                )
-                column = segment.endColumn + 1
-            } else {
-                Spacer(modifier = Modifier.weight(1f))
-                column++
-            }
+        segments.forEach { segment ->
+            val leftPx = bounds[segment.startColumn] + if (segment.continuesBefore) 0 else cellPadPx
+            val rightPx = bounds[segment.endColumn + 1] - if (segment.continuesAfter) 0 else cellPadPx
+            val widthDp = with(density) { (rightPx - leftPx).coerceAtLeast(0).toDp() }
+
+            EventBar(
+                modifier = Modifier
+                    .offset { IntOffset(leftPx, 0) }
+                    .width(widthDp)
+                    .fillMaxHeight(),
+                segment = segment
+            )
         }
     }
 }
@@ -231,7 +257,7 @@ private fun LaneRow(
 /**
  * A single continuous event bar. Corners are rounded only on the ends that represent the real start
  * or end of the event; edges that continue into an adjacent week stay flat so the bar reads as one
- * object spanning multiple weeks.
+ * object spanning multiple weeks. Horizontal position/size is supplied by the caller via [modifier].
  */
 @Composable
 private fun EventBar(
@@ -251,11 +277,6 @@ private fun EventBar(
 
     Box(
         modifier = modifier
-            .fillMaxHeight()
-            .padding(
-                start = if (segment.continuesBefore) 0.dp else CellPadding,
-                end = if (segment.continuesAfter) 0.dp else CellPadding
-            )
             .clip(shape)
             .background(segment.event.shapeColor),
         contentAlignment = Alignment.CenterStart
@@ -277,27 +298,32 @@ private fun EventBar(
 
 /**
  * Renders the "+N more" indicators for events that did not fit into the visible lanes, one per day
- * column so the count stays associated with the correct day.
+ * column so the count stays associated with the correct day (aligned to the shared [bounds]).
  */
 @Composable
 private fun OverflowRow(
     hiddenPerColumn: IntArray,
+    bounds: IntArray,
+    density: Density,
     calendarStyle: CalendarStyle
 ) {
-    Row(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(LaneHeight)
     ) {
-        for (column in 0..6) {
+        for (column in 0 until DaysPerWeek) {
             val count = hiddenPerColumn.getOrElse(column) { 0 }
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight(),
-                contentAlignment = Alignment.Center
-            ) {
-                if (count > 0) {
+            if (count > 0) {
+                val leftPx = bounds[column]
+                val widthDp = with(density) { (bounds[column + 1] - bounds[column]).toDp() }
+                Box(
+                    modifier = Modifier
+                        .offset { IntOffset(leftPx, 0) }
+                        .width(widthDp)
+                        .fillMaxHeight(),
+                    contentAlignment = Alignment.Center
+                ) {
                     Text(
                         text = "+$count",
                         color = calendarStyle.dayItemTextColor,
