@@ -60,31 +60,35 @@ private fun Event.typeKey() =
 
 /**
  * Combines separate single-day events of the same type on consecutive days into a single continuous
- * multi-day span for rendering.
+ * multi-day event (with an [Event.endDate] spanning the run).
  *
- * This lets callers who model a multi-day event as several independent [Event] objects (one per day)
- * still get a single continuous bar, without changing their data. To avoid wrongly merging genuinely
- * independent occurrences (e.g. a daily recurring appointment), merging is deliberately conservative:
+ * This is the same transformation the month view applies when
+ * [com.nmd.eventCalendar.compose.ui.config.CalendarOptions.mergeAdjacentEvents] is enabled. It lets
+ * callers who model a multi-day event as several independent [Event] objects (one per day) still get
+ * a single continuous bar without changing their data — and it is exposed publicly so the same merged
+ * view can be reused elsewhere (e.g. to show the full span of a tapped event in a details sheet).
+ *
+ * To avoid wrongly merging genuinely independent occurrences (e.g. a daily recurring appointment),
+ * merging is deliberately conservative:
  *
  * - Only **all-day** events are considered (`timeRange == null`); timed events are never merged, as a
  *   repeating time-of-day almost always signals a recurring appointment rather than a span.
  * - Only pure single-day events participate (`endDate == null`); events that already declare an
  *   explicit end are passed through untouched.
- * - Events must share the exact same type ([EventTypeKey]: name + colors) and cover a strictly
- *   consecutive, gap-free chain of days.
+ * - Events must share the exact same type (name + colors) and cover a strictly consecutive, gap-free
+ *   chain of days.
  * - A day may legitimately hold more than one event of the same type: exactly one representative per
  *   day forms the span, and any additional same-type events on those days are kept as their own
  *   single-day chips (they are neither dropped nor allowed to break the span).
  *
- * The synthesized span reuses the representative event's identity (via [Event.copy]) so Compose keys
- * and lane assignment stay stable; per-day event lookups used for selection are unaffected because
- * they are driven by the original store data, not by this function.
+ * The synthesized span reuses the representative event's identity (via [Event.copy]) so stable keys
+ * stay stable.
  *
- * @param events The distinct events visible in the current grid.
+ * @param events The events to merge.
  * @return A list where eligible consecutive same-type events are replaced by one spanning event; all
  * other events are returned unchanged.
  */
-internal fun mergeAdjacentEvents(events: List<Event>): List<Event> {
+fun mergeAdjacentEvents(events: List<Event>): List<Event> {
     if (events.size < 2) return events
 
     val result = ArrayList<Event>(events.size)

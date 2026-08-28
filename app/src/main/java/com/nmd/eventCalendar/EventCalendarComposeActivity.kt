@@ -57,6 +57,7 @@ import com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle
 import com.nmd.eventCalendar.compose.ui.controller.rememberCalendarController
 import com.nmd.eventCalendar.compose.ui.events.CalendarEventsStore
 import com.nmd.eventCalendar.compose.ui.events.rememberCalendarEventsStore
+import com.nmd.eventCalendar.compose.util.mergeAdjacentEvents
 import com.nmd.eventCalendar.compose.util.toStringRes
 import com.nmd.eventCalendar.theme.AppTheme
 import com.nmd.eventCalendarSample.R
@@ -109,8 +110,10 @@ fun Screen(
             CalendarDay(
                 date = date,
                 isCurrentMonth = true,
-                // Overlap-aware so a multi-day event shows on every day it covers, not only its start.
-                events = events.filter { it.occursOn(date) }
+                // Apply the same auto-merge the month view uses, so a tapped event that spans several
+                // days as separate consecutive events (not an explicit endDate) also reports its full
+                // range in the sheet. Overlap-aware so it shows on every covered day, not only its start.
+                events = mergeAdjacentEvents(events).filter { it.occursOn(date) }
             )
         }
     }

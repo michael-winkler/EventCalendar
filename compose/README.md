@@ -188,8 +188,15 @@ appointment) are **not** joined:
 
 Set `mergeAdjacentEvents = false` to disable this and render every event on its own day.
 
-> **Note:** Day selection is unaffected — `onDaySelected` still reports the individual events for the
-> tapped day. Only the visual bar is merged.
+> **Note:** Day selection reports the underlying store events for the tapped day, so an auto-merged
+> event is reported as the individual single-day event, not the span. If you want the merged span in
+> your own UI too (e.g. to show a "Mon–Wed" range in a details sheet), apply the same transformation
+> yourself — it is exposed publicly:
+>
+> ```kotlin
+> val merged = mergeAdjacentEvents(store.eventsFlow.value)
+> val onDay = merged.filter { it.occursOn(date) } // an auto-merged event now has an endDate
+> ```
 
 ---
 
