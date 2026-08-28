@@ -32,6 +32,7 @@ Choose the module that fits your project:
 - Built 100% with Compose.
 - **Min SDK: 23**
 - Supports horizontal paging.
+- Continuous **multi-day events** (week-overlapping, with optional auto-merge).
 - Custom `CalendarController` and `CalendarEventsStore`.
 - **[Read Compose Documentation →](./compose/README.md)**
 
