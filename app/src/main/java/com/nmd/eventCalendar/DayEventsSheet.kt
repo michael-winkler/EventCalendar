@@ -85,6 +85,7 @@ fun DayEventsSheetContent(
 private fun EventItem(event: Event) {
     // For a multi-day event, show its full range (e.g. "Mon 1.9. – Wed 3.9.") so tapping any day of
     // the span makes clear it belongs to the whole event, not just the tapped day.
+    val timeRange = event.timeRange
     val subtitle: String? = when {
         event.isMultiDay -> {
             val start = event.date
@@ -95,8 +96,8 @@ private fun EventItem(event: Event) {
                 "$endWeekday ${end.day}.${end.month.number}."
         }
 
-        event.timeRange != null ->
-            "${event.timeRange.getFormattedStart()} – ${event.timeRange.getFormattedEnd()}"
+        timeRange != null ->
+            "${timeRange.getFormattedStart()} – ${timeRange.getFormattedEnd()}"
 
         else -> null
     }
