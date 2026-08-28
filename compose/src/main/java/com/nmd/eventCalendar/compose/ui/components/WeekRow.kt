@@ -34,6 +34,10 @@ private val LaneHeight = 16.dp
 private val LaneSpacing = 2.dp
 private val EventBarShapeRadius = 6.dp
 
+// Inset around each day cell's background. Event bars use the same value at their real start/end so
+// a bar sits exactly inside the day cell, while continuation edges reach the grid edge to bridge.
+private val CellPadding = 2.dp
+
 /**
  * Renders a full calendar week: the day-cell backgrounds, the day numbers, and the event lanes.
  *
@@ -87,7 +91,7 @@ internal fun WeekRow(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight()
-                        .padding(2.dp)
+                        .padding(CellPadding)
                         .background(calendarStyle.dayItemBackgroundColor, shape)
                         .clip(shape)
                         .clickable { onDaySelected(day) }
@@ -100,7 +104,9 @@ internal fun WeekRow(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 2.dp, vertical = 4.dp)
+                // No horizontal padding: the day-number/lane columns must use the exact same 7-column
+                // grid as the background cells, otherwise bars drift out of their day cell.
+                .padding(vertical = 4.dp)
         ) {
             Row(modifier = Modifier.fillMaxWidth()) {
                 week.forEach { day ->
@@ -247,8 +253,8 @@ private fun EventBar(
         modifier = modifier
             .fillMaxHeight()
             .padding(
-                start = if (segment.continuesBefore) 0.dp else 1.dp,
-                end = if (segment.continuesAfter) 0.dp else 1.dp
+                start = if (segment.continuesBefore) 0.dp else CellPadding,
+                end = if (segment.continuesAfter) 0.dp else CellPadding
             )
             .clip(shape)
             .background(segment.event.shapeColor),
