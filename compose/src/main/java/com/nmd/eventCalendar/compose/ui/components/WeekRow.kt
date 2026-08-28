@@ -39,8 +39,8 @@ private val LaneHeight = 16.dp
 private val LaneSpacing = 2.dp
 private val EventBarShapeRadius = 6.dp
 
-// Inset around each day cell's background. Event bars use the same value at their real start/end so
-// a bar sits exactly inside the day cell, while continuation edges reach the grid edge to bridge.
+// Inset around each day cell's background. Event bars use the same value at both ends so a bar sits
+// exactly inside its day cells; a continuation across a week boundary is shown by a flat corner.
 private val CellPadding = 2.dp
 
 private const val DaysPerWeek = 7
@@ -223,7 +223,7 @@ private fun EventLanes(
 
 /**
  * Renders a single lane: each event segment is placed against the shared [bounds] so it lines up
- * exactly with the day cells; continuation edges reach the column boundary to bridge across weeks.
+ * exactly with the day cells, inset by the cell padding on both ends.
  */
 @Composable
 private fun LaneRow(
@@ -239,8 +239,10 @@ private fun LaneRow(
             .height(LaneHeight)
     ) {
         segments.forEach { segment ->
-            val leftPx = bounds[segment.startColumn] + if (segment.continuesBefore) 0 else cellPadPx
-            val rightPx = bounds[segment.endColumn + 1] - if (segment.continuesAfter) 0 else cellPadPx
+            // Always inset both ends by the cell padding so a bar sits inside its day cells; a
+            // continuation is shown by the flat (square) corner, not by overhanging the grid edge.
+            val leftPx = bounds[segment.startColumn] + cellPadPx
+            val rightPx = bounds[segment.endColumn + 1] - cellPadPx
             val widthDp = with(density) { (rightPx - leftPx).coerceAtLeast(0).toDp() }
 
             EventBar(
@@ -256,8 +258,8 @@ private fun LaneRow(
 
 /**
  * A single continuous event bar. Corners are rounded only on the ends that represent the real start
- * or end of the event; edges that continue into an adjacent week stay flat so the bar reads as one
- * object spanning multiple weeks. Horizontal position/size is supplied by the caller via [modifier].
+ * or end of the event; edges that continue into an adjacent week stay flat (square) so the bar reads
+ * as one object spanning multiple weeks. Horizontal position/size is supplied by the caller.
  */
 @Composable
 private fun EventBar(

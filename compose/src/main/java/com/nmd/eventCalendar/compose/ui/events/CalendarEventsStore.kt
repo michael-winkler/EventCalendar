@@ -1,6 +1,7 @@
 package com.nmd.eventCalendar.compose.ui.events
 
 import com.nmd.eventCalendar.compose.model.Event
+import kotlinx.coroutines.ExperimentalForInheritanceCoroutinesApi
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.datetime.LocalDate
@@ -67,6 +68,7 @@ interface CalendarEventsStore {
  * Backs the deprecated [CalendarEventsStore.eventsByDateFlow]; the grouping is computed lazily from
  * the current list, so it costs O(number of events) and only when actually collected/read.
  */
+@OptIn(ExperimentalForInheritanceCoroutinesApi::class)
 private class GroupedByStartDateStateFlow(
     private val source: StateFlow<List<Event>>
 ) : StateFlow<Map<LocalDate, List<Event>>> {
