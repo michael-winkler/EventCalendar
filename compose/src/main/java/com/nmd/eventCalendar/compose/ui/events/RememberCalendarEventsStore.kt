@@ -14,8 +14,8 @@ import com.nmd.eventCalendar.compose.viewmodel.CalendarEventsViewModel
  * Behavior:
  * - [initialEvents] are applied only if the current store is empty.
  *
- * The store exposes a [kotlinx.coroutines.flow.StateFlow] of events grouped by date via
- * [CalendarEventsStore.eventsByDateFlow].
+ * The store exposes a [kotlinx.coroutines.flow.StateFlow] of events via
+ * [CalendarEventsStore.eventsFlow].
  *
  * @param initialEvents Initial list of events used to seed the store (only if the store is empty).
  * @return A stable [CalendarEventsStore] instance.
@@ -34,7 +34,7 @@ fun rememberCalendarEventsStore(
 
     return remember(vm) {
         object : CalendarEventsStore {
-            override val eventsByDateFlow = vm.eventsByDateFlow
+            override val eventsFlow = vm.eventsFlow
             override fun setEvents(events: List<Event>) = vm.setEvents(events)
         }
     }

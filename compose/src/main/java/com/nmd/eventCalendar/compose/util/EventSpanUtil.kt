@@ -32,6 +32,20 @@ internal data class EventSegment(
 )
 
 /**
+ * Returns the events in a stable display order: by start date, then start time, then name.
+ *
+ * Used as the canonical ordering held by the events store so that per-day filtering downstream
+ * preserves a predictable order without re-sorting.
+ */
+internal fun List<Event>.sortedForDisplay(): List<Event> =
+    sortedWith(
+        compareBy<Event> { it.date }
+            .thenBy { it.timeRange?.startHour ?: Int.MAX_VALUE }
+            .thenBy { it.timeRange?.startMinute ?: Int.MAX_VALUE }
+            .thenBy { it.name }
+    )
+
+/**
  * Identity used to decide whether two separate events are "the same type" for auto-merging.
  */
 private data class EventTypeKey(

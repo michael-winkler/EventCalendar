@@ -101,15 +101,16 @@ fun Screen(
     var showCurrentWeekSheet by rememberSaveable { mutableStateOf(false) }
     var selectedDateForSheet by rememberSaveable { mutableStateOf<String?>(null) }
     var viewMode by rememberSaveable { mutableIntStateOf(0) } // 0: Month, 1: Week, 2: 3-Day, 3: Day
-    val eventsByDate by calendarEventsStore.eventsByDateFlow.collectAsStateWithLifecycle()
+    val events by calendarEventsStore.eventsFlow.collectAsStateWithLifecycle()
 
-    val selectedDayForSheet = remember(selectedDateForSheet, eventsByDate) {
+    val selectedDayForSheet = remember(selectedDateForSheet, events) {
         selectedDateForSheet?.let { dateString ->
             val date = LocalDate.parse(dateString)
             CalendarDay(
                 date = date,
                 isCurrentMonth = true,
-                events = eventsByDate[date].orEmpty()
+                // Overlap-aware so a multi-day event shows on every day it covers, not only its start.
+                events = events.filter { it.occursOn(date) }
             )
         }
     }

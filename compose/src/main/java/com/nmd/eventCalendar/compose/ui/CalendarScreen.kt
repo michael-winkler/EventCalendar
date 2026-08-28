@@ -71,7 +71,7 @@ private val MonthHeaderWidthLandscape = 48.dp
  * - A [HorizontalPager] backed by [CalendarController] for month-to-month swiping.
  * - [MonthView] for the actual 6×7 day grid inside each pager page.
  *
- * Event data is consumed from [calendarEventsStore] via its [CalendarEventsStore.eventsByDateFlow]
+ * Event data is consumed from [calendarEventsStore] via its [CalendarEventsStore.eventsFlow]
  * and resolved per date on each composition.
  *
  * @param modifier Modifier applied to the root layout container.
@@ -109,9 +109,12 @@ internal fun CalendarScreen(
             .collect { month -> onMonthChangeState.value(month) }
     }
 
-    val eventsByDate = calendarEventsStore.eventsByDateFlow.collectAsStateWithLifecycle().value
-    val eventsForDate: (LocalDate) -> List<Event> = remember(eventsByDate) {
-        { date -> eventsByDate[date].orEmpty() }
+    val events = calendarEventsStore.eventsFlow.collectAsStateWithLifecycle().value
+    // Resolve the events on a given day on demand. Because [events] is a flat list, this scales with
+    // the number of events (not with how many days a multi-day event spans), and it correctly
+    // includes multi-day events that merely overlap the day.
+    val eventsForDate: (LocalDate) -> List<Event> = remember(events) {
+        { date -> events.filter { it.occursOn(date) } }
     }
 
     val onPrevMonth: () -> Unit =
