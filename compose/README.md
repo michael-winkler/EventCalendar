@@ -284,37 +284,33 @@ Customize colors, text sizes, and shapes:
 
 ## Migration
 
-### `CalendarEventsStore` now exposes a flat event list (breaking)
+### `CalendarEventsStore`: prefer `eventsFlow` over `eventsByDateFlow`
 
-To support multi-day events efficiently, `CalendarEventsStore` no longer exposes events pre-grouped
-by date. The grouped map was built by expanding every multi-day event across each covered day, so its
-cost grew with an event's span (a far-away `endDate` could allocate thousands of entries). The store
-now holds a flat, stably ordered list, and the UI resolves per-day overlap on demand.
+To support multi-day events efficiently, `CalendarEventsStore` now exposes events as a flat,
+stably ordered list ([`eventsFlow`](#-calendareventsstore)) and resolves per-day overlap on demand,
+instead of a pre-grouped `Map<LocalDate, List<Event>>`. The old map was built by expanding every
+multi-day event across each covered day, so its cost grew with an event's span (a far-away `endDate`
+could allocate thousands of entries).
 
-**What changed**
+**This upgrade is non-breaking.** `eventsByDateFlow` still exists as a `@Deprecated` alias (grouped by
+**start** date, derived on demand from `eventsFlow`), so existing code keeps compiling.
 
-```kotlin
-// Before
-val eventsByDateFlow: StateFlow<Map<LocalDate, List<Event>>>
-
-// After
-val eventsFlow: StateFlow<List<Event>>
-```
-
-**If you read the flow directly** (e.g. to show a day's events), replace the map lookup with a filter
-on the day. Use `occursOn` to include multi-day events that overlap the day, or `date ==` for only the
-events that start on it:
+**One-click migration in Android Studio / IntelliJ:** the deprecated `eventsByDateFlow` is annotated
+with `ReplaceWith("eventsFlow")`. Put the caret on a usage and press <kbd>Alt</kbd>+<kbd>Enter</kbd> →
+**Replace with 'eventsFlow'** (or batch it via *Analyze → Run inspection by name → “Deprecated
+member”*). The rename is applied automatically; because the type changes from `Map` to `List`, adjust
+the lookup itself by hand:
 
 ```kotlin
 // Before
 val eventsOnDay = store.eventsByDateFlow.value[date].orEmpty()
 
-// After
+// After — occursOn() also includes multi-day events overlapping the day
 val eventsOnDay = store.eventsFlow.value.filter { it.occursOn(date) }
 ```
 
-**If you implemented `CalendarEventsStore` yourself**, expose a `StateFlow<List<Event>>` from
-`eventsFlow` instead of building a grouped map — no per-day grouping is required anymore.
+**If you implemented `CalendarEventsStore` yourself**, just expose `eventsFlow: StateFlow<List<Event>>`;
+`eventsByDateFlow` is inherited as a deprecated default, so nothing else is required.
 
 > The built-in `rememberCalendarEventsStore(initialEvents)` is unchanged: same call, same behavior.
-> Only custom stores and code that read `eventsByDateFlow` directly need updating.
+> The `eventsByDateFlow` alias will be removed in a future major release.

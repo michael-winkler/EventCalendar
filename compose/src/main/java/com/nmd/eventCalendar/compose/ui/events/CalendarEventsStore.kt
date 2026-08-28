@@ -1,7 +1,9 @@
 package com.nmd.eventCalendar.compose.ui.events
 
 import com.nmd.eventCalendar.compose.model.Event
+import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.datetime.LocalDate
 
 /**
  * Store abstraction for calendar events.
@@ -40,4 +42,42 @@ interface CalendarEventsStore {
      * @param events The new list of events to store.
      */
     fun setEvents(events: List<Event>)
+
+    /**
+     * Events grouped by their **start** date.
+     *
+     * @deprecated Replaced by the flat [eventsFlow]. This alias groups events by their start date
+     * only (it does not expand multi-day events across the days they cover); to get every event on a
+     * given day, use `eventsFlow.value.filter { it.occursOn(date) }`. Kept as a non-breaking bridge
+     * and derived on demand from [eventsFlow]; it will be removed in a future release.
+     */
+    @Deprecated(
+        message = "Use eventsFlow and resolve a day with Event.occursOn(date). " +
+            "eventsByDateFlow groups by start date only and will be removed in a future release.",
+        replaceWith = ReplaceWith("eventsFlow"),
+        level = DeprecationLevel.WARNING
+    )
+    val eventsByDateFlow: StateFlow<Map<LocalDate, List<Event>>>
+        get() = GroupedByStartDateStateFlow(eventsFlow)
+}
+
+/**
+ * Read-only [StateFlow] adapter that presents [source] (a flat event list) grouped by start date.
+ *
+ * Backs the deprecated [CalendarEventsStore.eventsByDateFlow]; the grouping is computed lazily from
+ * the current list, so it costs O(number of events) and only when actually collected/read.
+ */
+private class GroupedByStartDateStateFlow(
+    private val source: StateFlow<List<Event>>
+) : StateFlow<Map<LocalDate, List<Event>>> {
+
+    override val value: Map<LocalDate, List<Event>>
+        get() = source.value.groupBy { it.date }
+
+    override val replayCache: List<Map<LocalDate, List<Event>>>
+        get() = listOf(value)
+
+    override suspend fun collect(collector: FlowCollector<Map<LocalDate, List<Event>>>): Nothing {
+        source.collect { events -> collector.emit(events.groupBy { it.date }) }
+    }
 }
