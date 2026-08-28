@@ -143,8 +143,12 @@ There are two ways to create a multi-day event:
 
 ### 1) Explicit end date (recommended)
 
-Give a single `Event` an inclusive `endDate`. This is unambiguous and also works for timed events
-that cross midnight.
+Give a single `Event` an inclusive `endDate`. This is the unambiguous way to model a multi-day event
+in the **month view**.
+
+> Multi-day spanning is a **month-view** feature. The time-grid view (`EventCalendarWeekTime`) only
+> positions events by `timeRange` within a single day (`EventTimeRange` does not cross midnight), so
+> a multi-day event is not drawn as a single spanning block there.
 
 ```kotlin
 Event(

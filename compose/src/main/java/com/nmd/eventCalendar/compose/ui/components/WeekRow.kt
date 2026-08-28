@@ -145,29 +145,41 @@ private fun EventLanes(
         val maxLanes = ((maxHeight + LaneSpacing).value / laneStride.value).toInt().coerceAtLeast(0)
         if (maxLanes == 0) return@BoxWithConstraints
 
-        val neededLanes = (segments.maxOf { it.lane }) + 1
+        // Lanes are assigned globally across the whole grid so a multi-day bar keeps the same row
+        // across weeks. For the visible-row/overflow budget we only look at the lanes actually
+        // present in THIS week and compact them (gaps removed): otherwise a bar that ended up on a
+        // high global lane could waste blank rows above it - or, on a short row, collapse into "+N"
+        // (or vanish) even in a week where it is the only event.
+        val presentLanes = remember(segments) { segments.map { it.lane }.distinct().sorted() }
+        val neededLanes = presentLanes.size
         val overflow = neededLanes > maxLanes
-        // Reserve a lane for the "+N" indicators only when at least one real lane still remains
+        // Reserve a row for the "+N" indicators only when at least one real lane still remains
         // visible; otherwise (a row that fits a single lane) show that top lane instead of hiding
-        // everything - which previously made a multi-day bar disappear entirely into "+N".
+        // everything.
         val reserveOverflowRow = overflow && maxLanes >= 2
-        val fullyShownLanes =
+        val visibleRowCount =
             if (reserveOverflowRow) maxLanes - 1 else minOf(neededLanes, maxLanes)
 
-        val segmentsByLane = remember(segments, fullyShownLanes) {
-            (0 until fullyShownLanes).map { lane -> segments.filter { it.lane == lane } }
+        val visibleLanes = remember(presentLanes, visibleRowCount) {
+            presentLanes.take(visibleRowCount)
+        }
+        val segmentsByRow = remember(segments, visibleLanes) {
+            visibleLanes.map { lane -> segments.filter { it.lane == lane } }
         }
 
-        val hiddenPerColumn = remember(segments, fullyShownLanes, reserveOverflowRow) {
+        val hiddenPerColumn = remember(segments, visibleLanes, reserveOverflowRow) {
             if (!reserveOverflowRow) IntArray(0)
-            else IntArray(7) { column ->
-                segments.count { it.lane >= fullyShownLanes && column in it.startColumn..it.endColumn }
+            else {
+                val shown = visibleLanes.toHashSet()
+                IntArray(7) { column ->
+                    segments.count { it.lane !in shown && column in it.startColumn..it.endColumn }
+                }
             }
         }
 
         Column(verticalArrangement = Arrangement.spacedBy(LaneSpacing)) {
-            segmentsByLane.forEach { laneSegments ->
-                LaneRow(segments = laneSegments)
+            segmentsByRow.forEach { rowSegments ->
+                LaneRow(segments = rowSegments)
             }
             if (reserveOverflowRow) {
                 OverflowRow(hiddenPerColumn = hiddenPerColumn, calendarStyle = calendarStyle)
