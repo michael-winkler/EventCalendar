@@ -212,6 +212,22 @@ The `Event` class represents a calendar entry.
 - **`EventCalendarCompose`**: Standard month-grid view.
 - **`EventCalendarWeekTime`**: Time-grid view for 1, 3, or 7 days.
 
+### 🗃️ CalendarEventsStore
+
+Provides the events to the calendar. Use `rememberCalendarEventsStore(initialEvents)` for the
+built-in, configuration-change-safe implementation, or implement the interface yourself:
+
+```kotlin
+interface CalendarEventsStore {
+    // Events in a stable display order (by start date, then start time, then name).
+    val eventsFlow: StateFlow<List<Event>>
+    fun setEvents(events: List<Event>)
+}
+```
+
+The calendar resolves which events fall on a given day on demand via `event.occursOn(date)`, so the
+cost scales with the number of events, not with how many days a multi-day event spans.
+
 ### 🎮 CalendarController
 
 Use the controller to navigate programmatically:
@@ -263,3 +279,42 @@ Customize colors, text sizes, and shapes:
   support.
 - **Backward Compatible:** Supports Android API level 23 and above without requiring Java 8+ API
   desugaring.
+
+---
+
+## Migration
+
+### `CalendarEventsStore` now exposes a flat event list (breaking)
+
+To support multi-day events efficiently, `CalendarEventsStore` no longer exposes events pre-grouped
+by date. The grouped map was built by expanding every multi-day event across each covered day, so its
+cost grew with an event's span (a far-away `endDate` could allocate thousands of entries). The store
+now holds a flat, stably ordered list, and the UI resolves per-day overlap on demand.
+
+**What changed**
+
+```kotlin
+// Before
+val eventsByDateFlow: StateFlow<Map<LocalDate, List<Event>>>
+
+// After
+val eventsFlow: StateFlow<List<Event>>
+```
+
+**If you read the flow directly** (e.g. to show a day's events), replace the map lookup with a filter
+on the day. Use `occursOn` to include multi-day events that overlap the day, or `date ==` for only the
+events that start on it:
+
+```kotlin
+// Before
+val eventsOnDay = store.eventsByDateFlow.value[date].orEmpty()
+
+// After
+val eventsOnDay = store.eventsFlow.value.filter { it.occursOn(date) }
+```
+
+**If you implemented `CalendarEventsStore` yourself**, expose a `StateFlow<List<Event>>` from
+`eventsFlow` instead of building a grouped map — no per-day grouping is required anymore.
+
+> The built-in `rememberCalendarEventsStore(initialEvents)` is unchanged: same call, same behavior.
+> Only custom stores and code that read `eventsByDateFlow` directly need updating.
