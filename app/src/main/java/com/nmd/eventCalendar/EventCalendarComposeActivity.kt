@@ -64,6 +64,7 @@ import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.isoDayNumber
+import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
 import kotlin.random.Random
@@ -423,6 +424,26 @@ private fun shuffleEventsForCurrentYear(
     val daysInYear = if (isLeap) 366 else 365
 
     return buildList {
+        // Deterministic showcase anchored around "today" so an auto-merged multi-day bar is always
+        // visible on open. Each of these is modeled as SEPARATE single-day, all-day events of the
+        // same type on consecutive days; the calendar merges them into one continuous bar.
+        addAll(
+            consecutiveAllDayEvents(
+                name = "Road Trip",
+                color = Color(0xFF039BE5),
+                startDate = today.minus(2, kotlinx.datetime.DateTimeUnit.DAY),
+                days = 6 // spans across a week boundary
+            )
+        )
+        addAll(
+            consecutiveAllDayEvents(
+                name = "Sprint Week",
+                color = Color(0xFF3949AB),
+                startDate = today.plus(9, kotlinx.datetime.DateTimeUnit.DAY),
+                days = 3
+            )
+        )
+
         repeat(eventCount) {
             val (name, shape) = templates[rnd.nextInt(templates.size)]
             // Use daysInYear to generate a random date within the current year
@@ -475,6 +496,25 @@ private fun shuffleEventsForCurrentYear(
             }
         }
     }
+}
+
+/**
+ * Builds [days] separate single-day, all-day [Event]s of the same type on consecutive days starting
+ * at [startDate]. The calendar auto-merges them (see `CalendarOptions.mergeAdjacentEvents`) into one
+ * continuous multi-day bar.
+ */
+private fun consecutiveAllDayEvents(
+    name: String,
+    color: Color,
+    startDate: LocalDate,
+    days: Int
+): List<Event> = (0 until days).map { offset ->
+    Event(
+        date = startDate.plus(offset, kotlinx.datetime.DateTimeUnit.DAY),
+        name = name,
+        shapeColor = color,
+        textColor = Color.White
+    )
 }
 
 private val eventTemplates: List<Pair<String, Color>> = listOf(
