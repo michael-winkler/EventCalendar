@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.nmd.eventCalendar.compose.model.CalendarDay
 import com.nmd.eventCalendar.compose.model.Event
 import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
+import com.nmd.eventCalendar.compose.util.toStringRes
 import com.nmd.eventCalendarSample.R
 import kotlinx.datetime.number
 
@@ -82,17 +83,38 @@ fun DayEventsSheetContent(
 
 @Composable
 private fun EventItem(event: Event) {
+    // For a multi-day event, show its full range (e.g. "Mon 1.9. – Wed 3.9.") so tapping any day of
+    // the span makes clear it belongs to the whole event, not just the tapped day.
+    val timeRange = event.timeRange
+    val subtitle: String? = when {
+        event.isMultiDay -> {
+            val start = event.date
+            val end = event.lastDate
+            val startWeekday = stringResource(start.dayOfWeek.toStringRes())
+            val endWeekday = stringResource(end.dayOfWeek.toStringRes())
+            "$startWeekday ${start.day}.${start.month.number}. – " +
+                "$endWeekday ${end.day}.${end.month.number}."
+        }
+
+        timeRange != null ->
+            "${timeRange.getFormattedStart()} – ${timeRange.getFormattedEnd()}"
+
+        else -> null
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp),
+            .heightIn(min = 56.dp),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = event.shapeColor
         )
     ) {
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(vertical = 8.dp, horizontal = 12.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -103,6 +125,15 @@ private fun EventItem(event: Event) {
                 fontWeight = FontWeight.Medium,
                 textAlign = TextAlign.Center
             )
+            if (subtitle != null) {
+                Text(
+                    text = subtitle,
+                    color = event.effectiveTextColor.copy(alpha = 0.85f),
+                    fontSize = 13.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(top = 2.dp)
+                )
+            }
         }
     }
 }

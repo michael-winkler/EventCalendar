@@ -26,6 +26,11 @@ import kotlinx.datetime.LocalDate
  * [minDate], [maxDate], and [openEndedWindowMonths] will be ignored in this mode.
  * The calendar will automatically filter the events provided by the [com.nmd.eventCalendar.compose.ui.events.CalendarEventsStore] to only show those that fall within the current week.
  * @property noOfVisibleDays Number of days visible in the time grid view (1, 3, or 7).
+ * @property mergeAdjacentEvents If true (default), separate single-day, all-day events of the same
+ * type (name + colors) on consecutive days are rendered as one continuous multi-day bar in the month
+ * view. Timed events and events that already declare an explicit [Event.endDate] are never merged.
+ * Set to false to render every event on its own day. See
+ * [com.nmd.eventCalendar.compose.util.mergeAdjacentEvents] for the exact rules.
  */
 @Immutable
 data class CalendarOptions(
@@ -36,7 +41,8 @@ data class CalendarOptions(
     val maxDate: LocalDate? = null,
     val openEndedWindowMonths: Int,
     val isCurrentWeekOnly: Boolean = false,
-    val noOfVisibleDays: Int = 7
+    val noOfVisibleDays: Int = 7,
+    val mergeAdjacentEvents: Boolean = true
 )
 
 /**

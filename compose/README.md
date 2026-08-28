@@ -1,7 +1,8 @@
 # EventCalendarCompose
 
 A simple, highly customizable **month, week, and day calendar** for **Jetpack Compose** with
-per-day events, time-based layouts, optional ISO week numbers, and horizontal paging.
+per-day events, **continuous multi-day events**, time-based layouts, optional ISO week numbers, and
+horizontal paging.
 
 ---
 
@@ -132,6 +133,73 @@ fun MyWeekCalendarScreen() {
 
 ---
 
+## Multi-Day Events
+
+In the month view, an event that covers more than one day is rendered as a **single continuous bar**
+across the day cells it spans. Bars are split correctly across week boundaries (the part in each week
+keeps a flat edge where it continues) and stay correct for any configured `weekStart`.
+
+There are two ways to create a multi-day event:
+
+### 1) Explicit end date (recommended)
+
+Give a single `Event` an inclusive `endDate`. This is the unambiguous way to model a multi-day event
+in the **month view**.
+
+> Multi-day spanning is a **month-view** feature. The time-grid view (`EventCalendarWeekTime`) only
+> positions events by `timeRange` within a single day (`EventTimeRange` does not cross midnight), so
+> a multi-day event is not drawn as a single spanning block there.
+
+```kotlin
+Event(
+    date = LocalDate(2026, 8, 6),   // start (inclusive)
+    name = "Vacation",
+    shapeColor = Color(0xFF039BE5),
+    textColor = Color.White,
+    endDate = LocalDate(2026, 8, 11) // end (inclusive) — may cross weeks/months
+)
+```
+
+`endDate` is optional and defaults to `null` (single-day). An `endDate` before `date` is ignored and
+treated as single-day.
+
+### 2) Auto-merge of consecutive events
+
+If you model a multi-day event as several **separate** single-day `Event` objects of the same type
+(same `name` + colors) on consecutive days, they are automatically combined into one continuous bar.
+This is controlled by `CalendarOptions.mergeAdjacentEvents` (default `true`).
+
+```kotlin
+// These three separate events render as ONE "Conference" bar spanning Tue–Thu.
+listOf(
+    Event(LocalDate(2026, 8, 18), "Conference", Color(0xFF3949AB), Color.White),
+    Event(LocalDate(2026, 8, 19), "Conference", Color(0xFF3949AB), Color.White),
+    Event(LocalDate(2026, 8, 20), "Conference", Color(0xFF3949AB), Color.White),
+)
+```
+
+Auto-merge is intentionally conservative so genuinely independent occurrences (e.g. a daily recurring
+appointment) are **not** joined:
+
+- Only **all-day** events (`timeRange == null`) are merged — timed events are always kept separate.
+- Only pure single-day events participate — events that already declare an `endDate` are left as-is.
+- Events must share the exact type (`name` + colors) and cover strictly consecutive, gap-free days.
+- A day may hold several same-type events: one forms the span, any extras remain their own chips.
+
+Set `mergeAdjacentEvents = false` to disable this and render every event on its own day.
+
+> **Note:** Day selection reports the underlying store events for the tapped day, so an auto-merged
+> event is reported as the individual single-day event, not the span. If you want the merged span in
+> your own UI too (e.g. to show a "Mon–Wed" range in a details sheet), apply the same transformation
+> yourself — it is exposed publicly:
+>
+> ```kotlin
+> val merged = mergeAdjacentEvents(store.eventsFlow.value)
+> val onDay = merged.filter { it.occursOn(date) } // an auto-merged event now has an endDate
+> ```
+
+---
+
 ## Key Components
 
 ### 📅 Event Model
@@ -143,11 +211,29 @@ The `Event` class represents a calendar entry.
 - **`shapeColor`**: Background color of the event chip.
 - **`textColor`**: Text color of the event chip.
 - **`timeRange`**: Optional `EventTimeRange(startHour, startMinute, endHour, endMinute)`.
+- **`endDate`**: Optional inclusive end day for multi-day events (see
+  [Multi-Day Events](#multi-day-events)). Defaults to `null` (single-day).
 
 ### 🎮 Entry Points
 
 - **`EventCalendarCompose`**: Standard month-grid view.
 - **`EventCalendarWeekTime`**: Time-grid view for 1, 3, or 7 days.
+
+### 🗃️ CalendarEventsStore
+
+Provides the events to the calendar. Use `rememberCalendarEventsStore(initialEvents)` for the
+built-in, configuration-change-safe implementation, or implement the interface yourself:
+
+```kotlin
+interface CalendarEventsStore {
+    // Events in a stable display order (by start date, then start time, then name).
+    val eventsFlow: StateFlow<List<Event>>
+    fun setEvents(events: List<Event>)
+}
+```
+
+The calendar resolves which events fall on a given day on demand via `event.occursOn(date)`, so the
+cost scales with the number of events, not with how many days a multi-day event spans.
 
 ### 🎮 CalendarController
 
@@ -169,6 +255,9 @@ Configure the behavior of the calendar:
   and `openEndedWindowMonths` will be ignored. The calendar will automatically filter and show only
   events that fall within the current week.
 - `noOfVisibleDays`: Number of days to show in `EventCalendarWeekTime` (1, 3, or 7).
+- `mergeAdjacentEvents`: If `true` (default), separate single-day, all-day events of the same type on
+  consecutive days are merged into one continuous multi-day bar (see
+  [Multi-Day Events](#multi-day-events)).
 
 ### 🎨 CalendarStyle
 
@@ -184,13 +273,51 @@ Customize colors, text sizes, and shapes:
 ## Features
 
 - **Paging:** Smooth horizontal paging between months.
+- **Multi-Day Events:** Events spanning several days render as one continuous bar across day cells,
+  split correctly across week boundaries and independent of the configured week start. Consecutive
+  same-type events can be auto-merged (see [Multi-Day Events](#multi-day-events)).
 - **Time-Based Grid:** Detailed weekly and daily views with precise event positioning and overlap
   handling.
-- **Dynamic Events:** Cells automatically handle multiple events; if more than 3 exist, the cell
-  becomes scrollable.
+- **Dynamic Events:** Cells automatically stack multiple events into aligned lanes; events that do
+  not fit are collapsed into a per-day “+N” indicator.
 - **Theming:** Full support for Material 3 and Dark Mode.
 - **Lightweight:** Minimal dependencies, focused on performance.
 - **KMP Ready:** Uses `kotlinx-datetime` and resource-based localization for future multiplatform
   support.
 - **Backward Compatible:** Supports Android API level 23 and above without requiring Java 8+ API
   desugaring.
+
+---
+
+## Migration
+
+### `CalendarEventsStore`: prefer `eventsFlow` over `eventsByDateFlow`
+
+To support multi-day events efficiently, `CalendarEventsStore` now exposes events as a flat,
+stably ordered list ([`eventsFlow`](#-calendareventsstore)) and resolves per-day overlap on demand,
+instead of a pre-grouped `Map<LocalDate, List<Event>>`. The old map was built by expanding every
+multi-day event across each covered day, so its cost grew with an event's span (a far-away `endDate`
+could allocate thousands of entries).
+
+**This upgrade is non-breaking.** `eventsByDateFlow` still exists as a `@Deprecated` alias (grouped by
+**start** date, derived on demand from `eventsFlow`), so existing code keeps compiling.
+
+**One-click migration in Android Studio / IntelliJ:** the deprecated `eventsByDateFlow` is annotated
+with `ReplaceWith("eventsFlow")`. Put the caret on a usage and press <kbd>Alt</kbd>+<kbd>Enter</kbd> →
+**Replace with 'eventsFlow'** (or batch it via *Analyze → Run inspection by name → “Deprecated
+member”*). The rename is applied automatically; because the type changes from `Map` to `List`, adjust
+the lookup itself by hand:
+
+```kotlin
+// Before
+val eventsOnDay = store.eventsByDateFlow.value[date].orEmpty()
+
+// After — occursOn() also includes multi-day events overlapping the day
+val eventsOnDay = store.eventsFlow.value.filter { it.occursOn(date) }
+```
+
+**If you implemented `CalendarEventsStore` yourself**, just expose `eventsFlow: StateFlow<List<Event>>`;
+`eventsByDateFlow` is inherited as a deprecated default, so nothing else is required.
+
+> The built-in `rememberCalendarEventsStore(initialEvents)` is unchanged: same call, same behavior.
+> The `eventsByDateFlow` alias will be removed in a future major release.

@@ -57,6 +57,7 @@ import com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle
 import com.nmd.eventCalendar.compose.ui.controller.rememberCalendarController
 import com.nmd.eventCalendar.compose.ui.events.CalendarEventsStore
 import com.nmd.eventCalendar.compose.ui.events.rememberCalendarEventsStore
+import com.nmd.eventCalendar.compose.util.mergeAdjacentEvents
 import com.nmd.eventCalendar.compose.util.toStringRes
 import com.nmd.eventCalendar.theme.AppTheme
 import com.nmd.eventCalendarSample.R
@@ -64,6 +65,7 @@ import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.isoDayNumber
+import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
 import kotlin.random.Random
@@ -100,15 +102,18 @@ fun Screen(
     var showCurrentWeekSheet by rememberSaveable { mutableStateOf(false) }
     var selectedDateForSheet by rememberSaveable { mutableStateOf<String?>(null) }
     var viewMode by rememberSaveable { mutableIntStateOf(0) } // 0: Month, 1: Week, 2: 3-Day, 3: Day
-    val eventsByDate by calendarEventsStore.eventsByDateFlow.collectAsStateWithLifecycle()
+    val events by calendarEventsStore.eventsFlow.collectAsStateWithLifecycle()
 
-    val selectedDayForSheet = remember(selectedDateForSheet, eventsByDate) {
+    val selectedDayForSheet = remember(selectedDateForSheet, events) {
         selectedDateForSheet?.let { dateString ->
             val date = LocalDate.parse(dateString)
             CalendarDay(
                 date = date,
                 isCurrentMonth = true,
-                events = eventsByDate[date].orEmpty()
+                // Apply the same auto-merge the month view uses, so a tapped event that spans several
+                // days as separate consecutive events (not an explicit endDate) also reports its full
+                // range in the sheet. Overlap-aware so it shows on every covered day, not only its start.
+                events = mergeAdjacentEvents(events).filter { it.occursOn(date) }
             )
         }
     }
@@ -422,26 +427,98 @@ private fun shuffleEventsForCurrentYear(
     val isLeap = (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)
     val daysInYear = if (isLeap) 366 else 365
 
-    return List(eventCount) {
-        val (name, shape) = templates[rnd.nextInt(templates.size)]
-        // Use daysInYear to generate a random date within the current year
-        val date = start.plus(rnd.nextInt(daysInYear), kotlinx.datetime.DateTimeUnit.DAY) // Corrected line
-
-        val hasTime = rnd.nextBoolean()
-        val timeRange = if (hasTime) {
-            val startHour = rnd.nextInt(8, 20)
-            val duration = rnd.nextInt(1, 4)
-            EventTimeRange(startHour, 0, startHour + duration, 0)
-        } else null
-
-        Event(
-            date = date,
-            name = name,
-            shapeColor = shape,
-            textColor = Color.White,
-            timeRange = timeRange
+    return buildList {
+        // Deterministic showcase anchored around "today" so an auto-merged multi-day bar is always
+        // visible on open. Each of these is modeled as SEPARATE single-day, all-day events of the
+        // same type on consecutive days; the calendar merges them into one continuous bar.
+        addAll(
+            consecutiveAllDayEvents(
+                name = "Road Trip",
+                color = Color(0xFF039BE5),
+                startDate = today.minus(2, kotlinx.datetime.DateTimeUnit.DAY),
+                days = 6 // spans across a week boundary
+            )
         )
+        addAll(
+            consecutiveAllDayEvents(
+                name = "Sprint Week",
+                color = Color(0xFF3949AB),
+                startDate = today.plus(9, kotlinx.datetime.DateTimeUnit.DAY),
+                days = 3
+            )
+        )
+
+        repeat(eventCount) {
+            val (name, shape) = templates[rnd.nextInt(templates.size)]
+            // Use daysInYear to generate a random date within the current year
+            val date = start.plus(rnd.nextInt(daysInYear), kotlinx.datetime.DateTimeUnit.DAY)
+
+            when (rnd.nextInt(5)) {
+                // ~1/5: multi-day event modeled as a single event with an explicit end date.
+                0 -> add(
+                    Event(
+                        date = date,
+                        name = name,
+                        shapeColor = shape,
+                        textColor = Color.White,
+                        endDate = date.plus(rnd.nextInt(1, 7), kotlinx.datetime.DateTimeUnit.DAY)
+                    )
+                )
+                // ~1/5: multi-day event modeled as several SEPARATE single-day, all-day events of
+                // the same type on consecutive days. These are auto-merged into one continuous bar.
+                1 -> {
+                    val span = rnd.nextInt(2, 6)
+                    repeat(span) { offset ->
+                        add(
+                            Event(
+                                date = date.plus(offset, kotlinx.datetime.DateTimeUnit.DAY),
+                                name = name,
+                                shapeColor = shape,
+                                textColor = Color.White
+                            )
+                        )
+                    }
+                }
+                // Remaining: single-day events, some with a time range.
+                else -> {
+                    val timeRange = if (rnd.nextBoolean()) {
+                        val startHour = rnd.nextInt(8, 20)
+                        val duration = rnd.nextInt(1, 4)
+                        EventTimeRange(startHour, 0, startHour + duration, 0)
+                    } else null
+
+                    add(
+                        Event(
+                            date = date,
+                            name = name,
+                            shapeColor = shape,
+                            textColor = Color.White,
+                            timeRange = timeRange
+                        )
+                    )
+                }
+            }
+        }
     }
+}
+
+/**
+ * Builds [days] separate single-day, all-day [Event]s of the same type on consecutive days starting
+ * at [startDate]. The calendar auto-merges them (see `CalendarOptions.mergeAdjacentEvents`) into one
+ * continuous multi-day bar.
+ */
+private fun consecutiveAllDayEvents(
+    name: String,
+    color: Color,
+    startDate: LocalDate,
+    days: Int
+): List<Event> = (0 until days).map { offset ->
+    Event(
+        date = startDate.plus(offset, kotlinx.datetime.DateTimeUnit.DAY),
+        name = name,
+        shapeColor = color,
+        textColor = Color.White
+    )
 }
 
 private val eventTemplates: List<Pair<String, Color>> = listOf(

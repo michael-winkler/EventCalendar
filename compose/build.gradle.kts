@@ -56,6 +56,8 @@ dependencies {
     api(libs.kotlinx.serialization.json)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
+
+    testImplementation(libs.junit)
 }
 
 publishing {

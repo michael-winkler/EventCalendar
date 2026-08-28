@@ -46,13 +46,19 @@ fun EventCalendarWeekTime(
     onDaySelected: (LocalDate) -> Unit = {},
     onEventSelected: (Event) -> Unit = {}
 ) {
-    val eventsByDate by calendarEventsStore.eventsByDateFlow.collectAsStateWithLifecycle()
+    val events by calendarEventsStore.eventsFlow.collectAsStateWithLifecycle()
     val today = remember { Clock.System.todayIn(TimeZone.currentSystemDefault()) }
 
     val days = remember(calendarOptions.weekStart, calendarOptions.noOfVisibleDays) {
         val daysUntil = (today.dayOfWeek.ordinal - calendarOptions.weekStart.ordinal + 7) % 7
         val startOfWeek = today.minus(daysUntil, DateTimeUnit.DAY)
         (0 until calendarOptions.noOfVisibleDays).map { startOfWeek.plus(it, DateTimeUnit.DAY) }
+    }
+
+    // The time grid positions events by time within a single day, so it keys events by their start
+    // day. Built only for the visible days, so the cost stays bounded.
+    val eventsByDate = remember(events, days) {
+        days.associateWith { day -> events.filter { it.date == day } }
     }
 
     TimeGridView(
