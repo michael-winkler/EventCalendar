@@ -59,16 +59,16 @@ import kotlin.math.pow
  */
 @Keep
 @Serializable
-data class Event(
+data class Event @JvmOverloads constructor(
     val date: LocalDate,
     val name: String,
     @Serializable(with = ColorSerializer::class)
     val shapeColor: Color,
     @Serializable(with = ColorSerializer::class)
     val textColor: Color,
-    val autoAdjustTextColorForBackground: Boolean = true,
     @Transient
     val data: Any? = null,
+    val autoAdjustTextColorForBackground: Boolean = true,
     val timeRange: EventTimeRange? = null,
     val endDate: LocalDate? = null,
     val id: Int = nextEventId()
