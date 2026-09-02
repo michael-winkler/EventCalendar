@@ -1,67 +1,113 @@
 # AGENTS.md
 
-Android **EventCalendar** library: two independent, standalone UI libraries plus a demo app.
+## Project Overview
 
-> **This file is loaded into context on every session** (Codex reads it root→cwd; Claude Code reads
-> it via `CLAUDE.md`). Keep it short. Module rules live in each module's own `AGENTS.md`, and deep
-> feature details live in `docs/` — **read those on demand, don't inline them here.**
+This repository contains an Android calendar app with two implementations:
 
-## Module map
+- **`compose/`** – Modern UI based on Jetpack Compose.
+- **`xml/`** – Classic Android UI based on XML Views.
 
-| Module | What it is | Depends on |
-| --- | --- | --- |
-| `:compose` | Standalone Jetpack Compose calendar library | nothing in this repo |
-| `:xml` | Standalone XML/View calendar library | nothing in this repo |
-| `:app` | Demo app exercising both libraries | `:compose`, `:xml` |
+The project is intentionally structured to keep both UI approaches separate. Changes should be made
+in the appropriate module and should not mix the two architectures unnecessarily.
 
-**`:compose` and `:xml` must never depend on each other.** Keep resources inside the owning module.
+## Goals for Agents
 
-## Non-negotiables
+- **Respect Structure**: Always respect the existing project structure and module boundaries.
+- **Targeted Changes**: Prefer small, surgical changes over large refactoring.
+- **Consistent Style**: Follow the coding style and naming conventions of the affected module.
+- **Avoid Refactors**: Do not perform unrelated refactors while working on a task.
+- **Meaningful Docs**: Add documentation or comments only when they provide real value.
 
-- **Min SDK 23.** No API that needs Java 8 desugaring. **No `java.time`** in library code.
-- **Dates:** `kotlinx-datetime` for all models and Compose logic. (`:xml` additionally uses
-  `java.util.Calendar` for legacy View logic — see `xml/AGENTS.md`.)
-- **No `Parcelable`** in models; use `kotlinx-serialization` (custom serializer for `Color`).
-- **`internal` by default.** Only documented entry points are public. `@Preview` functions are
-  `internal`.
-- **Localization via string resources** (day/month names), never hardcoded English.
-- **Surgical edits.** Match surrounding style; don't reformat or refactor code you weren't asked to
-  touch.
+## Working Approach
 
-## Commands
+### Before Making Changes
 
-```bash
-./gradlew :compose:compileDebugKotlin   # compile the Compose library
-./gradlew :compose:testDebugUnitTest    # unit tests (pure logic)
-./gradlew :xml:compileDebugKotlin       # compile the XML library
-./gradlew :app:compileDebugKotlin       # compile the demo app
-```
+- **Analyze Boundaries**: Inspect relevant files and module boundaries.
+- **Identify Patterns**: Understand existing patterns in the affected area.
+- **Architectural Decision**: For UI changes, determine whether they belong in `compose` or `xml`.
 
-Run at minimum the compile task for every module you touched, plus `:compose:testDebugUnitTest` when
-changing Compose logic.
+### While Making Changes
 
-## Where to read next
+- **Minimize Impact**: Modify only the files that are actually affected.
+- **Preserve Architecture**: Maintain the existing architecture and package structure.
+- **API Stability**: Avoid changing public APIs unless absolutely necessary.
+- **Compatibility**: Ensure support for Android API level 23 and above. Avoid `java.time` in the UI
+  layer (Composables/Views) to prevent API 26 requirements. Use resource-based localization for day
+  and month names.
 
-Load **only** what your task needs.
+### After Making Changes
 
-**Working in a module** → that module's `AGENTS.md` (auto-loaded for files in it):
-`compose/AGENTS.md` · `xml/AGENTS.md` · `app/AGENTS.md`
+- **Verify Consistency**: Check local consistency and alignment with project goals.
+- **Communicate Changes**: If build, API, or architecture changes were made, mention them clearly.
+- **Test Awareness**: If tests are missing, note potential impacts and manual verification steps.
 
-**Working on a specific feature** → read the matching file:
+## Project Structure & Modularization
 
-| Task touches | Read |
-| --- | --- |
-| Multi-day events, `endDate`, auto-merge | `docs/compose/multi-day-events.md` |
-| Providing/consuming events, `CalendarEventsStore` | `docs/compose/events-store.md` |
-| Month grid, lanes, day cells, bar layout | `docs/compose/month-view-rendering.md` |
-| `EventCalendarWeekTime`, time grid | `docs/compose/week-time-view.md` |
-| Colors, sizes, `CalendarStyle`, `CalendarOptions` | `docs/compose/theming.md` |
-| `EventCalendarView`, `EventCalendarSingleWeekView` | `docs/xml/components.md` |
-| `ecv_*` attributes, drawables, expressive mode | `docs/xml/styling.md` |
-| Cutting a release / changelog | skill `changelog` (Claude), else `.claude/skills/changelog/SKILL.md` |
+- **Module Independence**: Treat `compose/` and `xml/` as independent, standalone UI libraries. They
+  must not depend on each other.
+- **Layered Architecture**: Both modules should follow consistent internal layering:
+    - **UI Layer**: Visual components (Composables or Custom Views/Layouts).
+    - **Logic Layer**: ViewModels and Controllers managing state and business rules.
+    - **Domain Layer**: Models and data structures specific to the calendar logic.
+- **Resource Encapsulation**: Keep resources (drawables, strings, layouts) strictly within the
+  module's own `res` directory. Avoid cross-module resource references to maintain portability.
+- **Encapsulated API**: Use `internal` visibility by default for all implementation details. Only
+  expose the main entry points (e.g., the primary View or Composable) to the `:app` module.
 
-## Keeping these docs healthy
+## Best Practices
 
-When you change behavior, update the **one** file that owns that topic — don't copy the same rule
-into several files. If this root file grows past ~100 lines, move detail into `docs/` and leave a
-pointer.
+### Kotlin / Android
+
+- **Idiomatic Kotlin**: Write clean, modern, and idiomatic Kotlin code.
+- **Null Safety**: Respect and leverage Kotlin's null safety features.
+- **Pure Functions**: Minimize side effects in UI-adjacent functions.
+- **Clear Naming**: Keep naming clear, descriptive, and consistent.
+- **Testability**: Move complex logic into testable units when possible.
+
+### Jetpack Compose
+
+- **State Separation**: Keep state sources clearly separated from UI components.
+- **Reusability**: Prefer small, highly reusable composables.
+- **Stability**: Favor recomposition-friendly structures and stable data types.
+- **Decoupling**: Keep UI and logic strictly decoupled.
+- **Side Effects**: Use `LaunchedEffect`, `SideEffect`, etc., deliberately and correctly.
+- **Internal Previews**: Keep all `@Preview` composables `internal` to avoid polluting the public
+  API.
+
+### ViewModel & State Management
+
+- **ViewModel Logic**: Move complex logic and data processing into ViewModels to keep UI components
+  lightweight.
+- **Reactive State**: Use `StateFlow` to expose UI state for consistent, lifecycle-aware data
+  streams.
+- **Configuration Changes**: Ensure ViewModels retain state and ongoing tasks (e.g., API calls)
+  during Activity recreation.
+- **Scope Management**: Launch long-running operations in `viewModelScope` to prevent interruption
+  when the UI is destroyed.
+
+### XML / View-Based UI
+
+- **Encapsulation**: Encapsulate reusable components (Custom Views) appropriately.
+- **Separation of Concerns**: Keep adapters, view logic, and state management clearly separated.
+- **Resource Naming**: Use consistent and descriptive naming for resources and IDs.
+
+## Build and Dependencies
+
+- **Minimal Changes**: Modify Gradle files only when necessary.
+- **Dependency Review**: Review version updates and new dependencies carefully.
+- **Shared Config**: When changing shared configuration, check both modules for impact.
+
+## Documentation
+
+- **Relevance**: Update README files only when changes are relevant to users or developers.
+- **Agent Guidance**: This file (`AGENTS.md`) serves as the source of truth for agent behavior.
+- **Maintenance**: Update `AGENTS.md` whenever the project structure or best practices change
+  significantly.
+
+## Guidance for Future Changes
+
+1. **Module First**: Determine which module (`compose` or `xml`) the feature belongs to.
+2. **Reuse Patterns**: Reuse existing patterns and utilities within that module.
+3. **Cross-Module Impact**: Consider the impact of changes on the other UI implementation.
+4. **Surgical Edits**: Touch only the files required for the task.
+5. **Clarity**: Keep the intent of changes clear and easy to follow.
