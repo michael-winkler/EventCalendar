@@ -14,5 +14,6 @@ For detailed API usage and setup examples, see: [compose/README.md](file://compo
 
 ## API Usage
 - Use `CalendarController` for navigation.
-- Use `CalendarEventsStore` for event data.
+- Use `CalendarEventsStore.eventsFlow` for event data; resolve a day via `event.occursOn(date)`.
 - Use `internal` `toStringRes()` extensions for date localization.
+- Month grid: `WeekRow` renders events as stacked lanes on a shared column grid; overflow collapses into a per-day "+N".
