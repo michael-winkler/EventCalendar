@@ -1,0 +1,19 @@
+# EventCalendar Cursor Rules
+
+## Project Context
+- Two UI implementations: `:compose` and `:xml`.
+- KMP-ready architecture (no platform-specific date APIs in common logic).
+- Min SDK 23.
+
+## Instruction Modules
+Open these files to provide context for your current task:
+- Architecture: `.agents/core/architecture.md`
+- Compose: `.agents/modules/compose.md`
+- XML: `.agents/modules/xml.md`
+- Logic: `.agents/features/calendar-logic.md`
+
+## Coding Standards
+- Use `kotlinx-datetime`. Avoid `java.time` in UI layers.
+- Use `internal` visibility for all non-entry point components.
+- Resource-based localization for day/month names.
+- Surgical edits only. Do not perform unrelated refactors.
