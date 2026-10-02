@@ -158,7 +158,9 @@ private fun MonthNavButton(
     IconButton(onClick = onClick) {
         Icon(
             painter = painterResource(if (isPrevious) R.drawable.chevron_left else R.drawable.chevron_right),
-            contentDescription = if (isPrevious) "Previous month" else "Next month",
+            contentDescription = stringResource(
+                if (isPrevious) R.string.month_previous else R.string.month_next
+            ),
             tint = calendarStyle.monthNavigationIconColor
         )
     }

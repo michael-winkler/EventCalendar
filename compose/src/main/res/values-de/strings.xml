@@ -20,4 +20,7 @@
     <string name="month_october">Oktober</string>
     <string name="month_november">November</string>
     <string name="month_december">Dezember</string>
+
+    <string name="month_previous">Vorheriger Monat</string>
+    <string name="month_next">Nächster Monat</string>
 </resources>
