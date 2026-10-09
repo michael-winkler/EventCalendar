@@ -76,6 +76,10 @@ import kotlin.math.abs
  * For more details about how an event model should be, @see events
  *
  */
+@Deprecated(
+    "The XML/View module is deprecated and no longer developed. Migrate to the Jetpack Compose " +
+        "module (com.github.michael-winkler.EventCalendar:compose)."
+)
 class EventCalendarView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,

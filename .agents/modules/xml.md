@@ -1,5 +1,9 @@
 # XML / View-Based Guidelines (:xml)
 
+> ⚠️ **Deprecated – no further development.** The `:xml` module is frozen. Do not add features,
+> new public API or refactors here. New work goes into `:compose`. Only touch `:xml` when explicitly
+> asked (e.g. dependency or build upkeep that keeps it compiling).
+
 For detailed API usage and setup examples, see: [xml/README.md](file://xml/README.md)
 
 ## Component Logic

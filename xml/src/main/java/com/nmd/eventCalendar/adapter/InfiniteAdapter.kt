@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.nmd.eventCalendar.adapter
 
 import android.annotation.SuppressLint

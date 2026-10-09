@@ -8,6 +8,7 @@ An Android calendar library with dual implementations: `:compose` and `:xml`.
 2. **KMP Compatibility**: Use `kotlinx-datetime`. Avoid `java.time` in UI modules to support API 23.
 3. **Layering**: UI -> Logic (ViewModels) -> Domain (Models).
 4. **Visibility**: Use `internal` for all implementation details.
+5. **`:xml` is deprecated**: No further development. New features and API go into `:compose` only.
 
 ## Coding Style
 - Idiomatic Kotlin.

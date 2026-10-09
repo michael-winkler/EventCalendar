@@ -6,6 +6,8 @@ metadata:
   version: "1.5"
 ---
 
+> ⚠️ **Deprecated – no further development.** The `:xml` module is frozen. Do not add features or new public API here; new work goes into `:compose`.
+
 # XML / View-Based UI Skill (EventCalendar)
 
 This skill provides specialized instructions for the `:xml` module, focusing on the

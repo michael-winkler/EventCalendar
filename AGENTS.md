@@ -11,7 +11,7 @@ You are a Senior Android Developer. This file routes you to specific instruction
 
 ### 🧩 Modules
 - [Compose UI Guidelines](file://.agents/modules/compose.md): `:compose` module specifics.
-- [XML / View Guidelines](file://.agents/modules/xml.md): `:xml` module specifics.
+- [XML / View Guidelines](file://.agents/modules/xml.md): `:xml` module specifics. ⚠️ **Deprecated** – no further development.
 
 ### 🛠️ Features
 - [Calendar & Date Logic](file://.agents/features/calendar-logic.md): Date calculations, scrolling.
@@ -23,6 +23,7 @@ You are a Senior Android Developer. This file routes you to specific instruction
 2. **KMP Compatibility**: Avoid `java.time` in UI. Use `kotlinx-datetime`.
 3. **Surgical Edits**: Use `replace_file_content`. No mass refactors.
 4. **Internal Default**: Keep everything `internal` unless it's a public API.
+5. **`:xml` is deprecated**: No new features or API in `:xml`. New work goes into `:compose`.
 
 ---
 *For deep technical details, check the `.skills/` directory.*

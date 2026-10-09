@@ -2,6 +2,7 @@
 
 ## Project Context
 - Two UI implementations: `:compose` and `:xml`.
+- `:xml` is deprecated: no further development. New features and API go into `:compose` only.
 - KMP-ready architecture (no platform-specific date APIs in common logic).
 - Min SDK 23.
 

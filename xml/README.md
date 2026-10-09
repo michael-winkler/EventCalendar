@@ -1,5 +1,12 @@
 # EventCalendar (XML/View System)
 
+> [!WARNING]
+> **Deprecated – no further development.** The XML/View module is no longer developed: it gets no
+> new features, no new APIs and no further development. `EventCalendarView` and
+> `EventCalendarSingleWeekView` are marked `@Deprecated`. Use the
+> **[Jetpack Compose module](../compose/README.md)** for new projects and plan a migration for
+> existing ones.
+
 A highly customizable **Month Calendar View** for the Android View System (XML), featuring event
 support, Material 3 design, and smooth navigation.
 

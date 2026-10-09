@@ -6,6 +6,8 @@ metadata:
   version: "1.0"
 ---
 
+> ⚠️ **Deprecated – no further development.** The `:xml` module is frozen. Do not add features or new public API here; new work goes into `:compose`.
+
 # XML Styling Skill (EventCalendar)
 
 This skill covers the extensive styling system used in the legacy XML module, including attributes,

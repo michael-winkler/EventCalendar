@@ -36,8 +36,14 @@ Choose the module that fits your project:
 - Custom `CalendarController` and `CalendarEventsStore`.
 - **[Read Compose Documentation →](./compose/README.md)**
 
-### 🏛️ [EventCalendar XML (View System)](./xml/README.md)
+### 🏛️ [EventCalendar XML (View System)](./xml/README.md) — ⚠️ Deprecated
 *For classic XML-based projects.*
+
+> [!WARNING]
+> **The XML module is deprecated.** It is no longer developed: no new features, no new APIs and
+> no further development. It remains available for existing projects, but new projects should use
+> the **[Compose module](./compose/README.md)**, and existing projects should plan to migrate.
+
 - `EventCalendarView` & `EventCalendarSingleWeekView`.
 - **Min SDK: 23**
 - Paging via ViewPager2.
@@ -69,7 +75,7 @@ dependencies {
     // For Jetpack Compose (Min SDK 23)
     implementation("com.github.michael-winkler.EventCalendar:compose:LATEST_VERSION")
 
-    // For XML / View System (Min SDK 23)
+    // For XML / View System (Min SDK 23) – deprecated, no further development
     implementation("com.github.michael-winkler.EventCalendar:xml:LATEST_VERSION")
 }
 ```

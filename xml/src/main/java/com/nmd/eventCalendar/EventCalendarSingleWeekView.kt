@@ -62,6 +62,10 @@ import java.util.Calendar
  *     app:ecv_week_start_day="monday" />
  * ```
  */
+@Deprecated(
+    "The XML/View module is deprecated and no longer developed. Migrate to the Jetpack Compose " +
+        "module (com.github.michael-winkler.EventCalendar:compose)."
+)
 @Suppress("unused")
 class EventCalendarSingleWeekView @JvmOverloads constructor(
     context: Context,

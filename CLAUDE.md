@@ -28,6 +28,7 @@ We use a modular, instruction-dense approach. **Read only what you need:**
 2. **Strict Module Separation**: Never mix `:compose` and `:xml` dependencies.
 3. **Internal by Default**: Expose only the primary View/Composable to `:app`.
 4. **Surgical Edits**: Prefer `replace_file_content` over overwriting files.
+5. **`:xml` is deprecated**: No further development. No new features or API in `:xml`; new work goes into `:compose`.
 
 ---
 *Refer to `AGENTS.md` for the main instruction index.*

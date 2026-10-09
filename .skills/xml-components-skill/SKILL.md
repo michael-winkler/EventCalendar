@@ -6,6 +6,8 @@ metadata:
   version: "1.0"
 ---
 
+> ⚠️ **Deprecated – no further development.** The `:xml` module is frozen. Do not add features or new public API here; new work goes into `:compose`.
+
 # XML Components Skill (EventCalendar)
 
 This skill focuses on the logic and lifecycle of the custom UI components within the `:xml` module.
