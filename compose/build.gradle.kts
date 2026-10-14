@@ -11,6 +11,7 @@ android {
 
     defaultConfig {
         minSdk = 23
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -43,6 +44,19 @@ android {
     publishing {
         singleVariant("release")
     }
+
+    sourceSets {
+        // UI tests run both on the JVM (Robolectric) and on a device/emulator.
+        getByName("test").kotlin.directories.add("src/sharedTest/java")
+        getByName("androidTest").kotlin.directories.add("src/sharedTest/java")
+    }
+
+    testOptions {
+        unitTests {
+            // Compose UI tests run on the JVM via Robolectric and need the merged resources.
+            isIncludeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -58,6 +72,17 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     testImplementation(libs.junit)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.compose.ui.test.junit4)
+    testImplementation(libs.androidx.compose.ui.test.manifest)
+    testImplementation(libs.androidx.test.ext.junit)
+
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    // ui-test-junit4 pulls Espresso 3.5, which crashes on API 35+ (InputManager.getInstance removed).
+    androidTestImplementation(libs.androidx.test.espresso.core)
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    androidTestImplementation(libs.androidx.compose.ui.test.manifest)
 }
 
 publishing {
