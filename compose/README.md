@@ -69,6 +69,7 @@ fun MyCalendarScreen() {
     val today = kotlinx.datetime.Clock.System.todayIn(TimeZone.currentSystemDefault())
 
     val eventsStore = rememberCalendarEventsStore(
+        key = "main",
         initialEvents = listOf(
             Event(
                 date = today,
@@ -106,6 +107,7 @@ fun MyWeekCalendarScreen() {
         noOfVisibleDays = 7 // Use 1 for Day, 3 for 3-Day, 7 for Week view
     )
     val eventsStore = rememberCalendarEventsStore(
+        key = "week",
         initialEvents = listOf(
             Event(
                 date = today,
@@ -223,8 +225,8 @@ The `Event` class represents a calendar entry.
 
 ### 🗃️ CalendarEventsStore
 
-Provides the events to the calendar. Use `rememberCalendarEventsStore(initialEvents)` for the
-built-in, configuration-change-safe implementation, or implement the interface yourself:
+Provides the events to the calendar. Use `rememberCalendarEventsStore(initialEvents, key = "...")`
+for the built-in, configuration-change-safe implementation, or implement the interface yourself:
 
 ```kotlin
 interface CalendarEventsStore {
@@ -237,12 +239,25 @@ interface CalendarEventsStore {
 The calendar resolves which events fall on a given day on demand via `event.occursOn(date)`, so the
 cost scales with the number of events, not with how many days a multi-day event spans.
 
-Showing **several independent calendars on the same screen**? Give each store its own `key`, otherwise
-they share (and overwrite) one set of events:
+The `key` identifies the store on the current screen: calls with the same key share their events,
+so give **each calendar its own key**:
 
 ```kotlin
 val workStore = rememberCalendarEventsStore(workEvents, key = "work")
 val holidayStore = rememberCalendarEventsStore(holidayEvents, key = "holidays")
+```
+
+**Migrating from the keyless call:** `rememberCalendarEventsStore(initialEvents)` without a key still
+works but is deprecated, because every keyless call on a screen shares one store (two calendars would
+show the same events). Android Studio marks such calls; press <kbd>Alt</kbd>+<kbd>Enter</kbd> →
+*Replace with …* to migrate in one click, then pick a meaningful key per calendar:
+
+```kotlin
+// Before (deprecated)
+val store = rememberCalendarEventsStore(events)
+
+// After
+val store = rememberCalendarEventsStore(events, key = "calendar")
 ```
 
 ### 🎮 CalendarController
@@ -330,5 +345,6 @@ val eventsOnDay = store.eventsFlow.value.filter { it.occursOn(date) }
 **If you implemented `CalendarEventsStore` yourself**, just expose `eventsFlow: StateFlow<List<Event>>`;
 `eventsByDateFlow` is inherited as a deprecated default, so nothing else is required.
 
-> The built-in `rememberCalendarEventsStore(initialEvents)` is unchanged: same call, same behavior.
+> The built-in `rememberCalendarEventsStore(...)` behaves the same; only its keyless overload is
+> deprecated (see "CalendarEventsStore" above).
 > The `eventsByDateFlow` alias will be removed in a future major release.

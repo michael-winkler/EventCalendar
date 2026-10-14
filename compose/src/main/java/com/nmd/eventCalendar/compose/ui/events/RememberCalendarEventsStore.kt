@@ -14,28 +14,53 @@ import com.nmd.eventCalendar.compose.viewmodel.CalendarEventsViewModel
  * Behavior:
  * - [initialEvents] are applied only if the current store is empty.
  * - Stores are scoped to the current [androidx.lifecycle.ViewModelStoreOwner] (Activity, Fragment or
- *   navigation destination) and identified by [key]. Calls without a key share one store per owner,
- *   so when showing **more than one calendar** on the same screen give each one its own [key] —
- *   otherwise they all display (and overwrite) the same events.
+ *   navigation destination) and identified by [key]: calls with the same key share one store, so
+ *   give **each calendar on a screen its own key** (e.g. `"work"`, `"holidays"`).
  *
  * The store exposes a [kotlinx.coroutines.flow.StateFlow] of events via
  * [CalendarEventsStore.eventsFlow].
  *
  * @param initialEvents Initial list of events used to seed the store (only if the store is empty).
- * @param key Optional identifier that separates this store from other calendars' stores on the same
- * screen. Use a distinct, stable value per calendar (e.g. `"work"`, `"holidays"`). `null` (default)
- * keeps the previous behaviour of one shared store per owner.
+ * @param key Identifies the store within the current owner. Use a distinct, stable value per
+ * calendar; calls with the same key share their events.
  * @return A stable [CalendarEventsStore] instance.
  */
 @Composable
 fun rememberCalendarEventsStore(
     initialEvents: List<Event> = emptyList(),
-    key: String? = null
+    key: String
+): CalendarEventsStore = rememberStore(initialEvents, viewModelKey = "CalendarEventsViewModel:$key")
+
+/**
+ * Returns a [CalendarEventsStore] without a key.
+ *
+ * All calls without a key on the same screen share ONE store, so several calendars would display
+ * (and overwrite) the same events. Pass a key per calendar instead; existing calls keep working
+ * unchanged until they are migrated.
+ *
+ * @param initialEvents Initial list of events used to seed the store (only if the store is empty).
+ * @return A stable [CalendarEventsStore] instance shared by all keyless calls of the owner.
+ */
+@Deprecated(
+    message = "Without a key, every calendar on the screen shares one store and shows the same " +
+            "events. Pass a stable key per calendar, e.g. key = \"work\".",
+    replaceWith = ReplaceWith("rememberCalendarEventsStore(initialEvents, key = \"calendar\")"),
+    level = DeprecationLevel.WARNING
+)
+@Composable
+fun rememberCalendarEventsStore(
+    initialEvents: List<Event> = emptyList()
+): CalendarEventsStore = rememberStore(initialEvents, viewModelKey = null)
+
+@Composable
+private fun rememberStore(
+    initialEvents: List<Event>,
+    viewModelKey: String?
 ): CalendarEventsStore {
     // A new store is seeded in its initializer, i.e. synchronously, so the events are there on the
     // calendar's very first frame (an effect would only run after that frame).
     val vm: CalendarEventsViewModel =
-        viewModel(key = key?.let { "CalendarEventsViewModel:$it" }) {
+        viewModel(key = viewModelKey) {
             CalendarEventsViewModel().apply { setEvents(initialEvents) }
         }
 

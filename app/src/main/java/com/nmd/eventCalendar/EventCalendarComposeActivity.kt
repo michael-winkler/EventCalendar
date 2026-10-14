@@ -95,7 +95,7 @@ fun Screen(
             seed = initialSeed
         )
     }
-    val calendarEventsStore = rememberCalendarEventsStore(initialEvents = initialEvents)
+    val calendarEventsStore = rememberCalendarEventsStore(initialEvents = initialEvents, key = "sample")
 
     var weekStartValue by rememberSaveable { mutableIntStateOf(DayOfWeek.MONDAY.isoDayNumber) }
     var headerVisible by rememberSaveable { mutableStateOf(true) }
@@ -621,7 +621,7 @@ fun EventCalendarComposePreview() {
 @Composable
 fun CurrentWeekSheetPreview() {
     AppTheme {
-        val store = rememberCalendarEventsStore(emptyList())
+        val store = rememberCalendarEventsStore(emptyList(), key = "preview")
         val style = defaultCalendarStyle()
         Box(modifier = Modifier.background(Color.White)) {
             CurrentWeekSheetContent(
