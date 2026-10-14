@@ -235,6 +235,14 @@ interface CalendarEventsStore {
 The calendar resolves which events fall on a given day on demand via `event.occursOn(date)`, so the
 cost scales with the number of events, not with how many days a multi-day event spans.
 
+Showing **several independent calendars on the same screen**? Give each store its own `key`, otherwise
+they share (and overwrite) one set of events:
+
+```kotlin
+val workStore = rememberCalendarEventsStore(workEvents, key = "work")
+val holidayStore = rememberCalendarEventsStore(holidayEvents, key = "holidays")
+```
+
 ### 🎮 CalendarController
 
 Use the controller to navigate programmatically:
@@ -254,7 +262,8 @@ Configure the behavior of the calendar:
 - `isCurrentWeekOnly`: If true, only the current calendar week is displayed. `minDate`, `maxDate`
   and `openEndedWindowMonths` will be ignored. The calendar will automatically filter and show only
   events that fall within the current week.
-- `noOfVisibleDays`: Number of days to show in `EventCalendarWeekTime` (1, 3, or 7).
+- `noOfVisibleDays`: Number of days to show in `EventCalendarWeekTime` (1, 3, or 7). The 7-day view
+  shows the current week (aligned to `weekStart`); the 1- and 3-day views start with today.
 - `mergeAdjacentEvents`: If `true` (default), separate single-day, all-day events of the same type on
   consecutive days are merged into one continuous multi-day bar (see
   [Multi-Day Events](#multi-day-events)).

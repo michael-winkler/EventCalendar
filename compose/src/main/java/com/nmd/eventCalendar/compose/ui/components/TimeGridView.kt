@@ -26,7 +26,6 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,7 +35,8 @@ import androidx.compose.ui.unit.sp
 import com.nmd.eventCalendar.compose.model.Event
 import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
 import com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle
-import com.nmd.eventCalendar.compose.util.toStringRes
+import com.nmd.eventCalendar.compose.util.dayOfWeekShortName
+import com.nmd.eventCalendar.compose.util.twoDigits
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.number
 
@@ -101,9 +101,11 @@ private fun TimeGridHeader(
     days: List<LocalDate>,
     calendarStyle: CalendarStyle
 ) {
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .padding(bottom = 8.dp)) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp)
+    ) {
         Spacer(modifier = Modifier.width(56.dp))
         days.forEach { date ->
             Column(
@@ -111,7 +113,7 @@ private fun TimeGridHeader(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = stringResource(date.dayOfWeek.toStringRes()).uppercase(),
+                    text = dayOfWeekShortName(date.dayOfWeek).uppercase(),
                     fontSize = 10.sp,
                     color = calendarStyle.defaultWeekDayTextColor
                 )
@@ -140,7 +142,7 @@ private fun TimeLabelsColumn(
                 contentAlignment = Alignment.TopCenter
             ) {
                 Text(
-                    text = "%02d:00".format(hour),
+                    text = "${twoDigits(hour)}:00",
                     fontSize = 10.sp,
                     color = calendarStyle.defaultWeekDayTextColor.copy(alpha = 0.6f),
                     modifier = Modifier.offset(y = (-6).dp)
@@ -282,9 +284,9 @@ private fun resolveOverlaps(events: List<Event>): List<PositionedEvent> {
 
     val sorted = eventsWithTime.sortedWith(
         compareBy(
-        { it.timeRange!!.startHour * 60 + it.timeRange.startMinute },
-        { -it.timeRange!!.getDurationMinutes() }
-    ))
+            { it.timeRange!!.startHour * 60 + it.timeRange.startMinute },
+            { -it.timeRange!!.getDurationMinutes() }
+        ))
 
     val clusters = mutableListOf<MutableList<Event>>()
     var clusterMaxEnd = -1

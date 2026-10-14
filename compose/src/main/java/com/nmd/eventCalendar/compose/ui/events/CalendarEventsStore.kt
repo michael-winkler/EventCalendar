@@ -54,7 +54,7 @@ interface CalendarEventsStore {
      */
     @Deprecated(
         message = "Use eventsFlow and resolve a day with Event.occursOn(date). " +
-            "eventsByDateFlow groups by start date only and will be removed in a future release.",
+                "eventsByDateFlow groups by start date only and will be removed in a future release.",
         replaceWith = ReplaceWith("eventsFlow"),
         level = DeprecationLevel.WARNING
     )

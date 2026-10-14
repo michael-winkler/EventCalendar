@@ -33,10 +33,8 @@ import com.nmd.eventCalendar.compose.model.YearMonth
 import com.nmd.eventCalendar.compose.ui.components.MonthHeader
 import com.nmd.eventCalendar.compose.ui.components.MonthView
 import com.nmd.eventCalendar.compose.ui.components.WeekHeader
-import com.nmd.eventCalendar.compose.ui.components.WeekNumberColumn
 import com.nmd.eventCalendar.compose.ui.config.CalendarOptions
 import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
-import com.nmd.eventCalendar.compose.ui.config.CalendarWeekColumnWidth
 import com.nmd.eventCalendar.compose.ui.config.calendarBody
 import com.nmd.eventCalendar.compose.ui.config.calendarMonthGrid
 import com.nmd.eventCalendar.compose.ui.config.calendarRoot
@@ -67,9 +65,9 @@ private val MonthHeaderWidthLandscape = 48.dp
  * Internally, [CalendarScreen] wires together:
  * - [MonthHeader] for month title and previous/next navigation.
  * - [WeekHeader] for the weekday label row (Mon–Sun).
- * - [WeekNumberColumn] for the optional ISO week-number column.
  * - A [HorizontalPager] backed by [CalendarController] for month-to-month swiping.
- * - [MonthView] for the actual 6×7 day grid inside each pager page.
+ * - [MonthView] for the actual 6×7 day grid inside each pager page, including the optional ISO
+ *   week-number column (rendered per page so it swipes together with the grid it labels).
  *
  * Event data is consumed from [calendarEventsStore] via its [CalendarEventsStore.eventsFlow]
  * and resolved per date on each composition.
@@ -209,7 +207,8 @@ internal fun CalendarScreen(
 }
 
 /**
- * Section that contains the [WeekHeader] and the [MonthPager] (with optional [WeekNumberColumn]).
+ * Section that contains the [WeekHeader] and the [MonthPager] (whose pages include the optional
+ * week-number column).
  *
  * @param modifier Modifier applied to the section.
  * @param pagerState The state of the horizontal pager.
@@ -255,59 +254,22 @@ private fun ColumnScope.CalendarPagerSection(
                 isPhoneLandscape = phoneLandscape
             )
         ) {
-            if (calendarOptions.calendarWeekVisible) {
-                val monthOptionsNoWeek = remember(calendarOptions) {
-                    calendarOptions.copy(calendarWeekVisible = false)
-                }
-
-                Row(
-                    modifier = Modifier.calendarMonthGrid(
-                        options = calendarOptions,
-                        isPhoneLandscape = phoneLandscape
-                    )
-                ) {
-                    WeekNumberColumn(
-                        modifier = if (phoneLandscape) Modifier.width(CalendarWeekColumnWidth) else Modifier.weight(
-                            1f
-                        ),
-                        yearMonth = currentMonth,
-                        weekStart = calendarOptions.weekStart,
-                        calendarStyle = calendarStyle,
-                        calendarOptions = calendarOptions,
-                        phoneLandscape = phoneLandscape
-                    )
-
-                    MonthPager(
-                        modifier = Modifier
-                            .then(
-                                if (calendarOptions.isCurrentWeekOnly) Modifier
-                                    .wrapContentHeight()
-                                    .weight(if (phoneLandscape) 1f else 7f) else Modifier.weight(if (phoneLandscape) 1f else 7f)
-                            ),
-                        pagerState = pagerState,
-                        calendarController = calendarController,
-                        calendarOptions = monthOptionsNoWeek,
-                        calendarStyle = calendarStyle,
-                        eventsForDate = eventsForDate,
-                        onDaySelected = onDaySelected,
-                        phoneLandscape = phoneLandscape
-                    )
-                }
-            } else {
-                MonthPager(
-                    modifier = Modifier.calendarMonthGrid(
-                        options = calendarOptions,
-                        isPhoneLandscape = phoneLandscape
-                    ),
-                    pagerState = pagerState,
-                    calendarController = calendarController,
-                    calendarOptions = calendarOptions,
-                    calendarStyle = calendarStyle,
-                    eventsForDate = eventsForDate,
-                    onDaySelected = onDaySelected,
-                    phoneLandscape = phoneLandscape
-                )
-            }
+            // The week numbers are part of each page (see MonthView) rather than a separate column
+            // next to the pager: a fixed column would keep showing the previous month's numbers while
+            // the grid is being swiped and only switch once the pager passes the halfway point.
+            MonthPager(
+                modifier = Modifier.calendarMonthGrid(
+                    options = calendarOptions,
+                    isPhoneLandscape = phoneLandscape
+                ),
+                pagerState = pagerState,
+                calendarController = calendarController,
+                calendarOptions = calendarOptions,
+                calendarStyle = calendarStyle,
+                eventsForDate = eventsForDate,
+                onDaySelected = onDaySelected,
+                phoneLandscape = phoneLandscape
+            )
         }
     }
 }

@@ -148,10 +148,14 @@ fun mergeAdjacentEvents(events: List<Event>): List<Event> {
  * multi-day event keeps one lane across every week it covers, which lets the UI render it as a
  * single continuous bar.
  *
+ * The result is keyed by the event itself rather than by [Event.id]: ids are not guaranteed to be
+ * unique (e.g. events created via [Event.copy] or from different sources share them), and keying by
+ * id would make such events fight over a single lane.
+ *
  * @param events The distinct events visible in the current grid.
- * @return A map of [Event.id] to lane index (0-based).
+ * @return A map of each event to its lane index (0-based).
  */
-internal fun assignEventLanes(events: List<Event>): Map<Int, Int> {
+internal fun assignEventLanes(events: List<Event>): Map<Event, Int> {
     if (events.isEmpty()) return emptyMap()
 
     val sorted = events.sortedWith(
@@ -162,7 +166,7 @@ internal fun assignEventLanes(events: List<Event>): Map<Int, Int> {
     )
 
     val laneLastDate = ArrayList<LocalDate>()
-    val laneByEventId = HashMap<Int, Int>(events.size)
+    val laneByEvent = HashMap<Event, Int>(events.size)
 
     for (event in sorted) {
         var lane = 0
@@ -174,10 +178,10 @@ internal fun assignEventLanes(events: List<Event>): Map<Int, Int> {
         } else {
             laneLastDate[lane] = event.lastDate
         }
-        laneByEventId[event.id] = lane
+        laneByEvent[event] = lane
     }
 
-    return laneByEventId
+    return laneByEvent
 }
 
 /**

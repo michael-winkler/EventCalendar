@@ -140,13 +140,16 @@ val dayItemTextColor: Color
 val dayItemBackgroundColor: Color
     @Composable get() = if (isSystemInDarkTheme()) Color(0xFF282A2C) else Color(0xFFF4F4F4)
 
-/** Text color used for the "today" indicator/badge. */
+/** Text color used for the "today" indicator/badge, theme-aware (inverse of the badge). */
 val currentDayTextColor: Color
-    @Composable get() = Color.White
+    @Composable get() = if (isSystemInDarkTheme()) Color.Black else Color.White
 
-/** Background color used for the "today" indicator/badge. */
+/**
+ * Background color used for the "today" indicator/badge, theme-aware: a black badge would be
+ * invisible on the dark day cells, so dark mode uses a white one.
+ */
 val currentDayBackgroundColor: Color
-    @Composable get() = Color.Black
+    @Composable get() = if (isSystemInDarkTheme()) Color.White else Color.Black
 
 /* --- Calendar week (week number column) --- */
 

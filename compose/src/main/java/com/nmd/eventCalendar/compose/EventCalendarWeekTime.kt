@@ -16,10 +16,11 @@ import com.nmd.eventCalendar.compose.ui.config.defaultCalendarOptions
 import com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle
 import com.nmd.eventCalendar.compose.ui.events.CalendarEventsStore
 import com.nmd.eventCalendar.compose.ui.events.PreviewCalendarEventsStore
+import com.nmd.eventCalendar.compose.util.rememberToday
+import com.nmd.eventCalendar.compose.util.visibleTimeGridDays
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
 import kotlin.time.Clock
@@ -28,7 +29,9 @@ import kotlin.time.Clock
  * A time-based week/day calendar view entry point.
  *
  * This view displays a time grid where events are positioned vertically according to their
- * start and end times. It supports displaying 1, 3, or 7 consecutive days.
+ * start and end times. It supports displaying 1, 3, or 7 consecutive days: the 7-day view shows the
+ * current week (aligned to [CalendarOptions.weekStart]); shorter views start with today, so today
+ * is always visible.
  *
  * @param modifier Modifier applied to the root layout.
  * @param calendarStyle Custom styling for colors and typography.
@@ -47,12 +50,14 @@ fun EventCalendarWeekTime(
     onEventSelected: (Event) -> Unit = {}
 ) {
     val events by calendarEventsStore.eventsFlow.collectAsStateWithLifecycle()
-    val today = remember { Clock.System.todayIn(TimeZone.currentSystemDefault()) }
+    val today = rememberToday()
 
-    val days = remember(calendarOptions.weekStart, calendarOptions.noOfVisibleDays) {
-        val daysUntil = (today.dayOfWeek.ordinal - calendarOptions.weekStart.ordinal + 7) % 7
-        val startOfWeek = today.minus(daysUntil, DateTimeUnit.DAY)
-        (0 until calendarOptions.noOfVisibleDays).map { startOfWeek.plus(it, DateTimeUnit.DAY) }
+    val days = remember(today, calendarOptions.weekStart, calendarOptions.noOfVisibleDays) {
+        visibleTimeGridDays(
+            today = today,
+            weekStart = calendarOptions.weekStart,
+            noOfVisibleDays = calendarOptions.noOfVisibleDays
+        )
     }
 
     // The time grid positions events by time within a single day, so it keys events by their start

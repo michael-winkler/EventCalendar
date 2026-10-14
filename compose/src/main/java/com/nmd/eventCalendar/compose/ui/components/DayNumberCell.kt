@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,7 +23,6 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import kotlin.time.Clock
 
-internal val today: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
 private val TodayBadgeShape = RoundedCornerShape(50)
 
 /**
@@ -36,6 +34,7 @@ private val TodayBadgeShape = RoundedCornerShape(50)
  * @param modifier Modifier applied to the number container (typically a column weight).
  * @param calendarDay The day to render.
  * @param visibleMonth The month currently displayed by the calendar (used to determine "today").
+ * @param today The current date. Passed in (instead of read once) so the badge moves at midnight.
  * @param calendarStyle Styling configuration (colors, typography sizes, etc.).
  */
 @Composable
@@ -43,10 +42,11 @@ internal fun DayNumberCell(
     modifier: Modifier = Modifier,
     calendarDay: CalendarDay,
     visibleMonth: YearMonth,
+    today: LocalDate,
     calendarStyle: CalendarStyle
 ) {
-    val isVisibleMonthCurrent = remember(visibleMonth) { visibleMonth == YearMonth.now() }
-    val isToday = isVisibleMonthCurrent && calendarDay.date == today
+    // Only the visible month highlights today, so a padding day of a neighbouring month does not.
+    val isToday = calendarDay.date == today && visibleMonth == YearMonth.from(today)
 
     val defaultTextColor =
         if (calendarDay.isCurrentMonth) calendarStyle.dayItemTextColor
@@ -86,6 +86,7 @@ internal fun DayNumberCell(
 @Preview(showBackground = true)
 @Composable
 internal fun DayNumberCellPreview() {
+    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
     DayNumberCell(
         modifier = Modifier.fillMaxWidth(),
         calendarDay = CalendarDay(
@@ -94,6 +95,7 @@ internal fun DayNumberCellPreview() {
             events = emptyList()
         ),
         visibleMonth = YearMonth.now(),
+        today = today,
         calendarStyle = defaultCalendarStyle().copy(textUnit = 12.sp)
     )
 }

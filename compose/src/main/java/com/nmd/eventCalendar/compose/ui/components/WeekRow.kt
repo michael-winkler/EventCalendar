@@ -22,8 +22,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,9 +36,17 @@ import com.nmd.eventCalendar.compose.model.YearMonth
 import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
 import com.nmd.eventCalendar.compose.ui.shapes.DayCornerShapes
 import com.nmd.eventCalendar.compose.util.EventSegment
+import com.nmd.eventCalendar.compose.util.dayCellLabel
+import com.nmd.eventCalendar.compose.util.monthDisplayName
+import kotlinx.datetime.LocalDate
 import kotlin.math.roundToInt
 
-private val LaneHeight = 16.dp
+private val MinLaneHeight = 16.dp
+private val EventTextSize = 10.sp
+private val OverflowTextSize = 9.sp
+
+// Vertical room a lane needs around its single text line.
+private val LaneTextPadding = 4.dp
 private val LaneSpacing = 2.dp
 private val EventBarShapeRadius = 6.dp
 
@@ -74,6 +85,7 @@ private fun columnBounds(totalWidthPx: Float): IntArray =
  * @param lastWeekIndex Index of the last week within the grid (used for corner rounding).
  * @param isSingleWeek Whether the calendar is rendering a single week only.
  * @param visibleMonth The month currently displayed (used to determine "today").
+ * @param today The current date, used for the "today" badge.
  * @param calendarStyle Styling configuration (colors, typography sizes, etc.).
  * @param cornerShapes Prebuilt day-cell corner shapes.
  * @param onDaySelected Callback invoked when a day column is tapped.
@@ -87,6 +99,7 @@ internal fun WeekRow(
     lastWeekIndex: Int,
     isSingleWeek: Boolean,
     visibleMonth: YearMonth,
+    today: LocalDate,
     calendarStyle: CalendarStyle,
     cornerShapes: DayCornerShapes,
     onDaySelected: (calendarDay: CalendarDay) -> Unit
@@ -111,6 +124,9 @@ internal fun WeekRow(
                     isFirstInSingleWeek = isSingleWeek && dayIndex == 0,
                     isLastInSingleWeek = isSingleWeek && dayIndex == 6
                 )
+                // The day number and event bars live in a separate, non-interactive layer, so the
+                // clickable cell has to carry its own label for screen readers (TalkBack).
+                val label = dayCellLabel(day, monthDisplayName(day.date.month))
                 Box(
                     modifier = Modifier
                         .width(columnWidth(dayIndex, dayIndex + 1))
@@ -119,6 +135,7 @@ internal fun WeekRow(
                         .background(calendarStyle.dayItemBackgroundColor, shape)
                         .clip(shape)
                         .clickable { onDaySelected(day) }
+                        .semantics { contentDescription = label }
                 )
             }
         }
@@ -136,6 +153,7 @@ internal fun WeekRow(
                         modifier = Modifier.width(columnWidth(dayIndex, dayIndex + 1)),
                         calendarDay = day,
                         visibleMonth = visibleMonth,
+                        today = today,
                         calendarStyle = calendarStyle
                     )
                 }
@@ -173,7 +191,10 @@ private fun EventLanes(
     }
 
     BoxWithConstraints(modifier = modifier) {
-        val laneStride = LaneHeight + LaneSpacing
+        // The text scales with the user's font size, so the lane must grow with it (otherwise large
+        // fonts clip the titles). At the default font scale this stays at MinLaneHeight.
+        val laneHeight = maxOf(MinLaneHeight, with(density) { EventTextSize.toDp() } + LaneTextPadding)
+        val laneStride = laneHeight + LaneSpacing
         val maxLanes = ((maxHeight + LaneSpacing).value / laneStride.value).toInt().coerceAtLeast(0)
         if (maxLanes == 0) return@BoxWithConstraints
 
@@ -184,7 +205,9 @@ private fun EventLanes(
         val presentLanes = remember(segments) { segments.map { it.lane }.distinct().sorted() }
         val neededLanes = presentLanes.size
         val overflow = neededLanes > maxLanes
-        val reserveOverflowRow = overflow && maxLanes >= 2
+        // Always keep a row for the "+N" indicator when not everything fits - even if that leaves no
+        // room for a bar (e.g. landscape or a large font), so hidden events never vanish silently.
+        val reserveOverflowRow = overflow
         val visibleRowCount =
             if (reserveOverflowRow) maxLanes - 1 else minOf(neededLanes, maxLanes)
 
@@ -207,13 +230,19 @@ private fun EventLanes(
 
         Column(verticalArrangement = Arrangement.spacedBy(LaneSpacing)) {
             segmentsByRow.forEach { rowSegments ->
-                LaneRow(segments = rowSegments, bounds = bounds, density = density)
+                LaneRow(
+                    segments = rowSegments,
+                    bounds = bounds,
+                    density = density,
+                    laneHeight = laneHeight
+                )
             }
             if (reserveOverflowRow) {
                 OverflowRow(
                     hiddenPerColumn = hiddenPerColumn,
                     bounds = bounds,
                     density = density,
+                    laneHeight = laneHeight,
                     calendarStyle = calendarStyle
                 )
             }
@@ -229,14 +258,15 @@ private fun EventLanes(
 private fun LaneRow(
     segments: List<EventSegment>,
     bounds: IntArray,
-    density: Density
+    density: Density,
+    laneHeight: Dp
 ) {
     val cellPadPx = remember(density) { with(density) { CellPadding.toPx() }.roundToInt() }
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(LaneHeight)
+            .height(laneHeight)
     ) {
         segments.forEach { segment ->
             // Always inset both ends by the cell padding so a bar sits inside its day cells; a
@@ -289,8 +319,8 @@ private fun EventBar(
                 .padding(horizontal = 4.dp),
             text = segment.event.name,
             color = segment.event.effectiveTextColor,
-            fontSize = 10.sp,
-            lineHeight = 10.sp,
+            fontSize = EventTextSize,
+            lineHeight = EventTextSize,
             maxLines = 1,
             softWrap = false,
             overflow = TextOverflow.Ellipsis
@@ -307,12 +337,13 @@ private fun OverflowRow(
     hiddenPerColumn: IntArray,
     bounds: IntArray,
     density: Density,
+    laneHeight: Dp,
     calendarStyle: CalendarStyle
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(LaneHeight)
+            .height(laneHeight)
     ) {
         for (column in 0 until DaysPerWeek) {
             val count = hiddenPerColumn.getOrElse(column) { 0 }
@@ -329,8 +360,8 @@ private fun OverflowRow(
                     Text(
                         text = "+$count",
                         color = calendarStyle.dayItemTextColor,
-                        fontSize = 9.sp,
-                        lineHeight = 9.sp,
+                        fontSize = OverflowTextSize,
+                        lineHeight = OverflowTextSize,
                         maxLines = 1,
                         overflow = TextOverflow.Clip
                     )

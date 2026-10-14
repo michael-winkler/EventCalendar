@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nmd.eventCalendar.compose.model.WeekItemPosition
@@ -17,6 +18,9 @@ import com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle
 import com.nmd.eventCalendar.compose.ui.shapes.WeekItemShapes
 
 private val sharedWeekItemShapes = WeekItemShapes()
+
+/** Test tag of the week-number text, used by UI tests to read the displayed calendar weeks. */
+internal const val WeekNumberTestTag = "EventCalendar.WeekNumber"
 
 /**
  * Displays a single calendar week number cell (KW).
@@ -49,6 +53,7 @@ internal fun WeekItem(
         contentAlignment = Alignment.Center
     ) {
         Text(
+            modifier = Modifier.testTag(WeekNumberTestTag),
             text = weekNumber.toString(),
             color = calendarStyle.weekItemTextColor,
             fontSize = calendarStyle.textUnit

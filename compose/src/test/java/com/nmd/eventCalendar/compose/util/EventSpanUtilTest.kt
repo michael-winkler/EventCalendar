@@ -5,6 +5,7 @@ import com.nmd.eventCalendar.compose.model.Event
 import com.nmd.eventCalendar.compose.model.EventTimeRange
 import kotlinx.datetime.LocalDate
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -139,5 +140,45 @@ class EventSpanUtilTest {
         assertEquals(2, spans.size)
         assertEquals(day(3) to day(4), spans[0].date to spans[0].endDate)
         assertEquals(day(10) to day(11), spans[1].date to spans[1].endDate)
+    }
+
+    /**
+     * Regression: lanes used to be keyed by [Event.id]. Events that share an id (e.g. built with
+     * `copy(date = ...)`, which keeps the id) overwrote each other's lane, so overlapping bars were
+     * drawn on top of each other.
+     */
+    @Test
+    fun overlappingEventsWithSharedIdGetSeparateLanes() {
+        val base = Event(
+            date = day(3),
+            name = "Kurs",
+            shapeColor = blue,
+            textColor = white,
+            endDate = day(5)
+        )
+        val sameIdOverlapping = base.copy(name = "Kurs B", date = day(4), endDate = day(6))
+        assertEquals(base.id, sameIdOverlapping.id)
+
+        val lanes = assignEventLanes(listOf(base, sameIdOverlapping))
+
+        assertEquals(2, lanes.size)
+        assertNotEquals(lanes.getValue(base), lanes.getValue(sameIdOverlapping))
+    }
+
+    /**
+     * Regression: the month view de-duplicated its events by [Event.id], so a recurring event built
+     * via `copy(date = ...)` showed up on its first day only.
+     */
+    @Test
+    fun copiesWithSharedIdAreAllRenderedInTheirWeek() {
+        val base = allDay("Training", 3, orange)
+        val recurring = listOf(base, base.copy(date = day(5)), base.copy(date = day(7)))
+        val week = (3..9).map { day(it) }
+
+        val lanes = assignEventLanes(recurring)
+        val segments = segmentsForWeek(week, recurring) { lanes.getValue(it) }
+
+        assertEquals(3, segments.size)
+        assertEquals(listOf(0, 2, 4), segments.map { it.startColumn }.sorted())
     }
 }

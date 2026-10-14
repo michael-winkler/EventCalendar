@@ -3,11 +3,11 @@ package com.nmd.eventCalendar.compose.model
 import androidx.annotation.Keep
 import androidx.compose.ui.graphics.Color
 import com.nmd.eventCalendar.compose.model.serializers.ColorSerializer
+import com.nmd.eventCalendar.compose.util.nextProcessUniqueId
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.daysUntil
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.pow
 
 /**
@@ -71,7 +71,7 @@ data class Event @JvmOverloads constructor(
     val autoAdjustTextColorForBackground: Boolean = true,
     val timeRange: EventTimeRange? = null,
     val endDate: LocalDate? = null,
-    val id: Int = nextEventId()
+    val id: Int = nextProcessUniqueId()
 ) {
 
     /**
@@ -114,15 +114,6 @@ data class Event @JvmOverloads constructor(
         }
 
     companion object {
-        private val idCounter = AtomicInteger(1)
-
-        /**
-         * Returns the next process-local unique event ID.
-         *
-         * This is sufficient for stable Compose keys during the lifetime of the process.
-         */
-        private fun nextEventId(): Int = idCounter.getAndIncrement()
-
         private fun improveTextColorIfNeeded(shapeColor: Color, currentTextColor: Color): Color {
             val shapeIsLight = shapeColor.isLight()
             val textIsDark = currentTextColor.isDark()

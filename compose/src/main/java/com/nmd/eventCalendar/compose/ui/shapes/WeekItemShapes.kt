@@ -2,9 +2,7 @@ package com.nmd.eventCalendar.compose.ui.shapes
 
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.nmd.eventCalendar.compose.model.WeekItemPosition

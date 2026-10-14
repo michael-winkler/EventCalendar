@@ -26,8 +26,9 @@ import com.nmd.eventCalendar.compose.ui.shapes.rememberDayCornerShapes
 import com.nmd.eventCalendar.compose.util.EventSegment
 import com.nmd.eventCalendar.compose.util.assignEventLanes
 import com.nmd.eventCalendar.compose.util.generateMonthDays
-import com.nmd.eventCalendar.compose.util.isoWeekNumber
+import com.nmd.eventCalendar.compose.util.isoWeekNumberOfRow
 import com.nmd.eventCalendar.compose.util.mergeAdjacentEvents
+import com.nmd.eventCalendar.compose.util.rememberToday
 import com.nmd.eventCalendar.compose.util.segmentsForWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -58,18 +59,22 @@ internal fun MonthView(
     onDaySelected: (calendarDay: CalendarDay) -> Unit,
     phoneLandscape: Boolean = false
 ) {
+    val today = rememberToday()
+
     val baseDays =
         remember(
             yearMonth,
             calendarOptions.weekStart,
             calendarOptions.isCurrentWeekOnly,
-            eventsForDate
+            eventsForDate,
+            today
         ) {
             generateMonthDays(
                 yearMonth = yearMonth,
                 weekStart = calendarOptions.weekStart,
                 eventsByDate = emptyMap(),
-                isCurrentWeekOnly = calendarOptions.isCurrentWeekOnly
+                isCurrentWeekOnly = calendarOptions.isCurrentWeekOnly,
+                today = today
             ).map { day ->
                 day.copy(events = eventsForDate(day.date))
             }
@@ -79,27 +84,31 @@ internal fun MonthView(
 
     val weekNumbers = remember(weeks, calendarOptions.calendarWeekVisible) {
         if (!calendarOptions.calendarWeekVisible) emptyList()
-        else weeks.map { week -> week.first().date.isoWeekNumber() }
+        else weeks.map { week -> isoWeekNumberOfRow(week.first().date) }
     }
 
     // Distinct events across the whole visible grid get a stable lane so multi-day events keep the
     // same row across consecutive weeks and render as one continuous bar. Segments are then resolved
     // per week (a multi-day event crossing a week boundary yields one segment per week).
-    val weekSegments: List<List<EventSegment>> = remember(weeks, calendarOptions.mergeAdjacentEvents) {
-        val distinctEvents = weeks.flatten().flatMap { it.events }.distinctBy { it.id }
-        // Optionally combine separate single-day, all-day events of the same type on consecutive
-        // days into one continuous bar (see mergeAdjacentEvents for the safeguards).
-        val renderEvents =
-            if (calendarOptions.mergeAdjacentEvents) mergeAdjacentEvents(distinctEvents)
-            else distinctEvents
-        val lanes = assignEventLanes(renderEvents)
-        weeks.map { week ->
-            segmentsForWeek(
-                weekDates = week.map { it.date },
-                events = renderEvents
-            ) { event -> lanes[event.id] ?: 0 }
+    val weekSegments: List<List<EventSegment>> =
+        remember(weeks, calendarOptions.mergeAdjacentEvents) {
+            // A multi-day event is returned for every day it covers, so collapse those repeats. This uses
+            // the event's value (not just its id): ids are not guaranteed to be unique, e.g. recurring
+            // events built with copy(date = ...) share one, and must not hide each other.
+            val distinctEvents = weeks.flatten().flatMap { it.events }.distinct()
+            // Optionally combine separate single-day, all-day events of the same type on consecutive
+            // days into one continuous bar (see mergeAdjacentEvents for the safeguards).
+            val renderEvents =
+                if (calendarOptions.mergeAdjacentEvents) mergeAdjacentEvents(distinctEvents)
+                else distinctEvents
+            val lanes = assignEventLanes(renderEvents)
+            weeks.map { week ->
+                segmentsForWeek(
+                    weekDates = week.map { it.date },
+                    events = renderEvents
+                ) { event -> lanes[event] ?: 0 }
+            }
         }
-    }
 
     val cornerShapes = rememberDayCornerShapes(
         outerRadius = 16.dp,
@@ -159,6 +168,7 @@ internal fun MonthView(
                     lastWeekIndex = weeks.lastIndex,
                     isSingleWeek = calendarOptions.isCurrentWeekOnly,
                     visibleMonth = yearMonth,
+                    today = today,
                     calendarStyle = calendarStyle,
                     cornerShapes = cornerShapes,
                     onDaySelected = onDaySelected

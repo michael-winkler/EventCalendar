@@ -1,6 +1,7 @@
 package com.nmd.eventCalendar.compose.model
 
 import androidx.annotation.Keep
+import com.nmd.eventCalendar.compose.util.twoDigits
 import kotlinx.serialization.Serializable
 
 /**
@@ -34,12 +35,12 @@ data class EventTimeRange(
     /**
      * Returns the formatted start time as `HH:mm`.
      */
-    fun getFormattedStart(): String = "%02d:%02d".format(startHour, startMinute)
+    fun getFormattedStart(): String = "${twoDigits(startHour)}:${twoDigits(startMinute)}"
 
     /**
      * Returns the formatted end time as `HH:mm`.
      */
-    fun getFormattedEnd(): String = "%02d:%02d".format(endHour, endMinute)
+    fun getFormattedEnd(): String = "${twoDigits(endHour)}:${twoDigits(endMinute)}"
 
     /**
      * Returns the duration of the range in minutes.
@@ -59,7 +60,7 @@ data class EventTimeRange(
         val total = getDurationMinutes().coerceAtLeast(0)
         val hours = total / 60
         val minutes = total % 60
-        return "%02d:%02d".format(hours, minutes)
+        return "${twoDigits(hours)}:${twoDigits(minutes)}"
     }
 
     /**

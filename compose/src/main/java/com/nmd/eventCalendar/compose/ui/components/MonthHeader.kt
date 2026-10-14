@@ -18,8 +18,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -29,10 +27,10 @@ import com.nmd.eventCalendar.compose.model.MonthHeaderLayout
 import com.nmd.eventCalendar.compose.model.YearMonth
 import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
 import com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle
-import com.nmd.eventCalendar.compose.util.toStringRes
-import com.nmd.eventcalendar.compose.R
-
-private val nowMonth: YearMonth = YearMonth.now()
+import com.nmd.eventCalendar.compose.ui.icons.CalendarIcons
+import com.nmd.eventCalendar.compose.util.monthDisplayName
+import com.nmd.eventCalendar.compose.util.monthNavigationLabel
+import com.nmd.eventCalendar.compose.util.rememberToday
 
 /**
  * Displays the current month label and navigation buttons to move to the previous/next month.
@@ -59,9 +57,10 @@ internal fun MonthHeader(
     layout: MonthHeaderLayout = MonthHeaderLayout.TopBar,
     showNavigation: Boolean = true
 ) {
-    val monthName = stringResource(currentMonth.month.toStringRes())
-    val title = remember(currentMonth, monthName) {
-        val showYear = currentMonth.year != nowMonth.year
+    val monthName = monthDisplayName(currentMonth.month)
+    val currentYear = rememberToday().year
+    val title = remember(currentMonth, monthName, currentYear) {
+        val showYear = currentMonth.year != currentYear
         if (showYear) "$monthName ${currentMonth.year}" else monthName
     }
 
@@ -157,10 +156,8 @@ private fun MonthNavButton(
 ) {
     IconButton(onClick = onClick) {
         Icon(
-            painter = painterResource(if (isPrevious) R.drawable.chevron_left else R.drawable.chevron_right),
-            contentDescription = stringResource(
-                if (isPrevious) R.string.month_previous else R.string.month_next
-            ),
+            imageVector = if (isPrevious) CalendarIcons.ChevronLeft else CalendarIcons.ChevronRight,
+            contentDescription = monthNavigationLabel(isPrevious),
             tint = calendarStyle.monthNavigationIconColor
         )
     }

@@ -6,6 +6,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import com.nmd.eventCalendar.compose.model.YearMonth
 import com.nmd.eventCalendar.compose.ui.config.CalendarOptions
+import com.nmd.eventCalendar.compose.util.rememberToday
 import kotlin.math.max
 
 /**
@@ -48,7 +49,12 @@ import kotlin.math.max
 fun rememberCalendarController(
     calendarOptions: CalendarOptions
 ): CalendarController {
-    val nowMonth = remember { YearMonth.now() }
+    // The month range of a full calendar is fixed when it is first shown: moving it later would shift
+    // the page the user is looking at. The single-week mode has exactly one page, which must follow
+    // the date (otherwise it keeps showing last month's week after midnight on the 1st).
+    val launchMonth = remember { YearMonth.now() }
+    val liveMonth = YearMonth.from(rememberToday())
+    val nowMonth = if (calendarOptions.isCurrentWeekOnly) liveMonth else launchMonth
 
     val minMonth =
         if (calendarOptions.isCurrentWeekOnly) null else calendarOptions.minDate?.let(YearMonth::from)
