@@ -25,6 +25,7 @@ import com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle
 import com.nmd.eventCalendar.compose.ui.shapes.rememberDayCornerShapes
 import com.nmd.eventCalendar.compose.util.EventSegment
 import com.nmd.eventCalendar.compose.util.assignEventLanes
+import com.nmd.eventCalendar.compose.util.eventsInRange
 import com.nmd.eventCalendar.compose.util.generateMonthDays
 import com.nmd.eventCalendar.compose.util.isoWeekNumberOfRow
 import com.nmd.eventCalendar.compose.util.mergeAdjacentEvents
@@ -46,7 +47,7 @@ import kotlin.time.Clock
  * @param yearMonth The month to display.
  * @param calendarOptions Calendar configuration options (week start, week numbers visibility, single week mode, etc.).
  * @param calendarStyle Styling configuration (colors, typography sizes, etc.).
- * @param eventsForDate Provides the events for a given date.
+ * @param events All events of the calendar, in display order (see [CalendarEventsStore.eventsFlow]).
  * @param onDaySelected Callback invoked when a day is tapped.
  * @param phoneLandscape If true, uses a fixed row height optimized for phone landscape layouts.
  */
@@ -55,30 +56,36 @@ internal fun MonthView(
     yearMonth: YearMonth,
     calendarOptions: CalendarOptions,
     calendarStyle: CalendarStyle,
-    eventsForDate: (LocalDate) -> List<Event>,
+    events: List<Event>,
     onDaySelected: (calendarDay: CalendarDay) -> Unit,
     phoneLandscape: Boolean = false
 ) {
     val today = rememberToday()
 
-    val baseDays =
-        remember(
-            yearMonth,
-            calendarOptions.weekStart,
-            calendarOptions.isCurrentWeekOnly,
-            eventsForDate,
-            today
-        ) {
-            generateMonthDays(
-                yearMonth = yearMonth,
-                weekStart = calendarOptions.weekStart,
-                eventsByDate = emptyMap(),
-                isCurrentWeekOnly = calendarOptions.isCurrentWeekOnly,
-                today = today
-            ).map { day ->
-                day.copy(events = eventsForDate(day.date))
-            }
-        }
+    val gridDays = remember(
+        yearMonth,
+        calendarOptions.weekStart,
+        calendarOptions.isCurrentWeekOnly,
+        today
+    ) {
+        generateMonthDays(
+            yearMonth = yearMonth,
+            weekStart = calendarOptions.weekStart,
+            isCurrentWeekOnly = calendarOptions.isCurrentWeekOnly,
+            today = today
+        )
+    }
+
+    // One pass over all events (instead of filtering them once per day): only the events of this
+    // page are kept and put on the days they cover, so the cost of a page barely grows with the
+    // total number of events.
+    val pageEvents = remember(gridDays, events) {
+        eventsInRange(events, firstDay = gridDays.first().date, dayCount = gridDays.size)
+    }
+
+    val baseDays = remember(gridDays, pageEvents) {
+        gridDays.mapIndexed { index, day -> day.copy(events = pageEvents.byDay[index]) }
+    }
 
     val weeks: List<List<CalendarDay>> = remember(baseDays) { baseDays.chunked(7) }
 
@@ -91,11 +98,10 @@ internal fun MonthView(
     // same row across consecutive weeks and render as one continuous bar. Segments are then resolved
     // per week (a multi-day event crossing a week boundary yields one segment per week).
     val weekSegments: List<List<EventSegment>> =
-        remember(weeks, calendarOptions.mergeAdjacentEvents) {
-            // A multi-day event is returned for every day it covers, so collapse those repeats. This uses
-            // the event's value (not just its id): ids are not guaranteed to be unique, e.g. recurring
-            // events built with copy(date = ...) share one, and must not hide each other.
-            val distinctEvents = weeks.flatten().flatMap { it.events }.distinct()
+        remember(weeks, pageEvents, calendarOptions.mergeAdjacentEvents) {
+            // Each event of the page exactly once (a multi-day event is not repeated per day). Events
+            // sharing an id, e.g. recurring ones built with copy(date = ...), stay separate bars.
+            val distinctEvents = pageEvents.inRange
             // Optionally combine separate single-day, all-day events of the same type on consecutive
             // days into one continuous bar (see mergeAdjacentEvents for the safeguards).
             val renderEvents =
@@ -208,7 +214,7 @@ internal fun MonthViewPreview() {
         yearMonth = YearMonth.now(),
         calendarOptions = defaultCalendarOptions().copy(calendarWeekVisible = true),
         calendarStyle = defaultCalendarStyle(),
-        eventsForDate = { date -> events.filter { it.occursOn(date) } },
+        events = events,
         onDaySelected = {},
         phoneLandscape = false
     )
@@ -228,7 +234,7 @@ internal fun MonthViewPreviewLandscape() {
         yearMonth = YearMonth.now(),
         calendarOptions = defaultCalendarOptions().copy(calendarWeekVisible = true),
         calendarStyle = defaultCalendarStyle(),
-        eventsForDate = { date -> events.filter { it.occursOn(date) } },
+        events = events,
         onDaySelected = {},
         phoneLandscape = true
     )

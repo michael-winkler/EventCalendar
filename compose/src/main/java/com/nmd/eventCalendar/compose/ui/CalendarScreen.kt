@@ -47,7 +47,6 @@ import com.nmd.eventCalendar.compose.ui.events.PreviewCalendarEventsStore
 import com.nmd.eventCalendar.compose.util.isPhoneLandscapeWindow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import kotlin.time.Clock
@@ -107,13 +106,8 @@ internal fun CalendarScreen(
             .collect { month -> onMonthChangeState.value(month) }
     }
 
+    // Each month page picks its own events from this flat list in a single pass (see MonthView).
     val events = calendarEventsStore.eventsFlow.collectAsStateWithLifecycle().value
-    // Resolve the events on a given day on demand. Because [events] is a flat list, this scales with
-    // the number of events (not with how many days a multi-day event spans), and it correctly
-    // includes multi-day events that merely overlap the day.
-    val eventsForDate: (LocalDate) -> List<Event> = remember(events) {
-        { date -> events.filter { it.occursOn(date) } }
-    }
 
     val onPrevMonth: () -> Unit =
         remember(calendarController) { { calendarController.goToPreviousMonth() } }
@@ -164,7 +158,7 @@ internal fun CalendarScreen(
                     calendarOptions = calendarOptions,
                     calendarStyle = calendarStyle,
                     currentMonth = currentMonth,
-                    eventsForDate = eventsForDate,
+                    events = events,
                     onDaySelected = { day -> onDaySelectedState.value(day) },
                     phoneLandscape = true
                 )
@@ -198,7 +192,7 @@ internal fun CalendarScreen(
                 calendarOptions = calendarOptions,
                 calendarStyle = calendarStyle,
                 currentMonth = currentMonth,
-                eventsForDate = eventsForDate,
+                events = events,
                 onDaySelected = { day -> onDaySelectedState.value(day) },
                 phoneLandscape = false
             )
@@ -216,7 +210,7 @@ internal fun CalendarScreen(
  * @param calendarOptions Configuration options for the calendar.
  * @param calendarStyle Styling configuration for the calendar.
  * @param currentMonth The currently visible month.
- * @param eventsForDate Function to retrieve events for a specific date.
+ * @param events All events, in display order.
  * @param onDaySelected Callback when a day is selected.
  * @param phoneLandscape Whether the device is in phone landscape mode.
  */
@@ -228,7 +222,7 @@ private fun ColumnScope.CalendarPagerSection(
     calendarOptions: CalendarOptions,
     calendarStyle: CalendarStyle,
     currentMonth: YearMonth,
-    eventsForDate: (LocalDate) -> List<Event>,
+    events: List<Event>,
     onDaySelected: (CalendarDay) -> Unit,
     phoneLandscape: Boolean
 ) {
@@ -266,7 +260,7 @@ private fun ColumnScope.CalendarPagerSection(
                 calendarController = calendarController,
                 calendarOptions = calendarOptions,
                 calendarStyle = calendarStyle,
-                eventsForDate = eventsForDate,
+                events = events,
                 onDaySelected = onDaySelected,
                 phoneLandscape = phoneLandscape
             )
@@ -282,7 +276,7 @@ private fun ColumnScope.CalendarPagerSection(
  * @param calendarController Controller for calendar navigation and page-to-month mapping.
  * @param calendarOptions Configuration options for the calendar.
  * @param calendarStyle Styling configuration for the calendar.
- * @param eventsForDate Function to retrieve events for a specific date.
+ * @param events All events, in display order.
  * @param onDaySelected Callback when a day is selected.
  * @param phoneLandscape Whether the device is in phone landscape mode.
  */
@@ -293,7 +287,7 @@ private fun MonthPager(
     calendarController: CalendarController,
     calendarOptions: CalendarOptions,
     calendarStyle: CalendarStyle,
-    eventsForDate: (LocalDate) -> List<Event>,
+    events: List<Event>,
     onDaySelected: (CalendarDay) -> Unit,
     phoneLandscape: Boolean
 ) {
@@ -310,7 +304,7 @@ private fun MonthPager(
             yearMonth = month,
             calendarOptions = calendarOptions,
             calendarStyle = calendarStyle,
-            eventsForDate = eventsForDate,
+            events = events,
             onDaySelected = onDaySelected,
             phoneLandscape = phoneLandscape
         )

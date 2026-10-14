@@ -181,4 +181,50 @@ class EventSpanUtilTest {
         assertEquals(3, segments.size)
         assertEquals(listOf(0, 2, 4), segments.map { it.startColumn }.sorted())
     }
+
+    @Test
+    fun eventsInRangeDistributesEventsOntoTheDaysTheyCover() {
+        val before = Event(day(1), "Before", blue, white)                    // ends before the range
+        val overlapStart = Event(day(2), "Overlap", blue, white, endDate = day(4))
+        val inside = allDay("Inside", 6)
+        val overlapEnd = Event(day(8), "Long", blue, white, endDate = day(20))
+        val after = allDay("After", 12)                                      // starts after the range
+
+        // Range: Aug 3..9 (7 days).
+        val result = eventsInRange(listOf(before, overlapStart, inside, overlapEnd, after), day(3), 7)
+
+        assertEquals(listOf(overlapStart, inside, overlapEnd), result.inRange)
+        assertEquals(7, result.byDay.size)
+        assertEquals(listOf(overlapStart), result.byDay[0])                  // Aug 3
+        assertEquals(listOf(overlapStart), result.byDay[1])                  // Aug 4
+        assertEquals(emptyList<Event>(), result.byDay[2])                    // Aug 5
+        assertEquals(listOf(inside), result.byDay[3])                        // Aug 6
+        assertEquals(listOf(overlapEnd), result.byDay[5])                    // Aug 8
+        assertEquals(listOf(overlapEnd), result.byDay[6])                    // Aug 9
+    }
+
+    @Test
+    fun eventsInRangeMatchesFilteringEachDay() {
+        val events = (1..28).flatMap { d ->
+            listOf(allDay("A$d", d), Event(day(d), "M$d", blue, white, endDate = day(minOf(31, d + d % 4))))
+        }
+        val result = eventsInRange(events, day(5), 14)
+        (0 until 14).forEach { i ->
+            val date = day(5 + i)
+            assertEquals(events.filter { it.occursOn(date) }, result.byDay[i])
+        }
+    }
+
+    /** Two equal events are still two bars: they must not share (and overlap on) one lane. */
+    @Test
+    fun equalEventsGetTheirOwnLanes() {
+        val a = allDay("Same", 3)
+        val b = a.copy()
+        assertEquals(a, b)
+
+        val lanes = assignEventLanes(listOf(a, b))
+
+        assertEquals(2, lanes.size)
+        assertNotEquals(lanes.getValue(a), lanes.getValue(b))
+    }
 }

@@ -148,15 +148,17 @@ fun mergeAdjacentEvents(events: List<Event>): List<Event> {
  * multi-day event keeps one lane across every week it covers, which lets the UI render it as a
  * single continuous bar.
  *
- * The result is keyed by the event itself rather than by [Event.id]: ids are not guaranteed to be
- * unique (e.g. events created via [Event.copy] or from different sources share them), and keying by
- * id would make such events fight over a single lane.
+ * The result is keyed by event identity rather than by [Event.id] or by value: ids are not
+ * guaranteed to be unique (e.g. events created via [Event.copy] share them), two equal events are
+ * still two bars that need their own lanes, and identity lookups never call the user-supplied
+ * [Event.data]'s `hashCode`/`equals` (which can be arbitrarily expensive).
  *
  * @param events The distinct events visible in the current grid.
- * @return A map of each event to its lane index (0-based).
+ * @return The lane index (0-based) of each event.
  */
-internal fun assignEventLanes(events: List<Event>): Map<Event, Int> {
-    if (events.isEmpty()) return emptyMap()
+internal fun assignEventLanes(events: List<Event>): EventLanes {
+    val laneByEvent = EventLanes()
+    if (events.isEmpty()) return laneByEvent
 
     val sorted = events.sortedWith(
         compareBy<Event> { it.date }
@@ -166,7 +168,6 @@ internal fun assignEventLanes(events: List<Event>): Map<Event, Int> {
     )
 
     val laneLastDate = ArrayList<LocalDate>()
-    val laneByEvent = HashMap<Event, Int>(events.size)
 
     for (event in sorted) {
         var lane = 0
@@ -178,10 +179,37 @@ internal fun assignEventLanes(events: List<Event>): Map<Event, Int> {
         } else {
             laneLastDate[lane] = event.lastDate
         }
-        laneByEvent[event] = lane
+        laneByEvent.put(event, lane)
     }
 
     return laneByEvent
+}
+
+/**
+ * Lane per event instance (see [assignEventLanes]).
+ *
+ * Looked up by [Event.id] (a cheap `Int` hash) and then by identity among events sharing that id,
+ * so neither the event's value nor its user-supplied [Event.data] is ever hashed or compared.
+ * Platform-neutral (no `java.util.IdentityHashMap`).
+ */
+internal class EventLanes {
+    private val byId = HashMap<Int, MutableList<Pair<Event, Int>>>()
+
+    /** Number of events with an assigned lane. */
+    var size: Int = 0
+        private set
+
+    internal fun put(event: Event, lane: Int) {
+        val entries = byId.getOrPut(event.id) { ArrayList(1) }
+        val index = entries.indexOfFirst { it.first === event }
+        if (index >= 0) entries[index] = event to lane else { entries.add(event to lane); size++ }
+    }
+
+    /** The lane of [event], or `null` if it has none. */
+    operator fun get(event: Event): Int? = byId[event.id]?.firstOrNull { it.first === event }?.second
+
+    /** The lane of [event]; throws if it has none. */
+    fun getValue(event: Event): Int = get(event) ?: throw NoSuchElementException("No lane for $event")
 }
 
 /**
@@ -222,4 +250,40 @@ internal fun segmentsForWeek(
             )
         }
         .sortedWith(compareBy({ it.lane }, { it.startColumn }))
+}
+
+/**
+ * The events of [events] that overlap the [dayCount] consecutive days starting at [firstDay], plus
+ * those events distributed onto each of these days.
+ *
+ * @property inRange Events overlapping the range, each once, in the order of [events].
+ * @property byDay For every day of the range (index 0 = [firstDay]) the events covering it, in the
+ * order of [events].
+ */
+internal class EventsInRange(
+    val inRange: List<Event>,
+    val byDay: List<List<Event>>
+)
+
+/**
+ * Distributes [events] onto the [dayCount] consecutive days starting at [firstDay].
+ *
+ * Runs in one pass: O(number of events + day/event overlaps), instead of filtering all events once
+ * per day (O(days x events)), so a month page stays cheap even with tens of thousands of events.
+ * Multi-day events are put on every day they cover within the range.
+ */
+internal fun eventsInRange(events: List<Event>, firstDay: LocalDate, dayCount: Int): EventsInRange {
+    val first = firstDay.toEpochDays()
+    val last = first + dayCount - 1
+    val inRange = ArrayList<Event>()
+    val byDay = List(dayCount) { ArrayList<Event>() }
+    for (event in events) {
+        val start = event.date.toEpochDays()
+        if (start > last) continue
+        val end = event.lastDate.toEpochDays()
+        if (end < first) continue
+        inRange.add(event)
+        for (day in maxOf(start, first)..minOf(end, last)) byDay[(day - first).toInt()].add(event)
+    }
+    return EventsInRange(inRange, byDay)
 }
