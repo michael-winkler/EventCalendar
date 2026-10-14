@@ -23,4 +23,5 @@
 
     <string name="month_previous">Vorheriger Monat</string>
     <string name="month_next">Nächster Monat</string>
+    <string name="all_day_label">Ganztägig</string>
 </resources>

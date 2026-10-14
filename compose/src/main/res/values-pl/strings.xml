@@ -23,4 +23,5 @@
 
     <string name="month_previous">Poprzedni miesiąc</string>
     <string name="month_next">Następny miesiąc</string>
+    <string name="all_day_label">Cały dzień</string>
 </resources>

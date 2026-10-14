@@ -217,7 +217,9 @@ The `Event` class represents a calendar entry.
 ### 🎮 Entry Points
 
 - **`EventCalendarCompose`**: Standard month-grid view.
-- **`EventCalendarWeekTime`**: Time-grid view for 1, 3, or 7 days.
+- **`EventCalendarWeekTime`**: Time-grid view for 1, 3, or 7 days. Events without a time range
+  (including multi-day events) appear in an all-day row above the hours, and the grid initially
+  scrolls to the earliest visible event.
 
 ### 🗃️ CalendarEventsStore
 

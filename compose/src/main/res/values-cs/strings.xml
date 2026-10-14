@@ -23,4 +23,5 @@
 
     <string name="month_previous">Předchozí měsíc</string>
     <string name="month_next">Další měsíc</string>
+    <string name="all_day_label">Celý den</string>
 </resources>

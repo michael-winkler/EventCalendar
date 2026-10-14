@@ -19,6 +19,7 @@ import com.nmd.eventCalendar.compose.EventCalendarCompose
 import com.nmd.eventCalendar.compose.EventCalendarWeekTime
 import com.nmd.eventCalendar.compose.model.CalendarDay
 import com.nmd.eventCalendar.compose.model.Event
+import com.nmd.eventCalendar.compose.model.EventTimeRange
 import com.nmd.eventCalendar.compose.model.YearMonth
 import com.nmd.eventCalendar.compose.ui.components.WeekNumberTestTag
 import com.nmd.eventCalendar.compose.ui.config.defaultCalendarOptions
@@ -236,7 +237,8 @@ class EventCalendarUiTest {
         }
 
         composeRule.onNodeWithText(dayLabel(today)).assertExists()
-        composeRule.onAllNodesWithText("/", substring = true).assertCountEquals(1)
+        composeRule.onNodeWithText(dayLabel(today.plus(1, DateTimeUnit.DAY))).assertDoesNotExist()
+        composeRule.onNodeWithText(dayLabel(today.minus(1, DateTimeUnit.DAY))).assertDoesNotExist()
     }
 
     @Test
@@ -251,7 +253,8 @@ class EventCalendarUiTest {
         (0..2).forEach { offset ->
             composeRule.onNodeWithText(dayLabel(today.plus(offset, DateTimeUnit.DAY))).assertExists()
         }
-        composeRule.onAllNodesWithText("/", substring = true).assertCountEquals(3)
+        composeRule.onNodeWithText(dayLabel(today.plus(3, DateTimeUnit.DAY))).assertDoesNotExist()
+        composeRule.onNodeWithText(dayLabel(today.minus(1, DateTimeUnit.DAY))).assertDoesNotExist()
     }
 
     @Test
@@ -261,7 +264,7 @@ class EventCalendarUiTest {
             name = "Meeting",
             shapeColor = Color.Blue,
             textColor = Color.White,
-            timeRange = com.nmd.eventCalendar.compose.model.EventTimeRange(9, 0, 10, 30)
+            timeRange = EventTimeRange(9, 0, 10, 30)
         )
         composeRule.setContent {
             EventCalendarWeekTime(
@@ -275,10 +278,45 @@ class EventCalendarUiTest {
     }
 
     /**
+     * Events without a time range used to be missing from the time grid entirely; they are shown in
+     * the all-day row, a multi-day event on every visible day it covers.
+     */
+    @Test
+    fun allDayAndMultiDayEventsAreShownInTheTimeGrid() {
+        val holiday = Event(today, "Holiday", Color.Green, Color.Black)
+        val trip = Event(
+            date = today.minus(1, DateTimeUnit.DAY),
+            name = "Trip",
+            shapeColor = Color.Blue,
+            textColor = Color.White,
+            endDate = today.plus(1, DateTimeUnit.DAY)
+        )
+        val meeting = Event(today, "Meeting", Color.Red, Color.White, timeRange = EventTimeRange(9, 0, 10, 0))
+        val clicked = mutableListOf<String>()
+        composeRule.setContent {
+            EventCalendarWeekTime(
+                calendarOptions = defaultCalendarOptions().copy(noOfVisibleDays = 3),
+                calendarEventsStore = store(holiday, trip, meeting),
+                onEventSelected = { clicked += it.name }
+            )
+        }
+
+        composeRule.onNodeWithText(composeRule.activity.getString(R.string.all_day_label)).assertExists()
+        composeRule.onAllNodesWithText("Holiday").assertCountEquals(1)
+        composeRule.onAllNodesWithText("Trip").assertCountEquals(2) // today and tomorrow are visible
+        composeRule.onNodeWithText("Meeting").assertExists() // timed: hour grid, not the all-day row
+
+        composeRule.onNodeWithText("Holiday").performClick()
+        assertEquals(listOf("Holiday"), clicked)
+    }
+
+    /**
      * Regression: all `rememberCalendarEventsStore()` calls on one screen shared a single
      * ViewModel, so two calendars displayed (and overwrote) the same events. Distinct keys must
-     * keep them apart, while calls without a key keep sharing (backwards compatible).
+     * keep them apart, equal keys share, and the deprecated keyless calls keep sharing
+     * (backwards compatible).
      */
+    @Suppress("DEPRECATION") // The keyless overload is exercised on purpose.
     @Test
     fun storesWithDifferentKeysAreIndependent() {
         val work = Event(today, "Work", Color.Red, Color.White)
@@ -287,12 +325,16 @@ class EventCalendarUiTest {
         lateinit var holidayStore: CalendarEventsStore
         lateinit var sharedA: CalendarEventsStore
         lateinit var sharedB: CalendarEventsStore
+        lateinit var sameKeyA: CalendarEventsStore
+        lateinit var sameKeyB: CalendarEventsStore
 
         composeRule.setContent {
             workStore = rememberCalendarEventsStore(listOf(work), key = "work")
             holidayStore = rememberCalendarEventsStore(listOf(holiday), key = "holidays")
             sharedA = rememberCalendarEventsStore()
             sharedB = rememberCalendarEventsStore()
+            sameKeyA = rememberCalendarEventsStore(key = "team")
+            sameKeyB = rememberCalendarEventsStore(key = "team")
         }
         composeRule.waitForIdle()
 
@@ -305,6 +347,10 @@ class EventCalendarUiTest {
 
         sharedA.setEvents(listOf(work))
         composeRule.waitForIdle()
+        assertEquals(listOf("Work"), sharedB.eventsFlow.value.map { it.name })
+
+        sameKeyA.setEvents(listOf(holiday))
+        assertEquals(listOf("Holiday"), sameKeyB.eventsFlow.value.map { it.name })
         assertEquals(listOf("Work"), sharedB.eventsFlow.value.map { it.name })
     }
 
@@ -338,7 +384,13 @@ class EventCalendarUiTest {
 
     // --- helpers (independent of the production grid code) -----------------------------------
 
-    private fun dayLabel(date: LocalDate) = "${date.day}/${date.month.number}"
+    /** Short day/month label in the device locale, e.g. "14.10." (de) or "10/14" (en-US). */
+    private fun dayLabel(date: LocalDate): String {
+        val locale = java.util.Locale.getDefault()
+        val pattern = android.text.format.DateFormat.getBestDateTimePattern(locale, "dM")
+        return java.text.SimpleDateFormat(pattern, locale)
+            .format(java.util.GregorianCalendar(date.year, date.month.number - 1, date.day).time)
+    }
 
     private fun rowStartOf(date: LocalDate, weekStart: DayOfWeek): LocalDate {
         val back = (date.dayOfWeek.ordinal - weekStart.ordinal + 7) % 7

@@ -1,10 +1,14 @@
 package com.nmd.eventCalendar.compose.util
 
+import androidx.compose.ui.graphics.Color
+import com.nmd.eventCalendar.compose.model.Event
+import com.nmd.eventCalendar.compose.model.EventTimeRange
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.plus
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -174,5 +178,26 @@ class UtilTest {
         assertNotEquals(lanes.getValue(a), lanes.getValue(b))
         assertEquals(0, lanes.getValue(a)) // longest first on the same start date order
         assertEquals(0, lanes.getValue(c))
+    }
+
+    @Test
+    fun timeGridScrollsToTheEarliestTimedEventOrToTheDefaultHour() {
+        val day = LocalDate(2026, 10, 14)
+        fun timed(start: Int, end: Int) =
+            Event(day, "T$start", Color.Red, Color.White, timeRange = EventTimeRange(start, 0, end, 0))
+        val allDay = Event(day, "All day", Color.Red, Color.White)
+        val invalid = Event(day, "Invalid", Color.Red, Color.White, timeRange = EventTimeRange(10, 0, 9, 0))
+
+        assertEquals(DefaultTimeGridStartHour, initialTimeGridHour(emptyList()))
+        assertEquals(DefaultTimeGridStartHour, initialTimeGridHour(listOf(allDay, invalid)))
+        assertEquals(6, initialTimeGridHour(listOf(timed(14, 15), allDay, timed(6, 7))))
+    }
+
+    @Test
+    fun eventsWithoutAValidTimeRangeBelongToTheAllDayArea() {
+        val day = LocalDate(2026, 10, 14)
+        assertTrue(isAllDayInTimeGrid(Event(day, "A", Color.Red, Color.White)))
+        assertTrue(isAllDayInTimeGrid(Event(day, "B", Color.Red, Color.White, timeRange = EventTimeRange(10, 0, 9, 0))))
+        assertFalse(isAllDayInTimeGrid(Event(day, "C", Color.Red, Color.White, timeRange = EventTimeRange(9, 0, 10, 0))))
     }
 }

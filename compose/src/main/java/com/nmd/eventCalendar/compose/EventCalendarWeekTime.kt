@@ -16,6 +16,7 @@ import com.nmd.eventCalendar.compose.ui.config.defaultCalendarOptions
 import com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle
 import com.nmd.eventCalendar.compose.ui.events.CalendarEventsStore
 import com.nmd.eventCalendar.compose.ui.events.PreviewCalendarEventsStore
+import com.nmd.eventCalendar.compose.util.isAllDayInTimeGrid
 import com.nmd.eventCalendar.compose.util.rememberToday
 import com.nmd.eventCalendar.compose.util.visibleTimeGridDays
 import kotlinx.datetime.DateTimeUnit
@@ -31,7 +32,9 @@ import kotlin.time.Clock
  * This view displays a time grid where events are positioned vertically according to their
  * start and end times. It supports displaying 1, 3, or 7 consecutive days: the 7-day view shows the
  * current week (aligned to [CalendarOptions.weekStart]); shorter views start with today, so today
- * is always visible.
+ * is always visible. Events without a (valid) time range, including multi-day events, are shown in
+ * an all-day row above the hour grid. Initially the grid scrolls to the earliest visible event (or
+ * 08:00 if there is none).
  *
  * @param modifier Modifier applied to the root layout.
  * @param calendarStyle Custom styling for colors and typography.
@@ -60,16 +63,21 @@ fun EventCalendarWeekTime(
         )
     }
 
-    // The time grid positions events by time within a single day, so it keys events by their start
-    // day. Built only for the visible days, so the cost stays bounded.
+    // The hour grid positions timed events within a single day, so it keys them by their start day.
+    // All-day events (incl. multi-day ones) go to the all-day row on every day they cover. Built
+    // only for the visible days, so the cost stays bounded.
     val eventsByDate = remember(events, days) {
-        days.associateWith { day -> events.filter { it.date == day } }
+        days.associateWith { day -> events.filter { !isAllDayInTimeGrid(it) && it.date == day } }
+    }
+    val allDayEventsByDate = remember(events, days) {
+        days.associateWith { day -> events.filter { isAllDayInTimeGrid(it) && it.occursOn(day) } }
     }
 
     TimeGridView(
         modifier = modifier,
         days = days,
         eventsByDate = eventsByDate,
+        allDayEventsByDate = allDayEventsByDate,
         calendarStyle = calendarStyle,
         onDaySelected = onDaySelected,
         onEventSelected = onEventSelected

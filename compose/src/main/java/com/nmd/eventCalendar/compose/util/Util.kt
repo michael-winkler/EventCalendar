@@ -213,3 +213,21 @@ internal fun visibleTimeGridDays(
     }
     return (0 until count).map { start.plus(it, DateTimeUnit.DAY) }
 }
+
+/** Hour the time grid scrolls to when no timed event is visible (start of a typical day). */
+internal const val DefaultTimeGridStartHour = 8
+
+/**
+ * Returns whether [event] belongs in the all-day area of the time grid instead of the hour grid:
+ * events without a time range, and events whose time range is invalid (which the hour grid cannot
+ * place and would otherwise drop silently).
+ */
+internal fun isAllDayInTimeGrid(event: Event): Boolean = event.timeRange?.isValid() != true
+
+/**
+ * Returns the hour the time grid initially scrolls to: the start hour of the earliest timed event
+ * among [events], or [DefaultTimeGridStartHour] if there is none.
+ */
+internal fun initialTimeGridHour(events: Collection<Event>): Int =
+    events.filterNot(::isAllDayInTimeGrid).minOfOrNull { it.timeRange!!.startHour }
+        ?: DefaultTimeGridStartHour

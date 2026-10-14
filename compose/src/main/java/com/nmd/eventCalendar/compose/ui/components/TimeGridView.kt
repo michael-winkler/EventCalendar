@@ -18,7 +18,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,7 +31,9 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -35,10 +42,12 @@ import androidx.compose.ui.unit.sp
 import com.nmd.eventCalendar.compose.model.Event
 import com.nmd.eventCalendar.compose.ui.config.CalendarStyle
 import com.nmd.eventCalendar.compose.ui.config.defaultCalendarStyle
+import com.nmd.eventCalendar.compose.util.allDayLabel
 import com.nmd.eventCalendar.compose.util.dayOfWeekShortName
+import com.nmd.eventCalendar.compose.util.initialTimeGridHour
+import com.nmd.eventCalendar.compose.util.shortDateLabel
 import com.nmd.eventCalendar.compose.util.twoDigits
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.number
 
 /**
  * A time-based grid view that displays events for a list of days.
@@ -48,7 +57,9 @@ import kotlinx.datetime.number
  *
  * @param modifier Modifier applied to the root layout.
  * @param days List of dates to display as columns.
- * @param eventsByDate Map of events keyed by their date.
+ * @param eventsByDate Map of timed events keyed by their date.
+ * @param allDayEventsByDate Map of all-day events per visible date (a multi-day event is listed for
+ * every day it covers). Shown in a row above the hour grid.
  * @param calendarStyle Styling configuration for colors and typography.
  * @param hourHeight Height of a single hour row.
  * @param onDaySelected Callback triggered when a day/background is selected.
@@ -59,6 +70,7 @@ internal fun TimeGridView(
     modifier: Modifier = Modifier,
     days: List<LocalDate>,
     eventsByDate: Map<LocalDate, List<Event>>,
+    allDayEventsByDate: Map<LocalDate, List<Event>> = emptyMap(),
     calendarStyle: CalendarStyle = defaultCalendarStyle(),
     hourHeight: Dp = 64.dp,
     onDaySelected: (LocalDate) -> Unit = {},
@@ -66,8 +78,29 @@ internal fun TimeGridView(
 ) {
     val scrollState = rememberScrollState()
 
+    // Start at the earliest visible event (or a typical day start) instead of midnight. Only once:
+    // after a configuration change the saved scroll position is kept.
+    var initialScrollDone by rememberSaveable { mutableStateOf(false) }
+    val density = LocalDensity.current
+    LaunchedEffect(Unit) {
+        if (!initialScrollDone) {
+            val hour = initialTimeGridHour(days.flatMap { eventsByDate[it].orEmpty() })
+            scrollState.scrollTo(with(density) { (hourHeight * hour).roundToPx() })
+            initialScrollDone = true
+        }
+    }
+
     Column(modifier = modifier.fillMaxSize()) {
         TimeGridHeader(days = days, calendarStyle = calendarStyle)
+
+        if (days.any { allDayEventsByDate[it].orEmpty().isNotEmpty() }) {
+            AllDayRow(
+                days = days,
+                allDayEventsByDate = allDayEventsByDate,
+                calendarStyle = calendarStyle,
+                onEventSelected = onEventSelected
+            )
+        }
 
         Row(
             modifier = Modifier
@@ -96,6 +129,9 @@ internal fun TimeGridView(
     }
 }
 
+/** Width of the hour-label column; the header and all-day row are indented by the same amount. */
+private val TimeLabelWidth = 56.dp
+
 @Composable
 private fun TimeGridHeader(
     days: List<LocalDate>,
@@ -106,7 +142,7 @@ private fun TimeGridHeader(
             .fillMaxWidth()
             .padding(bottom = 8.dp)
     ) {
-        Spacer(modifier = Modifier.width(56.dp))
+        Spacer(modifier = Modifier.width(TimeLabelWidth))
         days.forEach { date ->
             Column(
                 modifier = Modifier.weight(1f),
@@ -118,11 +154,72 @@ private fun TimeGridHeader(
                     color = calendarStyle.defaultWeekDayTextColor
                 )
                 Text(
-                    text = "${date.day}/${date.month.number}",
+                    text = shortDateLabel(date),
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     color = calendarStyle.defaultWeekDayTextColor
                 )
+            }
+        }
+    }
+}
+
+/** Maximum all-day chips per day before the rest collapses into "+N". */
+private const val MaxAllDayChips = 2
+
+/**
+ * Row above the hour grid with the all-day events of each visible day (aligned to the day columns).
+ */
+@Composable
+private fun AllDayRow(
+    days: List<LocalDate>,
+    allDayEventsByDate: Map<LocalDate, List<Event>>,
+    calendarStyle: CalendarStyle,
+    onEventSelected: (Event) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 4.dp)
+    ) {
+        Text(
+            modifier = Modifier
+                .width(TimeLabelWidth)
+                .padding(top = 2.dp),
+            text = allDayLabel(),
+            fontSize = 9.sp,
+            textAlign = TextAlign.Center,
+            color = calendarStyle.defaultWeekDayTextColor.copy(alpha = 0.6f)
+        )
+        days.forEach { date ->
+            val events = allDayEventsByDate[date].orEmpty()
+            Column(modifier = Modifier.weight(1f)) {
+                events.take(MaxAllDayChips).forEach { event ->
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(1.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(event.shapeColor)
+                            .clickable { onEventSelected(event) }
+                            .padding(horizontal = 4.dp, vertical = 1.dp),
+                        text = event.name,
+                        color = event.effectiveTextColor,
+                        fontSize = 10.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                val hidden = events.size - MaxAllDayChips
+                if (hidden > 0) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = "+$hidden",
+                        fontSize = 9.sp,
+                        textAlign = TextAlign.Center,
+                        color = calendarStyle.dayItemTextColor
+                    )
+                }
             }
         }
     }
@@ -133,7 +230,7 @@ private fun TimeLabelsColumn(
     hourHeight: Dp,
     calendarStyle: CalendarStyle
 ) {
-    Column(modifier = Modifier.width(56.dp)) {
+    Column(modifier = Modifier.width(TimeLabelWidth)) {
         repeat(24) { hour ->
             Box(
                 modifier = Modifier

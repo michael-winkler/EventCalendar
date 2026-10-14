@@ -1,10 +1,17 @@
 package com.nmd.eventCalendar.compose.util
 
+import android.text.format.DateFormat
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.intl.Locale
 import com.nmd.eventcalendar.compose.R
 import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
+import kotlinx.datetime.number
+import java.text.SimpleDateFormat
+import java.util.GregorianCalendar
 
 // ---------------------------------------------------------------------------------------------
 // Platform boundary (Android): the ONLY place in this library that touches Android resources.
@@ -25,6 +32,26 @@ internal fun monthDisplayName(month: Month): String = stringResource(month.toStr
 /** Localized label of the calendar-week column header (e.g. "KW" / "CW"). */
 @Composable
 internal fun calendarWeekLabel(): String = stringResource(R.string.calendar_week_label)
+
+/** Localized label of the all-day area of the time grid (e.g. "All day" / "Ganztägig"). */
+@Composable
+internal fun allDayLabel(): String = stringResource(R.string.all_day_label)
+
+/**
+ * Day and month of [date] in the short numeric form of the current locale, e.g. "14.10." (German)
+ * or "10/14" (US English).
+ */
+@Composable
+internal fun shortDateLabel(date: LocalDate): String {
+    val languageTag = Locale.current.toLanguageTag()
+    val format = remember(languageTag) {
+        val locale = java.util.Locale.forLanguageTag(languageTag)
+        SimpleDateFormat(DateFormat.getBestDateTimePattern(locale, "dM"), locale)
+    }
+    return remember(format, date) {
+        format.format(GregorianCalendar(date.year, date.month.number - 1, date.day).time)
+    }
+}
 
 /** Localized accessibility label of the previous/next month buttons. */
 @Composable
