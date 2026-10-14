@@ -16,6 +16,12 @@
 - **Date/Time**: Use `kotlinx-datetime`. **Avoid** `java.time` in UI layer to support API 23.
 - **Localization**: Use resource-based localization for day/month names.
 - **Serialization**: Use `kotlinx-serialization`. No `Parcelable` in common models.
+- **Platform boundary (`:compose`)**: Only two files may use Android/JVM-only APIs:
+  `util/AndroidResources.kt` (Android `R` resources, exposed to the UI as composable accessors such
+  as `dayOfWeekShortName()`) and `util/ProcessUniqueId.kt` (`java.util.concurrent` counter). They
+  become the `actual`s when the module moves to Kotlin Multiplatform. Everywhere else: no `R`,
+  `java.*`, `android.*`, `String.format` or `::class.java`; icons are `ImageVector`s in code
+  (`ui/icons/CalendarIcons.kt`), number formatting goes through `twoDigits()`.
 
 ## Visibility
 - **Default**: `internal` for all implementation details.
