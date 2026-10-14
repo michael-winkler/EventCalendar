@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.baselineprofile)
 }
 
 android {
@@ -22,6 +23,9 @@ android {
 
     buildTypes {
         release {
+            // The sample is never published; signing with the debug key lets the release build (and
+            // the benchmark builds derived from it) be installed for profiling.
+            signingConfig = signingConfigs.getByName("debug")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -76,4 +80,6 @@ dependencies {
     // Libraries
     implementation(project(":xml"))
     implementation(project(":compose"))
+
+    baselineProfile(project(":baselineprofile"))
 }

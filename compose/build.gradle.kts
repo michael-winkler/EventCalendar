@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.baselineprofile)
     id("maven-publish")
 }
 
@@ -41,7 +42,13 @@ android {
         targetCompatibility = JavaVersion.VERSION_21
     }
 
-    publishing {
+    // The Baseline Profile is generated from the sample app (see :baselineprofile) and shipped with the
+// library, so apps using it get the calendar's hot paths precompiled at install time.
+baselineProfile {
+    filter { include("com.nmd.eventCalendar.compose.**") }
+}
+
+publishing {
         singleVariant("release")
     }
 
@@ -83,6 +90,8 @@ dependencies {
     androidTestImplementation(libs.androidx.test.espresso.core)
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.compose.ui.test.manifest)
+
+    baselineProfile(project(":baselineprofile"))
 }
 
 publishing {

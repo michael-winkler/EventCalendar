@@ -17,4 +17,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "EventCalendar"
-include(":app", ":xml", ":compose")
+include(":app", ":xml", ":compose", ":baselineprofile")

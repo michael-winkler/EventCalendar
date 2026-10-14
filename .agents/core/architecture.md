@@ -23,6 +23,17 @@
   `java.*`, `android.*`, `String.format` or `::class.java`; icons are `ImageVector`s in code
   (`ui/icons/CalendarIcons.kt`), number formatting goes through `twoDigits()`.
 
+## Performance (`:compose`)
+- **Baseline Profile**: `compose/src/main/generated/baselineProfiles/baseline-prof.txt` is shipped
+  with the library. It is generated from the sample app by `:baselineprofile`; regenerate it after
+  changing hot paths (month paging, time grid) with `./gradlew :compose:generateBaselineProfile`
+  (device/emulator with API 33+ connected). Never edit it by hand.
+- **Benchmark**: `./gradlew :baselineprofile:connectedBenchmarkReleaseAndroidTest` compares frame
+  times without/with the profile (on an emulator add
+  `-Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.suppressErrors=EMULATOR`).
+- **Per-page work must not scale with days x events**: distribute events in one pass
+  (`eventsInRange`), never filter the full list once per day.
+
 ## Visibility
 - **Default**: `internal` for all implementation details.
 - **Public**: Only main entry points (e.g., `EventCalendarView`, `EventCalendarCompose`).

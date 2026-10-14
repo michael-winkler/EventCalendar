@@ -308,6 +308,9 @@ Customize colors, text sizes, and shapes:
   not fit are collapsed into a per-day “+N” indicator.
 - **Theming:** Full support for Material 3 and Dark Mode.
 - **Lightweight:** Minimal dependencies, focused on performance.
+- **Fast from the first frame:** Ships a Baseline Profile, so the calendar's hot paths are
+  precompiled when your app is installed (no setup needed). Each month page picks its events in a
+  single pass, so paging stays smooth even with tens of thousands of events.
 - **KMP Ready:** Uses `kotlinx-datetime` and resource-based localization for future multiplatform
   support.
 - **Backward Compatible:** Supports Android API level 23 and above without requiring Java 8+ API
