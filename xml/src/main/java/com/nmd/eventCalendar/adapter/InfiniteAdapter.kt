@@ -159,7 +159,7 @@ internal class InfiniteAdapter(
         }
     }
 
-    private fun applyWindowInsets(insets: Insets, binding: EcvEventCalendarViewBinding) =
+    internal fun applyWindowInsets(insets: Insets, binding: EcvEventCalendarViewBinding) =
         with(binding) {
             val isPortrait = (root.tag?.toString()?.toIntOrNull() ?: 0) == 0
 
@@ -353,7 +353,7 @@ internal class InfiniteAdapter(
 
     override fun getItemCount(): Int = getMonthCount()
 
-    private val currentItem: Int
+    internal val currentItem: Int
         get() = eventCalendarView.currentRecyclerViewPosition
 
     private fun getMonthCount(): Int {

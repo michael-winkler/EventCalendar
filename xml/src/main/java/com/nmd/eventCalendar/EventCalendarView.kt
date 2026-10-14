@@ -373,7 +373,7 @@ class EventCalendarView @JvmOverloads constructor(
      * Internal method.
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    private fun scrollHelper(position: Int) {
+    internal fun scrollHelper(position: Int) {
         currentRecyclerViewPosition = position
         currentYearAndMonthPair = getMonthNameAndYear(position)
         scrollListener?.onScrolled(
