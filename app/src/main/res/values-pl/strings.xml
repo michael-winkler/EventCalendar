@@ -4,4 +4,14 @@
     <string name="app_variant_compose">Compose</string>
     <string name="event_calendar_no_events">Nie znaleziono wydarzeń na ten dzień!</string>
     <string name="event_calendar_current_week">Bieżący tydzień</string>
+
+    <string name="action_back">Wstecz</string>
+    <string name="action_open_compose">Otwórz wersję Compose</string>
+    <string name="action_change_week_start">Zmień początek tygodnia</string>
+    <string name="action_jump_to_current_month">Przejdź do bieżącego miesiąca</string>
+    <string name="action_shuffle_events">Przetasuj wydarzenia</string>
+    <string name="action_show_current_week">Pokaż bieżący tydzień</string>
+    <string name="action_switch_view">Przełącz widok</string>
+    <string name="action_toggle_calendar_week">Pokaż lub ukryj numery tygodni</string>
+    <string name="action_toggle_expressive_ui">Przełącz styl ekspresyjny</string>
 </resources>

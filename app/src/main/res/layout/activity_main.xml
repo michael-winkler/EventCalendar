@@ -27,6 +27,7 @@
 
                 <ImageView
                     android:id="@+id/activityMainCompose"
+                    android:contentDescription="@string/action_open_compose"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="?android:attr/actionBarItemBackground"
@@ -37,6 +38,7 @@
 
                 <ImageView
                     android:id="@+id/activityMainWeekStartDayImageView"
+                    android:contentDescription="@string/action_change_week_start"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="?android:attr/actionBarItemBackground"
@@ -47,6 +49,7 @@
 
                 <ImageView
                     android:id="@+id/activityMainCalendarImageView"
+                    android:contentDescription="@string/action_jump_to_current_month"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="?android:attr/actionBarItemBackground"
@@ -57,6 +60,7 @@
 
                 <ImageView
                     android:id="@+id/activityMainShuffleImageView"
+                    android:contentDescription="@string/action_shuffle_events"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="?android:attr/actionBarItemBackground"
@@ -114,6 +118,7 @@
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/activityMainFloatingActionButtonExpressiveToggle"
+                android:contentDescription="@string/action_toggle_expressive_ui"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/dp_8"
@@ -124,6 +129,7 @@
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/activityMainFloatingActionButtonCalendarWeekToggle"
+                android:contentDescription="@string/action_toggle_calendar_week"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/dp_8"
@@ -135,6 +141,7 @@
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/activityMainFloatingActionButtonSingleWeekView"
+                android:contentDescription="@string/action_show_current_week"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/dp_8"

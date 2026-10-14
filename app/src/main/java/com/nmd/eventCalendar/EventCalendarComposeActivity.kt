@@ -1,7 +1,6 @@
 package com.nmd.eventCalendar
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -88,13 +87,15 @@ fun Screen(
     callback: () -> Unit
 ) {
     val initialSeed = rememberSaveable { System.currentTimeMillis() }
-    val calendarEventsStore = rememberCalendarEventsStore(
-        initialEvents = shuffleEventsForCurrentYear(
+    // Generated once per seed, not on every recomposition of this screen.
+    val initialEvents = remember(initialSeed) {
+        shuffleEventsForCurrentYear(
             templates = eventTemplates,
             eventCount = 250,
             seed = initialSeed
         )
-    )
+    }
+    val calendarEventsStore = rememberCalendarEventsStore(initialEvents = initialEvents)
 
     var weekStartValue by rememberSaveable { mutableIntStateOf(DayOfWeek.MONDAY.isoDayNumber) }
     var headerVisible by rememberSaveable { mutableStateOf(true) }
@@ -141,14 +142,14 @@ fun Screen(
 
     val onDaySelected: (CalendarDay) -> Unit = remember {
         {
-            Log.i("EventCalendarCompose", "Selected day: ${it.date}")
-            Log.i("EventCalendarCompose", "Selected events: ${it.events}")
+            logInfo("Selected day: ${it.date}")
+            logInfo("Selected events: ${it.events}")
             selectedDateForSheet = it.date.toString()
         }
     }
 
     val onMonthChange: (YearMonth) -> Unit = remember {
-        { Log.i("EventCalendarCompose", "Selected month: $it") }
+        { logInfo("Selected month: $it") }
     }
 
     val onWeekStartClick: () -> Unit = remember {
@@ -192,7 +193,7 @@ fun Screen(
                     IconButton(onClick = callback) {
                         Icon(
                             painter = painterResource(R.drawable.icon_arrow_left),
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.action_back),
                             tint = iconTint
                         )
                     }
@@ -201,28 +202,28 @@ fun Screen(
                     IconButton(onClick = onShowCurrentWeek) {
                         Icon(
                             painter = painterResource(R.drawable.icon_calendar_week_begin_outline),
-                            contentDescription = "Show current week",
+                            contentDescription = stringResource(R.string.action_show_current_week),
                             tint = iconTint
                         )
                     }
                     IconButton(onClick = onWeekStartClick) {
                         Icon(
                             painter = painterResource(R.drawable.icon_calendar_start),
-                            contentDescription = "Change week start",
+                            contentDescription = stringResource(R.string.action_change_week_start),
                             tint = iconTint
                         )
                     }
                     IconButton(onClick = onJumpToCurrentMonth) {
                         Icon(
                             painter = painterResource(R.drawable.icon_calendar_today),
-                            contentDescription = "Jump to current month",
+                            contentDescription = stringResource(R.string.action_jump_to_current_month),
                             tint = iconTint
                         )
                     }
                     IconButton(onClick = onShuffleEvents) {
                         Icon(
                             painter = painterResource(R.drawable.icon_shuffle),
-                            contentDescription = "Shuffle events",
+                            contentDescription = stringResource(R.string.action_shuffle_events),
                             tint = iconTint
                         )
                     }
@@ -235,7 +236,7 @@ fun Screen(
                         }
                         Icon(
                             painter = painterResource(icon),
-                            contentDescription = "Switch View",
+                            contentDescription = stringResource(R.string.action_switch_view),
                             tint = iconTint
                         )
                     }
@@ -251,7 +252,7 @@ fun Screen(
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.icon_calendar_week_begin_outline),
-                    contentDescription = "Toggle calendar week"
+                    contentDescription = stringResource(R.string.action_toggle_calendar_week)
                 )
             }
         },
@@ -291,7 +292,7 @@ fun Screen(
                     selectedDateForSheet = date.toString()
                 },
                 onEventSelected = { event ->
-                    Log.i("EventCalendarCompose", "Clicked on event: ${event.name}")
+                    logInfo("Clicked on event: ${event.name}")
                     selectedDateForSheet = event.date.toString()
                 }
             )
@@ -404,7 +405,7 @@ private fun CurrentWeekSheetContent(
             calendarController = weekController,
             calendarEventsStore = calendarEventsStore,
             onDaySelected = { day ->
-                Log.i("EventCalendarCompose", "Selected week day: ${day.date}")
+                logInfo("Selected week day: ${day.date}")
             },
             onMonthChange = {}
         )

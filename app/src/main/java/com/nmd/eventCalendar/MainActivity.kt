@@ -3,7 +3,6 @@ package com.nmd.eventCalendar
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -143,7 +142,7 @@ class MainActivity : AppCompatActivity() {
         activityMainEventCalendarView.addOnCalendarScrollListener(object :
             EventCalendarScrollListener {
             override fun onScrolled(month: Int, year: Int) {
-                Log.i("ECV", "Scrolled to: $month $year")
+                logInfo("Scrolled to: $month $year")
             }
         })
 
@@ -200,7 +199,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun bottomSheet(day: Day, eventList: List<Event>) {
+    // Not private: it is called from the listener objects above (avoids synthetic accessors).
+    internal fun bottomSheet(day: Day, eventList: List<Event>) {
         val dialogBinding = BottomSheetBinding.inflate(LayoutInflater.from(this))
         with(dialogBinding) {
             val bottomSheetDialog = BottomSheetDialog(this@MainActivity)
