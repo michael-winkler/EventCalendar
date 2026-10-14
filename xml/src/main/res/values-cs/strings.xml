@@ -22,4 +22,6 @@
         <item>Listopad</item>
         <item>Prosinec</item>
     </string-array>
+    <string name="ecv_month_previous">Předchozí měsíc</string>
+    <string name="ecv_month_next">Další měsíc</string>
 </resources>

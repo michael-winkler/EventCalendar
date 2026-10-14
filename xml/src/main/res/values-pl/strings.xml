@@ -22,4 +22,6 @@
         <item>Listopad</item>
         <item>Grudzień</item>
     </string-array>
+    <string name="ecv_month_previous">Poprzedni miesiąc</string>
+    <string name="ecv_month_next">Następny miesiąc</string>
 </resources>
