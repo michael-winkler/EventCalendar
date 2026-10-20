@@ -22,7 +22,8 @@ Conversation with the user is German; everything in the repo (commits, changelog
 ## Facts about this repo
 
 - Published via **JitPack** from the GitHub tag; `VERSION_NAME` in `gradle.properties` is the
-  artifact version (the sample app reads it as `versionName`).
+  artifact version (the sample app reads it as `versionName`). `jitpack.yml` limits the JitPack
+  build to `:compose`/`:xml` publishing; keep it in sync if library modules are added or renamed.
 - Tags are **plain version numbers** (`2.4.0`, no `v`), annotated, pointing at the
   `chore(release): released version X.Y.Z` commit.
 - GitHub release: title = version, body = changelog, one asset **`app-release-unsigned.apk`**.

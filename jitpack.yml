@@ -1,0 +1,7 @@
+# JitPack only needs the two library AARs. Its default command assembles every module, which since
+# 2.4.0 includes the :baselineprofile benchmark build and its test dependencies (184 instead of 58
+# tasks). The Baseline Profile itself is checked in and packaged into the :compose AAR as is.
+jdk:
+  - openjdk21
+install:
+  - ./gradlew :compose:publishToMavenLocal :xml:publishToMavenLocal --console=plain
