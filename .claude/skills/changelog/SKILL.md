@@ -2,9 +2,9 @@
 name: changelog
 description: >-
   Write a release changelog / release notes for the EventCalendar library in this repo's house
-  style, and bump the version. Use this whenever the user asks to "make a release", "cut a release",
-  "prepare vX.Y.Z", "bump the version", "write the changelog", "release notes", or anything about
-  publishing a new version — even if they don't name a version. Produces GitHub-release-ready
+  style, and bump the version. Use this when the user only asks to "bump the version", "write the
+  changelog" or for "release notes" — for a full release ("make a release", "cut a release",
+  "release X.Y.Z") use the release skill, which calls this one. Produces GitHub-release-ready
   Markdown with the project's emoji sections and the "Full Changelog" compare link, and updates
   VERSION_NAME in gradle.properties.
 ---

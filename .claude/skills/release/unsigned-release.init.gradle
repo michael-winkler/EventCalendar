@@ -1,0 +1,14 @@
+// Builds :app's release APK unsigned (app-release-unsigned.apk), as attached to every GitHub
+// release. The sample's release build type is signed with the debug key for profiling, so this
+// init script clears the signing config for one build without touching the repo.
+//
+// Usage: ./gradlew :app:assembleRelease -I .claude/skills/release/unsigned-release.init.gradle
+allprojects {
+    if (path == ':app') {
+        pluginManager.withPlugin('com.android.application') {
+            extensions.getByName('androidComponents').finalizeDsl { android ->
+                android.buildTypes.getByName('release').signingConfig = null
+            }
+        }
+    }
+}
