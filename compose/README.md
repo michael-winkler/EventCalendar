@@ -46,7 +46,7 @@ dependencies {
 
 ## Requirements
 
-- **Min SDK:** 23
+- **Min SDK:** 24
 - **Kotlin:** 2.0+
 - **kotlinx-datetime:** 0.6.0+
 - **Jetpack Compose:** 1.7.0+

@@ -7,10 +7,11 @@ plugins {
 android {
     namespace = "com.nmd.eventCalendarSample"
     compileSdk = 37
+    compileSdkMinor = 1
 
     defaultConfig {
         applicationId = "com.nmd.eventCalendar"
-        minSdk = 23
+        minSdk = 24
         targetSdk = 37
         versionCode = 1
         versionName = project.property("VERSION_NAME") as String

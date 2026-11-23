@@ -30,7 +30,7 @@ Choose the module that fits your project:
 ### 🚀 [EventCalendar Compose](./compose/README.md)
 *For modern Jetpack Compose projects.*
 - Built 100% with Compose.
-- **Min SDK: 23**
+- **Min SDK: 24**
 - Supports horizontal paging.
 - Continuous **multi-day events** (week-overlapping, with optional auto-merge).
 - Custom `CalendarController` and `CalendarEventsStore`.
@@ -72,7 +72,7 @@ Replace `LATEST_VERSION` with [![](https://jitpack.io/v/michael-winkler/EventCal
 
 ```kotlin
 dependencies {
-    // For Jetpack Compose (Min SDK 23)
+    // For Jetpack Compose (Min SDK 24)
     implementation("com.github.michael-winkler.EventCalendar:compose:LATEST_VERSION")
 
     // For XML / View System (Min SDK 23) – deprecated, no further development

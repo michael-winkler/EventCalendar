@@ -9,9 +9,10 @@ plugins {
 android {
     namespace = "com.nmd.eventcalendar.compose"
     compileSdk = 37
+    compileSdkMinor = 1
 
     defaultConfig {
-        minSdk = 23
+        minSdk = 24
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
