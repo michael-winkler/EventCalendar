@@ -12,8 +12,8 @@
 3. **Domain Layer**: Models (plain data classes).
 
 ## Compatibility & KMP
-- **Min SDK**: Android API 23.
-- **Date/Time**: Use `kotlinx-datetime`. **Avoid** `java.time` in UI layer to support API 23.
+- **Min SDK**: Android API 24 for `:compose` (Material3 1.5 needs it), API 23 for `:xml`.
+- **Date/Time**: Use `kotlinx-datetime`. **Avoid** `java.time` in UI layer - it needs API 26, above both min SDKs.
 - **Localization**: Use resource-based localization for day/month names.
 - **Serialization**: Use `kotlinx-serialization`. No `Parcelable` in common models.
 - **Platform boundary (`:compose`)**: Only two files may use Android/JVM-only APIs:

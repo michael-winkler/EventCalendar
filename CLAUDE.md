@@ -6,7 +6,7 @@ This project contains two UI implementations of a calendar: `:compose` and `:xml
 - **Language**: Kotlin (Idiomatic, KMP-ready)
 - **UI**: Jetpack Compose (M3) & XML Views (Classic)
 - **Date/Time**: `kotlinx-datetime` (Primary), `java.util.Calendar` (Legacy XML internal)
-- **Min SDK**: 23
+- **Min SDK**: 24 (`:compose`), 23 (`:xml`)
 
 ## 📋 Build & Dev Commands
 - **Build**: `./gradlew assembleDebug`
@@ -24,7 +24,7 @@ We use a modular, instruction-dense approach. **Read only what you need:**
 - [Calendar & Event Logic](file://.agents/features/calendar-logic.md)
 
 ## ⚠️ Critical Constraints
-1. **API 23 Compatibility**: Avoid `java.time` in UI. Use `kotlinx-datetime` or resources.
+1. **Min SDK Compatibility** (24 `:compose`, 23 `:xml`): Avoid `java.time` in UI. Use `kotlinx-datetime` or resources.
 2. **Strict Module Separation**: Never mix `:compose` and `:xml` dependencies.
 3. **Internal by Default**: Expose only the primary View/Composable to `:app`.
 4. **Surgical Edits**: Prefer `replace_file_content` over overwriting files.

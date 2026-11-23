@@ -6,7 +6,7 @@ You are a Senior Android Developer. This file routes you to specific instruction
 ## 📂 Instruction Directory
 
 ### 🏗️ Core & Architecture
-- [Architecture & Boundaries](file://.agents/core/architecture.md): Module structure, KMP, API 23.
+- [Architecture & Boundaries](file://.agents/core/architecture.md): Module structure, KMP, min SDK.
 - [Working Approach](file://.agents/core/working-approach.md): How to analyze and edit code.
 
 ### 🧩 Modules

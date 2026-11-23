@@ -21,10 +21,10 @@ reactive patterns.
 
 1. **Unidirectional Data Flow (UDF)**: UI consumes state from `CalendarEventsStore` and sends events
    back via callbacks.
-2. **KMP Readiness & API 23**:
+2. **KMP Readiness & API 24**:
     - **Avoid `java.time`** in Composables. Use `kotlinx-datetime` for data and the `toStringRes()`
       extensions for localized names (day/month) via string resources.
-    - **Min SDK 23**: Code must run on Android 23+ without requiring Java 8 API desugaring.
+    - **Min SDK 24**: Code must run on Android 24+ without requiring Java 8 API desugaring.
     - **No `android.os.Parcelable`** in models.
 3. **Internal by Default**: All implementation details must be `internal`. Only the main entry
    points should be public.
