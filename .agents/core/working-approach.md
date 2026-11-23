@@ -5,7 +5,7 @@
 - **Identify Patterns**: Respect existing code style (Indentation, Naming).
 
 ## Modification
-- **Surgical Edits**: Use `replace_file_content` or `multi_replace_file_content`.
+- **Surgical Edits**: Change only the lines the task needs; never rewrite whole files.
 - **Avoid Refactors**: Don't touch unrelated code.
 - **API Stability**: Keep public APIs stable.
 

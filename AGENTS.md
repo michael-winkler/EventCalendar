@@ -1,29 +1,46 @@
-# EventCalendar Agent Instructions
+# EventCalendar - Agent Index
 
-You are a Senior Android Developer. This file routes you to specific instructions.
-**Read only what is relevant to your current task to save tokens.**
+The one instruction file for every agent (Claude, Copilot, Cursor, Gemini, ...). Tool-specific files
+only point here. **Read only what your task needs.**
 
-## 📂 Instruction Directory
+## Project
+- Android calendar library with two UI modules: `:compose` (Jetpack Compose, Material 3) and `:xml`
+  (classic Views). `:app` is the sample app and only coordinates.
+- Kotlin, KMP-ready: `kotlinx-datetime`, `kotlinx-serialization`.
+- **Min SDK**: 24 for `:compose` (Material3 1.5 needs it), 23 for `:xml`.
 
-### 🏗️ Core & Architecture
-- [Architecture & Boundaries](file://.agents/core/architecture.md): Module structure, KMP, min SDK.
-- [Working Approach](file://.agents/core/working-approach.md): How to analyze and edit code.
+## Commands
+- Build: `./gradlew assembleDebug`
+- Test: `./gradlew test`
+- Lint: `./gradlew lint`
 
-### 🧩 Modules
-- [Compose UI Guidelines](file://.agents/modules/compose.md): `:compose` module specifics.
-- [XML / View Guidelines](file://.agents/modules/xml.md): `:xml` module specifics. ⚠️ **Deprecated** – no further development.
+## Core Rules
+1. **Module separation**: `:compose` and `:xml` never depend on each other; no mixed UI.
+2. **`:xml` is deprecated**: no new features or API there. New work goes into `:compose`; touch
+   `:xml` only for upkeep that keeps it compiling.
+3. **KMP compatibility**: `kotlinx-datetime`, no `java.time` in UI code (it needs API 26).
+4. **Internal by default**: only the main entry points (`EventCalendarCompose`,
+   `EventCalendarView`) are public.
+5. **Surgical edits**: change only what the task needs, no unrelated refactors, keep public APIs
+   stable, follow the existing style.
+6. **Text files use CRLF** (`.gitattributes`).
 
-### 🛠️ Features
-- [Calendar & Date Logic](file://.agents/features/calendar-logic.md): Date calculations, scrolling.
-- [Event Management](file://.agents/features/event-management.md): Data models, Stores, ViewModels.
-- [Styling System](file://.agents/features/styling.md): Attrs, Themes, Tinting.
+## Instructions
+- [Architecture & boundaries](.agents/core/architecture.md): modules, layering, platform boundary,
+  baseline profile, visibility.
+- [Working approach](.agents/core/working-approach.md): analyse, edit, verify.
+- [`:compose` guidelines](.agents/modules/compose.md)
+- [`:xml` guidelines](.agents/modules/xml.md) - deprecated module.
+- [Calendar & date logic](.agents/features/calendar-logic.md)
+- [Event management](.agents/features/event-management.md): models, multi-day events, stores.
+- [Styling](.agents/features/styling.md)
 
-## 🚀 Quick Rules
-1. **No Mixed UI**: Keep Compose and XML strictly separated.
-2. **KMP Compatibility**: Avoid `java.time` in UI. Use `kotlinx-datetime`.
-3. **Surgical Edits**: Use `replace_file_content`. No mass refactors.
-4. **Internal Default**: Keep everything `internal` unless it's a public API.
-5. **`:xml` is deprecated**: No new features or API in `:xml`. New work goes into `:compose`.
-
----
-*For deep technical details, check the `.skills/` directory.*
+## Skills (`.agents/skills/`)
+- [commit](.agents/skills/commit/SKILL.md) - "commit", "commit everything", "commit as me".
+- [changelog](.agents/skills/changelog/SKILL.md) - "bump the version", "write the changelog".
+- [release](.agents/skills/release/SKILL.md) - "make a release", "release X.Y.Z", "ein Release
+  machen"; calls the changelog skill.
+- [compose-ui-skill](.agents/skills/compose-ui-skill/SKILL.md) - deep guidance for `:compose`.
+- [xml-ui-skill](.agents/skills/xml-ui-skill/SKILL.md),
+  [xml-components-skill](.agents/skills/xml-components-skill/SKILL.md),
+  [xml-styling-skill](.agents/skills/xml-styling-skill/SKILL.md) - `:xml` only, deprecated.

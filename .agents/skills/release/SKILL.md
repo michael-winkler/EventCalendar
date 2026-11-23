@@ -95,7 +95,7 @@ If the tag exists but points elsewhere, stop and ask — never move or force-pus
 
 ### 7. Unsigned APK
 ```bash
-./gradlew :app:assembleRelease -I .claude/skills/release/unsigned-release.init.gradle
+./gradlew :app:assembleRelease -I .agents/skills/release/unsigned-release.init.gradle
 ```
 Check `app/build/outputs/apk/release/`: `app-release-unsigned.apk` exists, `output-metadata.json`
 has `"versionName": "<new>"`, and `unzip -l` shows no `META-INF/*.RSA|SF|EC|DSA`.

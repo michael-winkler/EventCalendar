@@ -11,4 +11,5 @@
 
 ## Localization
 - Don't use `java.time` formatters.
-- Use `strings.xml` for day names (e.g., `R.string.ecv_monday`) and month names.
+- Use `strings.xml` for day and month names. `:compose` reads them only through the accessors in
+  `util/AndroidResources.kt` (`dayOfWeekShortName()`, `monthDisplayName()`); `:xml` uses `R` directly.
