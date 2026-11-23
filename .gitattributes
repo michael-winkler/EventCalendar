@@ -1,2 +1,14 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Line endings: every text file uses CRLF in the working copy, whatever core.autocrlf says - the
+# same rule as in the apps that use this library. The repository itself stores LF.
+* text=auto eol=crlf
+# The one exception: the POSIX wrapper script. A shell cannot read a script whose lines end in CR,
+# and JitPack builds on Linux with ./gradlew.
+gradlew text eol=lf
+*.sh text eol=lf
+
+# Binaries - no conversion, no diff.
+*.jar binary
+*.png binary
+*.jpg binary
+*.webp binary
+*.gif binary
